@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    //firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -40,4 +42,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation("com.google.firebase:firebase-firestore")
+
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "553363831153",
+    "project_id": "pastillerodigital-cuidamedpill",
+    "storage_bucket": "pastillerodigital-cuidamedpill.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553363831153:android:6f2ed70e7d5dde58715ed0",
+        "android_client_info": {
+          "package_name": "com.pastillerodigital.cuidamedpill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaqMXZ42HHcxEPCCxdPOvPmRrwdD0yWNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
