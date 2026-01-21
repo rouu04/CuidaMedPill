@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.pastillerodigital.cuidamedpill.modelo.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
@@ -16,6 +17,8 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         super();
         setCollectionName();
     }
+
+    //MÉTODOS SOBREESCRITOS DE LA CLASE ABSTRACTA
     @Override
     protected void setCollectionName() {
         this.collectionName = Constantes.COLLECTION_USUARIOS;
@@ -35,8 +38,42 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                     //Lista de medicamentos asociados
                     //todo get lista medicamentos (llamar funcion y en el onsucces se guarda)
 
+
+                    callback.onSuccess(u);
                 })
-                .addOnFailureListener(callback::onFailure);
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+    }
+
+    /*
+    REGISTRO DE UN USUARIO
+
+    Funcion que añade un usuario a la base de datos (registro)
+     */
+    @Override
+    public void add(Usuario obj, OnOperationCallback callback) {
+        //Si no existe, lo registra
+        usuarioExiste(obj.getTelefono(), new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario existente) {
+                if (existente != null) {
+                    //todo tratar como sea
+                    callback.onFailure(new Exception("Ya existe un usuario con este teléfono"));
+                } else {
+                    //todo registro
+                    UsuarioDAO.super.add(obj, callback);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
     }
 
     /*
@@ -54,6 +91,36 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
 
         return u;
     }
+
+    /*
+    No puede haber dos usuarios con el mismo telefono
+     */
+    public void usuarioExiste(String telefono, OnDataLoadedCallback<Usuario> callback) {
+        if (telefono == null || telefono.isEmpty()) {
+            callback.onSuccess(null);
+            return;
+        }
+
+        db.collection(collectionName)
+                .whereEqualTo(Constantes.USUARIO_TELEFONO, telefono)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0); //primer y único documento de la consulta
+                        Usuario usuario = docToObj(doc);
+                        usuario.setId(doc.getId()); // Asignamos el ID del documento
+                        callback.onSuccess(usuario); // Devolvemos el usuario
+                    } else {
+                        callback.onSuccess(null); // Tiene éxito en la consulta (no da error)
+                        //pero no existe
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onFailure(new Exception("Fallo al comprobar si el usuario existe"));
+                });
+    }
+
 
 
 }

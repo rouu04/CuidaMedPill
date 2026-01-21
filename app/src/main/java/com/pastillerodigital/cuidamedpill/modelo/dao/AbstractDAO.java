@@ -22,9 +22,12 @@ public abstract class AbstractDAO<T extends Persistible> implements DAO<T>{
     public abstract T docToObj(DocumentSnapshot doc);
 
 
+    /*
+    Función que añade un elemento a la coleccion. Cada objeto debería preguntar si existe en función
+    de sus restricciones.
+     */
     @Override
     public void add(T obj, OnOperationCallback callback) {
-        //todo comprobar si existe
         db.collection(this.collectionName)
                 .add(obj)
                 .addOnSuccessListener(documentReference -> {
