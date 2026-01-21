@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        //probarAddUsuario();
+        probarAddUsuario();
     }
 
     private void probarAddUsuario() {
