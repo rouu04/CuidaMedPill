@@ -4,7 +4,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 
-/*
+/**
 Clase abstracta que implementa el dao y hará las funciones generales
  */
 public abstract class AbstractDAO<T extends Persistible> implements DAO<T>{
@@ -22,7 +22,7 @@ public abstract class AbstractDAO<T extends Persistible> implements DAO<T>{
     public abstract T docToObj(DocumentSnapshot doc);
 
 
-    /*
+    /**
     Función que añade un elemento a la coleccion. Cada objeto debería preguntar si existe en función
     de sus restricciones.
      */
@@ -37,7 +37,7 @@ public abstract class AbstractDAO<T extends Persistible> implements DAO<T>{
                 .addOnFailureListener(callback::onFailure);
     }
 
-    /*
+    /**
     Usamos set, que reemplaza el documento con el id por el nuevo que le pasamos
      */
     @Override

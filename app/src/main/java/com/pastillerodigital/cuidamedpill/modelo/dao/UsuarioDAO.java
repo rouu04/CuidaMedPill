@@ -8,7 +8,7 @@ import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.List;
 
-/*
+/**
 Funciones de acceso a la base de datos de usuarios
  */
 public class UsuarioDAO extends AbstractDAO<Usuario>{
@@ -49,34 +49,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 });
     }
 
-    /*
-    REGISTRO DE UN USUARIO
-
-    Funcion que añade un usuario a la base de datos (registro)
-     */
-    @Override
-    public void add(Usuario obj, OnOperationCallback callback) {
-        //Si no existe, lo registra
-        usuarioExiste(obj.getTelefono(), new OnDataLoadedCallback<Usuario>() {
-            @Override
-            public void onSuccess(Usuario existente) {
-                if (existente != null) {
-                    //todo tratar como sea
-                    callback.onFailure(new Exception("Ya existe un usuario con este teléfono"));
-                } else {
-                    //todo registro
-                    UsuarioDAO.super.add(obj, callback);
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                callback.onFailure(e);
-            }
-        });
-    }
-
-    /*
+    /**
     Devuelve un objeto usuario a partir del documento devuelto por firebase
     Imprescindible que los strings marcados coincidan exactamente con la base de datos
      */
@@ -92,8 +65,8 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         return u;
     }
 
-    /*
-    No puede haber dos usuarios con el mismo telefono
+    /**
+    Comprueba si el usuario existe. No puede haber dos usuarios con el mismo telefono
      */
     public void usuarioExiste(String telefono, OnDataLoadedCallback<Usuario> callback) {
         if (telefono == null || telefono.isEmpty()) {

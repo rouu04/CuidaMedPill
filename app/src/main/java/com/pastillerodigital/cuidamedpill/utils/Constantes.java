@@ -17,4 +17,10 @@ public class Constantes {
     public static final String TIPOUSR_ESTANDAR = "Estándar";
     public static final String TIPOUSR_ASISTIDO = "Asistido";
 
+    //ARGUMENTOS
+    public static final String ARG_UID = "uid";
+    public static final String ARG_TELEFONO = "telefono";
+
+
+
 }

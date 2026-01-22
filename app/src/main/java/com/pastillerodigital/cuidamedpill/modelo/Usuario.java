@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.modelo;
 
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 
@@ -19,8 +20,8 @@ public class Usuario implements Persistible {
     private List<String> medAsigId; //lista de ids de medicamentos de este usuario
 
     //Atributos que NO quiero que estén en firebase directamente pero son necesarios para el objeto
-    @Exclude
-    private String idU;
+    @DocumentId
+    private String idU; //indica id del documento
     @Exclude
     private TipoUsuario tipoUsuario;
     @Exclude
@@ -69,12 +70,12 @@ public class Usuario implements Persistible {
         this.medAsigId = medAsigId;
     }
 
-    @Exclude
+    @DocumentId
     @Override
     public String getId() {
         return idU;
     }
-    @Exclude
+    @DocumentId
     @Override
     public void setId(String id) {
         this.idU = id;
