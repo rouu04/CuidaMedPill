@@ -13,11 +13,14 @@ public class Usuario implements Persistible {
     }
 
     //Atributos que aparecerán en la base de datos
-    private String nombreU;
-    private String telefono;
+    private String nombreUsuario;
+    private String aliasU; //nombre (como se dirigirá la app)
     private String fotoURL;
     private String tipoUsuarioStr;
     private List<String> medAsigId; //lista de ids de medicamentos de este usuario
+
+    private String passwordHash;
+    private String salt;
 
     //Atributos que NO quiero que estén en firebase directamente pero son necesarios para el objeto
     @DocumentId
@@ -26,25 +29,18 @@ public class Usuario implements Persistible {
     private TipoUsuario tipoUsuario;
     @Exclude
     private List<Medicamento> medList;
+    @Exclude
+    private String passwordPlano;
 
     //GETTERS Y SETTERS
 
-    public String getNombreU() {
-        return nombreU;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setNombreU(String nombreU) {
-        this.nombreU = nombreU;
+    public void setNombreUsuario(String nombreU) {
+        this.nombreUsuario = nombreU;
     }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
 
     public String getFotoURL() {
         return fotoURL;
@@ -62,12 +58,36 @@ public class Usuario implements Persistible {
         this.tipoUsuarioStr = tipoUsuarioStr;
     }
 
-    public List<String> getMedListStr() {
+    public List<String> getMedAsigId() {
         return medAsigId;
     }
 
-    public void setMedListStr(List<String> medAsigId) {
+    public void setMedAsigId(List<String> medAsigId) {
         this.medAsigId = medAsigId;
+    }
+
+    public String getAliasU() {
+        return aliasU;
+    }
+
+    public void setAliasU(String aliasU) {
+        this.aliasU = aliasU;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     @DocumentId
@@ -96,7 +116,12 @@ public class Usuario implements Persistible {
     public void setMedList(List<Medicamento> medList) {
         this.medList = medList;
     }
-
-
-
+    @Exclude
+    public String getPasswordPlano() {
+        return passwordPlano;
+    }
+    @Exclude
+    public void setPasswordPlano(String passwordPlano) {
+        this.passwordPlano = passwordPlano;
+    }
 }

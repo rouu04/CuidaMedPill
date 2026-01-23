@@ -13,14 +13,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Logo opcional -->
+        <!-- Foto del usuario -->
         <ImageView
-            android:id="@+id/imgLogo"
+            android:id="@+id/imgUserPhoto"
             android:src="@drawable/ic_launcher_foreground"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginBottom="32dp"
-            android:contentDescription="Logo"/>
+            android:layout_marginBottom="24dp"
+            android:contentDescription="Foto del usuario"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <!-- Alias -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutAlias"
+            android:hint="Alias (nombre visible en la app)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAlias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Nombre de usuario -->
         <com.google.android.material.textfield.TextInputLayout
@@ -28,12 +45,12 @@
             android:hint="Nombre de usuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtUsername"
-                android:inputType="textPersonName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -72,29 +89,29 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botón iniciar sesión -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogin"
-            android:text="Iniciar sesión"
-            android:layout_marginTop="32dp"
+        <!-- Tipo de usuario -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutTipoUsuario"
+            android:hint="Tipo de usuario"
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Button"/>
+            app:errorEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <!-- Texto aclaración y registrarse -->
-        <TextView
-            android:id="@+id/tvRegisterPrompt"
-            android:text="¿Es la primera vez que entras en CuidaMedPill? Regístrate!"
-            android:layout_marginTop="48dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="14sp"/>
+            <AutoCompleteTextView
+                android:id="@+id/actvTipoUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Botón registrar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
             android:text="Registrarse"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"/>

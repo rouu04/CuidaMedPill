@@ -5,6 +5,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.pastillerodigital.cuidamedpill.modelo.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.List;
 
@@ -56,26 +57,29 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     @Override
     public Usuario docToObj(DocumentSnapshot doc) {
         Usuario u = new Usuario();
-        u.setNombreU(doc.getString(Constantes.USUARIO_NOMBRE));
-        u.setTelefono(doc.getString(Constantes.USUARIO_TELEFONO));
+        u.setNombreUsuario(doc.getString(Constantes.USUARIO_NOMBREUSUARIO));
+        u.setAliasU(doc.getString(Constantes.USUARIO_ALIAS));
         u.setTipoUsuarioStr(doc.getString(Constantes.USUARIO_TIPOUSR));
         u.setFotoURL(doc.getString(Constantes.USUARIO_FOTO));
-        u.setMedListStr((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
+        u.setMedAsigId((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
+        u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
+        u.setSalt(doc.getString(Constantes.USUARIO_SALT));
 
         return u;
     }
 
+
     /**
-    Comprueba si el usuario existe. No puede haber dos usuarios con el mismo telefono
+    Obtiene objeto filtrando por un parámetro
      */
-    public void usuarioExiste(String telefono, OnDataLoadedCallback<Usuario> callback) {
-        if (telefono == null || telefono.isEmpty()) {
+    public void getWithParameter(String paramBD, String param, OnDataLoadedCallback<Usuario> callback){
+        if (param == null || param.isEmpty()) {
             callback.onSuccess(null);
             return;
         }
 
         db.collection(collectionName)
-                .whereEqualTo(Constantes.USUARIO_TELEFONO, telefono)
+                .whereEqualTo(paramBD, param)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
@@ -90,7 +94,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 })
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
-                    callback.onFailure(new Exception("Fallo al comprobar si el usuario existe"));
+                    callback.onFailure(new Exception(Mensajes.EX_EXISTE));
                 });
     }
 

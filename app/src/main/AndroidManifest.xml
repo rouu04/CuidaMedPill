@@ -11,19 +11,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CuidaMedPill">
+
+        <!-- MainActivity -->
         <activity
             android:name=".controlador.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
+        <!-- WelcomeActivity, registro o inicio de sesion  -->
         <activity
             android:name=".controlador.WelcomeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- RegistroActivity, registro -->
+        <activity
+            android:name=".controlador.RegistroActivity"
             android:exported="false" />
+
 
     </application>
 
