@@ -8,7 +8,6 @@ import java.security.SecureRandom;
 
 public class Utils {
 
-
     /**
      //Para guardar la contraseña de forma segura
      */
@@ -27,4 +26,5 @@ public class Utils {
             throw new RuntimeException("Error al hashear contraseña", e);
         }
     }
+
 }

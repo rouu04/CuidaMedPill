@@ -20,15 +20,16 @@ public enum TipoUsuario {
         return descripcion;
     }
 
-    /*
+    /**
     Convierte el string al valor del enumerado
      */
     public static TipoUsuario tipoUsrFromString(String tipo) {
         if (tipo == null) return null;
-        try {
-            return TipoUsuario.valueOf(tipo);
-        } catch (IllegalArgumentException e) {
-            return null;
+        for (TipoUsuario t : TipoUsuario.values()) {
+            if (t.descripcion.equals(tipo)) {
+                return t;
+            }
         }
+        return null;
     }
 }

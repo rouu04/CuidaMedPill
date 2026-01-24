@@ -23,6 +23,15 @@
             android:contentDescription="Foto del usuario"
             android:clickable="true"
             android:focusable="true"/>
+        <TextView
+            android:id="@+id/tvFotoError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:text="Error al subir la foto"
+            android:layout_gravity="center"
+            android:paddingTop="4dp"/>
 
         <!-- Alias -->
         <com.google.android.material.textfield.TextInputLayout
@@ -99,11 +108,11 @@
             app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actvTipoUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
+                android:clickable="true"
                 android:focusable="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 

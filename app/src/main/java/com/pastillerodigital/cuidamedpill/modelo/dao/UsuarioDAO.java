@@ -60,7 +60,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         u.setNombreUsuario(doc.getString(Constantes.USUARIO_NOMBREUSUARIO));
         u.setAliasU(doc.getString(Constantes.USUARIO_ALIAS));
         u.setTipoUsuarioStr(doc.getString(Constantes.USUARIO_TIPOUSR));
-        u.setFotoURL(doc.getString(Constantes.USUARIO_FOTO));
+        u.setFotoPerfil((int) doc.get(Constantes.USUARIO_FOTO));
         u.setMedAsigId((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
         u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
         u.setSalt(doc.getString(Constantes.USUARIO_SALT));
@@ -72,8 +72,8 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     /**
     Obtiene objeto filtrando por un parámetro
      */
-    public void getWithParameter(String paramBD, String param, OnDataLoadedCallback<Usuario> callback){
-        if (param == null || param.isEmpty()) {
+    public void getWithParameter(String paramBD, Object param, OnDataLoadedCallback<Usuario> callback){
+        if (param == null) {
             callback.onSuccess(null);
             return;
         }
@@ -97,7 +97,5 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                     callback.onFailure(new Exception(Mensajes.EX_EXISTE));
                 });
     }
-
-
 
 }

@@ -10,6 +10,11 @@ public class Constantes {
     public static final String PERSIST_KEYUSERID = "USERID";
     public static final String PERSIST_KEYNOMBREUSER = "NOMBREUSER";
     public static final String PERSIST_KEYSESIONACTIVA = "SESIONACTIVA";
+    public static final String PERSIST_KEYFOTOPERFIL = "FOTOPERFIL";
+
+    //----------STORAGE (fotos)
+    public static final String STOR_FN_USUARIOS = "usuarios/";
+    public static final String STOR_FN_FORMATO = ".jpg";
 
     //-----------TABLA USUARIOS
     public static final String USUARIO_NOMBREUSUARIO = "nombreUsuario";

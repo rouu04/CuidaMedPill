@@ -15,7 +15,7 @@ public class Usuario implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreUsuario;
     private String aliasU; //nombre (como se dirigirá la app)
-    private String fotoURL;
+    private int fotoPerfil;
     private String tipoUsuarioStr;
     private List<String> medAsigId; //lista de ids de medicamentos de este usuario
 
@@ -42,12 +42,12 @@ public class Usuario implements Persistible {
         this.nombreUsuario = nombreU;
     }
 
-    public String getFotoURL() {
-        return fotoURL;
+    public int getFotoPerfil() {
+        return fotoPerfil;
     }
 
-    public void setFotoURL(String fotoURL) {
-        this.fotoURL = fotoURL;
+    public void setFotoPerfil(int fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
 
     public String getTipoUsuarioStr() {

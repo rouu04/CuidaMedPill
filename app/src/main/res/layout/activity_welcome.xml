@@ -7,6 +7,7 @@
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/formLayout"
         android:orientation="vertical"
         android:padding="24dp"
         android:gravity="center_horizontal"
@@ -50,23 +51,6 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtPassword"
-                android:inputType="textPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Confirmar contraseña -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutConfirmPassword"
-            android:hint="Confirmar contraseña"
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtConfirmPassword"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

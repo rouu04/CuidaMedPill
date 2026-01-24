@@ -18,6 +18,10 @@
             android:exported="true">
 
         </activity>
+        <!-- Activity para test  -->
+        <activity
+            android:name=".controlador.TestsActivity"
+            android:exported="true"/>
 
         <!-- WelcomeActivity, registro o inicio de sesion  -->
         <activity
@@ -34,6 +38,8 @@
         <activity
             android:name=".controlador.RegistroActivity"
             android:exported="false" />
+
+
 
 
     </application>

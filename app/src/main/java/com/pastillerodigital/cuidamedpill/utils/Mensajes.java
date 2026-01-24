@@ -12,11 +12,8 @@ public class Mensajes {
     public static final String ERROR_USUARIO_CONTRASEÑAINCORRECTA = "La contraseña es incorrecta, inténtelo de nuevo";
 
     //REGISTRO
-    public static final String ERROR_REGCODIGO = "No se ha podido enviar el codigo, revisa la conexión y vuelve a intentarlo";
-    public static final String ERROR_REGCODIGONECESARIO = "Primero debes enviar el código SMS";
-    public static final String ERROR_REGCODIGOINCORRECTO = "Código incorrecto o expirado";
-    public static final String ERROR_REGTELFINVALIDO = "El número de teléfono no es válido";
-    public static final String ERROR_REGTOOMANYSOLICITUDES = "Se han enviado demasiadas solicitudes, intentalo de nuevo más tarde";
+    public static final String ERROR_FOTOURL = "Ha ocurrido un problema al obtener la foto";
+    public static final String ERROR_FOTOUPLOAD = "Ha ocurrido un problema al guardar la foto";
 
     //-------------INTERACCIONES
     public static final String ACEPTAR = "Aceptar";
@@ -30,7 +27,8 @@ public class Mensajes {
     public static final String REG_VAL_PUTNOMBREUSR = "Introduce tu nombre de usuario";
     public static final String REG_VAL_PUTPASSW = "Introduce tu contraseña";
     public static final String REG_VAL_PASSWDNOCOINCIDEN = "Las contraseñas no coinciden, tienen que ser iguales";
-
+    public static final String REG_VAL_PUTALIAS= "Introduce un alias, será como la aplicación se diriga a ti";
+    public static final String REG_VAL_PUTTIPOUSR= "Selecciona tu caso, obtendrás distintos servicios de la aplicación";
 
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";

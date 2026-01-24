@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,15 +20,18 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
+import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     //ELEMENTOS DE DISEÑO
-    private TextInputLayout layoutUsername, layoutPassword, layoutConfirmPassword;
-    private TextInputEditText edtUsername, edtPassword, edtConfirmPassword;
+    private LinearLayout formLayout; //el formulario en si
+    private TextInputLayout layoutUsername, layoutPassword;
+    private TextInputEditText edtUsername, edtPassword;
     private MaterialButton btnLogin, btnRegister;
     private CircularProgressIndicator progressIndicator;
+
 
     //ELEMENTOS LÓGICOS
     private UsuarioDAO usuarioDAO;
@@ -40,12 +45,11 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome); //carga layout correspondiente con los componentes
 
         // Componentes de diseño:
+        formLayout = findViewById(R.id.formLayout);
         layoutUsername = findViewById(R.id.layoutUsername);
         layoutPassword = findViewById(R.id.layoutPassword);
-        layoutConfirmPassword = findViewById(R.id.layoutConfirmPassword);
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
-        edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         progressIndicator = findViewById(R.id.progressIndicator);
@@ -69,22 +73,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void login(){
+        UiUtils.limpiarErroresLayouts(formLayout);
+
         //Sacamos información input
         String nombreUsuario = edtUsername.getText().toString().trim();
         String password = edtPassword.getText().toString();
-        String confirmPassword = edtConfirmPassword.getText().toString();
 
         // Validaciones
         if(TextUtils.isEmpty(nombreUsuario)){
-            edtUsername.setError(Mensajes.REG_VAL_PUTNOMBREUSR);
+            layoutUsername.setError(Mensajes.REG_VAL_PUTNOMBREUSR);
             return;
         }
         if(TextUtils.isEmpty(password)){
-            edtPassword.setError(Mensajes.REG_VAL_PUTPASSW);
-            return;
-        }
-        if(!password.equals(confirmPassword)){
-            edtConfirmPassword.setError(Mensajes.REG_VAL_PASSWDNOCOINCIDEN);
+            layoutPassword.setError(Mensajes.REG_VAL_PUTPASSW);
             return;
         }
 
@@ -106,7 +107,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 String hashIntroducido = Utils.hashPassword(password, usuario.getSalt());
                 if(hashIntroducido.equals(usuario.getPasswordHash())){
                     //La contraseña coincide con la que teníamos, se inicia sesión
-                    guardarSesion(usuario.getId(), usuario.getNombreUsuario());
+                    guardarSesion(usuario.getId(), usuario.getNombreUsuario(), usuario.getFotoPerfil());
                     gotoMainActivity();
                 } else {
                     layoutUsername.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
@@ -127,13 +128,14 @@ public class WelcomeActivity extends AppCompatActivity {
      SharedPreferences es un mecanismo de android para guardar datos pequeños en forma de clave
      valor de forma persistente.
      */
-    private void guardarSesion(String userId, String username){
+    private void guardarSesion(String userId, String username, int fotoPerfilId){
         //modo privado para que solo la aplicación pueda acceder a esos datos, perfs representan las
         //preferencias
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit(); //editor necesario para modificar archivo preferencias
         editor.putString(Constantes.PERSIST_KEYUSERID, userId);
         editor.putString(Constantes.PERSIST_KEYNOMBREUSER, username);
+        editor.putInt(Constantes.PERSIST_KEYFOTOPERFIL, fotoPerfilId);
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply(); //aplica los cambios de forma asíncrona
     }
