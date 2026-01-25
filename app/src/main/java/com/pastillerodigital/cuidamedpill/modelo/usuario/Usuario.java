@@ -1,36 +1,40 @@
-package com.pastillerodigital.cuidamedpill.modelo;
+package com.pastillerodigital.cuidamedpill.modelo.usuario;
 
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.Exclude;
+import com.pastillerodigital.cuidamedpill.modelo.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNotificacionGeneral;
 
 import java.util.List;
 
 public class Usuario implements Persistible {
 
-    public Usuario(){
-
-    }
-
     //Atributos que aparecerán en la base de datos
     private String nombreUsuario;
     private String aliasU; //nombre (como se dirigirá la app)
     private int fotoPerfil;
-    private String tipoUsuarioStr;
+    protected String tipoUsuarioStr;
     private List<String> medAsigId; //lista de ids de medicamentos de este usuario
 
     private String passwordHash;
     private String salt;
+    private ConfNotificacionGeneral confNotiGeneral;
 
     //Atributos que NO quiero que estén en firebase directamente pero son necesarios para el objeto
     @DocumentId
     private String idU; //indica id del documento
     @Exclude
-    private TipoUsuario tipoUsuario;
+    protected TipoUsuario tipoUsuario;
     @Exclude
     private List<Medicamento> medList;
     @Exclude
     private String passwordPlano;
+
+    public Usuario(){
+        this.confNotiGeneral = new ConfNotificacionGeneral();
+    }
 
     //GETTERS Y SETTERS
 
