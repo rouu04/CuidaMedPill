@@ -1,7 +1,10 @@
 package com.pastillerodigital.cuidamedpill.utils;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -66,4 +69,6 @@ public class UiUtils {
             }
         }
     }
+
+
 }

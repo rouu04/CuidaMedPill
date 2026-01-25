@@ -1,5 +1,7 @@
 package com.pastillerodigital.cuidamedpill.utils;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.util.Base64;
 
 import java.nio.charset.StandardCharsets;
@@ -26,5 +28,7 @@ public class Utils {
             throw new RuntimeException("Error al hashear contraseña", e);
         }
     }
+
+
 
 }

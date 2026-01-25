@@ -42,6 +42,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        borrarSesion(); //todo borrar cuando esté log out
         setContentView(R.layout.activity_welcome); //carga layout correspondiente con los componentes
 
         // Componentes de diseño:
@@ -156,6 +157,12 @@ public class WelcomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    //todo borrar cuando ya esté puesto en el log out
+    private void borrarSesion(){
+        SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
+        prefs.edit().clear().apply();
     }
 
 }
