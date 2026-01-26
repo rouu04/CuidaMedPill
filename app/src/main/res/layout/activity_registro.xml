@@ -113,7 +113,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:focusable="false"/>
+                android:focusable="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Usuario tutor -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutTutorUsername"
+            android:hint="Usuario tutor"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtTutorUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Contraseña tutor -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutTutorPassword"
+            android:hint="Contraseña del tutor"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtTutorPassword"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón registrar -->

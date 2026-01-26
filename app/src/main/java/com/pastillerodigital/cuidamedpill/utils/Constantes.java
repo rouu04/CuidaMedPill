@@ -25,6 +25,10 @@ public class Constantes {
     public static final String USUARIO_PASSWORDHASH = "passwordHash";
     public static final String USUARIO_SALT = "salt";
 
+    public static final String USUARIO_ESTANDAR_IDUSRASIST = "idUsrAsistAsig";
+
+
+
 
     //ENUMERADOS
     public static final String TIPOUSR_ESTANDAR = "Estándar";

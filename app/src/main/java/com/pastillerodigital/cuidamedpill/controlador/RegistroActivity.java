@@ -21,26 +21,29 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.util.List;
+
 public class RegistroActivity extends AppCompatActivity {
 
     //Elementos del layout
-    private TextInputLayout layoutAlias, layoutUsername, layoutPassword, layoutConfirmPassword, layoutTipoUsuario;
-    private TextInputEditText edtAlias, edtUsername, edtPassword, edtConfirmPassword;
-    private TextView tvFotoError;
+    private TextInputLayout layoutAlias, layoutUsername, layoutPassword, layoutConfirmPassword, layoutTipoUsuario, layoutTutorUsername, layoutTutorPassword;
+    private TextInputEditText edtAlias, edtUsername, edtPassword, edtConfirmPassword, edtTutorUsername, edtTutorPassword;
     private android.widget.ImageView imgUserPhoto;
     private MaterialAutoCompleteTextView actvTipoUsuario;
     private MaterialButton btnRegister;
     private CircularProgressIndicator progressIndicator;
-    private ActivityResultLauncher<PickVisualMediaRequest> pickImageLauncher;
 
     //Elementos lógica
     private UsuarioDAO usuarioDAO;
@@ -58,15 +61,19 @@ public class RegistroActivity extends AppCompatActivity {
         layoutPassword = findViewById(R.id.layoutPassword);
         layoutConfirmPassword = findViewById(R.id.layoutConfirmPassword);
         layoutTipoUsuario = findViewById(R.id.layoutTipoUsuario);
+        layoutTutorUsername = findViewById(R.id.layoutTutorUsername);
+        layoutTutorPassword = findViewById(R.id.layoutTutorPassword);
+
 
         edtAlias = findViewById(R.id.edtAlias);
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
-        actvTipoUsuario = findViewById(R.id.actvTipoUsuario);
-        tvFotoError = findViewById(R.id.tvFotoError);
-        imgUserPhoto = findViewById(R.id.imgUserPhoto);
+        edtTutorUsername = findViewById(R.id.edtTutorUsername);
+        edtTutorPassword = findViewById(R.id.edtTutorPassword);
 
+        actvTipoUsuario = findViewById(R.id.actvTipoUsuario);
+        imgUserPhoto = findViewById(R.id.imgUserPhoto);
         btnRegister = findViewById(R.id.btnRegister);
         progressIndicator = findViewById(R.id.progressIndicator);
 
@@ -77,8 +84,17 @@ public class RegistroActivity extends AppCompatActivity {
         ArrayAdapter<TipoUsuario> adapter = new ArrayAdapter<>(this, R.layout.lista_items_dropdown, TipoUsuario.values());
         actvTipoUsuario.setAdapter(adapter);
         //Que muestre el menu cuando se le da
-        actvTipoUsuario.setOnClickListener(v -> {
-            actvTipoUsuario.showDropDown();
+        actvTipoUsuario.setOnItemClickListener((parent, view, position, id) -> {
+            TipoUsuario tipo = (TipoUsuario) parent.getItemAtPosition(position);
+
+            //En función del tipo de usuario se ven unas cosas u otras.
+            if (tipo == TipoUsuario.ASISTIDO) {
+                layoutTutorUsername.setVisibility(View.VISIBLE);
+                layoutTutorPassword.setVisibility(View.VISIBLE);
+            } else {
+                layoutTutorUsername.setVisibility(View.GONE);
+                layoutTutorPassword.setVisibility(View.GONE);
+            }
         });
 
         // Selección de foto
@@ -90,16 +106,6 @@ public class RegistroActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> registrarUsuario());
     }
 
-    /**
-    Función que permitirá elegir una foto para el usuario
-     */
-    private void seleccionarFoto() {
-        pickImageLauncher.launch(
-                new PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                        .build()
-        );
-    }
 
     private void registrarUsuario(){
         // Limpiamos errores
@@ -152,9 +158,63 @@ public class RegistroActivity extends AppCompatActivity {
         u.setPasswordHash(hash);
         u.setSalt(salt);
         u.setTipoUsuarioStr(tipoUsuario);
+        u.setTipoUsuario(TipoUsuario.tipoUsrFromString(tipoUsuario));
         u.setFotoPerfil(fotoPerfilSel);
 
-        this.addUsuario(u);
+        //Si es un usuario asistido, necesitará definir un usuario tutor
+        if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
+            String tutorUsername = edtTutorUsername.getText().toString().trim();
+            String tutorPassword = edtTutorPassword.getText().toString();
+
+            if (TextUtils.isEmpty(tutorUsername)) {
+                layoutTutorUsername.setError(Mensajes.REG_VAL_PUTUSUARIOTUTOR);
+                return;
+            }
+
+            if (TextUtils.isEmpty(tutorPassword)) {
+                layoutTutorPassword.setError(Mensajes.REG_VAL_PUTUSUARIOTUTORPASSWD);
+                return;
+            }
+
+            progressIndicator.setVisibility(View.VISIBLE);
+
+            usuarioDAO.getWithParameter(Constantes.USUARIO_NOMBREUSUARIO, tutorUsername, new OnDataLoadedCallback<Usuario>() {
+                        @Override
+                        public void onSuccess(Usuario tutor) {
+                            if (tutor == null || tutor.getTipoUsuario() != TipoUsuario.ESTANDAR) {
+                                progressIndicator.setVisibility(View.GONE);
+                                layoutTutorUsername.setError(Mensajes.ERROR_TUTORNOVALIDO);
+                                return;
+                            }
+
+                            // Verificación de la contraseña
+                            String hashInput = Utils.hashPassword(
+                                    tutorPassword,
+                                    tutor.getSalt()
+                            );
+
+                            if (!hashInput.equals(tutor.getPasswordHash())) {
+                                progressIndicator.setVisibility(View.GONE);
+                                layoutTutorPassword.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
+                                return;
+                            }
+
+                            addAsistido((UsuarioAsistido)u, tutor.getId());
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            progressIndicator.setVisibility(View.GONE);
+                            layoutTutorUsername.setError(Mensajes.ERROR_REINTENTAR);
+                        }
+                    }
+            );
+        }
+        else{
+            this.addUsuario(u);
+        }
+
+
     }
 
 
@@ -177,10 +237,26 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    private void addAsistido(UsuarioAsistido ua, String idue) {
+        usuarioDAO.add(ua, idue, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                guardarSesion(ua);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(RegistroActivity.this);
+            }
+        });
+
+    }
+
     // Muestra un diálogo con los 10 avatares
     private void mostrarSelectorAvatares() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Selecciona un avatar");
+        builder.setTitle(Mensajes.REG_PUTFOTO);
 
         GridView gridView = new GridView(this);
         gridView.setNumColumns(3);

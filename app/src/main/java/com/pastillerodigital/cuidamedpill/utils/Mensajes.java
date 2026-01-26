@@ -14,15 +14,14 @@ public class Mensajes {
     //REGISTRO
     public static final String ERROR_FOTOURL = "Ha ocurrido un problema al obtener la foto";
     public static final String ERROR_FOTOUPLOAD = "Ha ocurrido un problema al guardar la foto";
+    public static final String ERROR_TUTORNOVALIDO = "La persona que te ayudará con la medicación tiene que estar registrada en la aplicación y ser un usuario de tipo estándar";
 
     //-------------INTERACCIONES
     public static final String ACEPTAR = "Aceptar";
 
     //-------------ELEMENTOS INTERFAZ
     // REGISTRO
-    public static final String REG_LAYOUTTELEFONO = "Introduce un teléfono";
-    public static final String REG_LAYOUTCODIGO = "Introduce el código";
-    public static final String REG_CODIGOENVIADO = "Código enviado correctamente";
+    public static final String REG_PUTFOTO = "Selecciona la foto de perfil";
         //VALIDACIONES
     public static final String REG_VAL_PUTNOMBREUSR = "Introduce tu nombre de usuario";
     public static final String REG_VAL_PUTPASSW = "Introduce tu contraseña";
@@ -30,6 +29,8 @@ public class Mensajes {
     public static final String REG_VAL_PUTALIAS= "Introduce un alias, será como la aplicación se diriga a ti";
     public static final String REG_VAL_PUTTIPOUSR= "Selecciona tu caso, obtendrás distintos servicios de la aplicación";
 
+    public static final String REG_VAL_PUTUSUARIOTUTOR= "Introduce el nombre de usuario de la persona que te ayudará con la medicación";
+    public static final String REG_VAL_PUTUSUARIOTUTORPASSWD = "Introduce la contraseña de la persona que te ayudará con la aplicación";
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";
 

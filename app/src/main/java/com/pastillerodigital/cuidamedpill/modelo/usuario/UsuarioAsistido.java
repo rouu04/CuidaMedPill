@@ -3,6 +3,8 @@ package com.pastillerodigital.cuidamedpill.modelo.usuario;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -11,10 +13,8 @@ import java.util.List;
  */
 public class UsuarioAsistido extends Usuario{
 
-    private List<String> idUsrTutoresAsig; //ids de los usuarios que le ayudarán en la app
+    private List<String> idUsrTutoresAsig = new ArrayList<>(); //ids de los usuarios que le ayudarán en la app
 
-    @Exclude
-    private List<Usuario> usrTutoresAsig;
     public UsuarioAsistido(){
         super();
         this.tipoUsuario = TipoUsuario.ASISTIDO;
@@ -28,12 +28,8 @@ public class UsuarioAsistido extends Usuario{
     public void setIdUsrTutoresAsig(List<String> idUsrTutoresAsig) {
         this.idUsrTutoresAsig = idUsrTutoresAsig;
     }
-    @Exclude
-    public List<Usuario> getUsrTutoresAsig() {
-        return usrTutoresAsig;
-    }
-    @Exclude
-    public void setUsrTutoresAsig(List<Usuario> usrTutoresAsig) {
-        this.usrTutoresAsig = usrTutoresAsig;
+
+    public void addTutorAAsistido(String  idue){
+        this.idUsrTutoresAsig.add(idue);
     }
 }

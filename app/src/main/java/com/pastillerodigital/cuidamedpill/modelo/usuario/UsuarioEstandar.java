@@ -11,10 +11,10 @@ import java.util.List;
  */
 public class UsuarioEstandar extends Usuario{
 
-    private List<String> idUsrAsistidoAsig; //ids de los usuarios asistidos a los que supervisará
+    private List<String> idUsrAsistAsig; //ids de los usuarios asistidos a los que supervisará
 
     @Exclude
-    private List<Usuario> usrAsistidoAsig;
+    private List<UsuarioAsistido> usrAsistidoAsig;
 
     public UsuarioEstandar(){
         super();
@@ -22,20 +22,20 @@ public class UsuarioEstandar extends Usuario{
         this.tipoUsuarioStr = TipoUsuario.ESTANDAR.toString();
     }
 
-    public List<String> getIdUsrAsistidoAsig() {
-        return idUsrAsistidoAsig;
+    public List<String> getIdUsrAsistAsig() {
+        return idUsrAsistAsig;
     }
 
 
-    public void setIdUsrAsistidoAsig(List<String> idUsrAsistidoAsig) {
-        this.idUsrAsistidoAsig = idUsrAsistidoAsig;
+    public void setIdUsrAsistAsig(List<String> idUsrAsistAsig) {
+        this.idUsrAsistAsig = idUsrAsistAsig;
     }
     @Exclude
-    public List<Usuario> getUsrAsistidoAsig() {
+    public List<UsuarioAsistido> getUsrAsistidoAsig() {
         return usrAsistidoAsig;
     }
     @Exclude
-    public void setUsrAsistidoAsig(List<Usuario> usrAsistidoAsig) {
+    public void setUsrAsistidoAsig(List<UsuarioAsistido> usrAsistidoAsig) {
         this.usrAsistidoAsig = usrAsistidoAsig;
     }
 }
