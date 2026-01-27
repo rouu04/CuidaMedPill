@@ -10,6 +10,7 @@ public class Constantes {
     public static final String PERSIST_KEYUSERID = "USERID";
     public static final String PERSIST_KEYNOMBREUSER = "NOMBREUSER";
     public static final String PERSIST_KEYSESIONACTIVA = "SESIONACTIVA";
+    public static final String PERSIST_KEYTIPOUSR = "TIPOUSR";
     public static final String PERSIST_KEYFOTOPERFIL = "FOTOPERFIL";
 
     //----------STORAGE (fotos)
@@ -29,14 +30,13 @@ public class Constantes {
     public static final String USUARIO_ASIST_IDUSRTUTORESASIG = "idUsrTutoresAsig";
 
 
-
-
     //ENUMERADOS
     public static final String TIPOUSR_ESTANDAR = "Estándar";
     public static final String TIPOUSR_ASISTIDO = "Asistido";
 
     //ARGUMENTOS
     public static final String ARG_UID = "uid";
+    public static final String ARG_UIDSELF = "uid";
 
 
 

@@ -107,10 +107,10 @@ public class WelcomeActivity extends AppCompatActivity {
                 String hashIntroducido = Utils.hashPassword(password, usuario.getSalt());
                 if(hashIntroducido.equals(usuario.getPasswordHash())){
                     //La contraseña coincide con la que teníamos, se inicia sesión
-                    guardarSesion(usuario.getId(), usuario.getNombreUsuario(), usuario.getFotoPerfil());
+                    guardarSesion(usuario);
                     gotoMainActivity();
                 } else {
-                    layoutUsername.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
+                    layoutPassword.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
                 }
             }
 
@@ -128,14 +128,13 @@ public class WelcomeActivity extends AppCompatActivity {
      SharedPreferences es un mecanismo de android para guardar datos pequeños en forma de clave
      valor de forma persistente.
      */
-    private void guardarSesion(String userId, String username, int fotoPerfilId){
+    private void guardarSesion(Usuario u){
         //modo privado para que solo la aplicación pueda acceder a esos datos, perfs representan las
         //preferencias
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit(); //editor necesario para modificar archivo preferencias
-        editor.putString(Constantes.PERSIST_KEYUSERID, userId);
-        editor.putString(Constantes.PERSIST_KEYNOMBREUSER, username);
-        editor.putInt(Constantes.PERSIST_KEYFOTOPERFIL, fotoPerfilId);
+        editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
+        editor.putString(Constantes.PERSIST_KEYTIPOUSR, u.getTipoUsuarioStr());
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply(); //aplica los cambios de forma asíncrona
     }

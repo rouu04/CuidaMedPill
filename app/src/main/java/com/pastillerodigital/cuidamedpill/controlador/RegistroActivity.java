@@ -329,8 +329,7 @@ public class RegistroActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
-        editor.putString(Constantes.PERSIST_KEYNOMBREUSER, u.getNombreUsuario());
-        editor.putInt(Constantes.PERSIST_KEYFOTOPERFIL, u.getFotoPerfil()); // guardamos la foto
+        editor.putString(Constantes.PERSIST_KEYTIPOUSR, u.getTipoUsuarioStr());
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply();
     }
