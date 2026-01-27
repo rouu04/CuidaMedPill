@@ -37,13 +37,9 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Usuario u = docToObj(documentSnapshot);
-                    //Hay que asignar los parámetros que no están directamente en firebase
-                    u.setId(id);
-                    u.setTipoUsuario(TipoUsuario.tipoUsrFromString(u.getTipoUsuarioStr()));
 
                     //Lista de medicamentos asociados
                     //todo get lista medicamentos (llamar funcion y en el onsucces se guarda)
-
 
                     callback.onSuccess(u);
                 })
@@ -55,29 +51,40 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 });
     }
 
-
+    /**
+     * Devuelve simplemente el objeto de la colección usuarios, sin entrar en las subcolecciones
+     * que pueda tener. No siempre se necesitan las subcolecciones entonces lo hacemos más eficiente.
+     * @param id
+     * @param callback
+     */
+    public void getBasico(String id, OnDataLoadedCallback<Usuario> callback){
+        db.collection(collectionName)
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Usuario u = docToObj(documentSnapshot);
+                    callback.onSuccess(u);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+    }
 
     /**
     Devuelve un objeto usuario a partir del documento devuelto por firebase
     Imprescindible que los strings marcados coincidan exactamente con la base de datos
-     todo reescribir para usuarios estandar y asistidos
      */
     @Override
     public Usuario docToObj(DocumentSnapshot doc) {
-        Usuario u = new Usuario();
-        u.setNombreUsuario(doc.getString(Constantes.USUARIO_NOMBREUSUARIO));
-        u.setAliasU(doc.getString(Constantes.USUARIO_ALIAS));
-        u.setTipoUsuarioStr(doc.getString(Constantes.USUARIO_TIPOUSR));
-        u.setFotoPerfil((int) doc.get(Constantes.USUARIO_FOTO));
-        u.setMedAsigId((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
-        u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
-        u.setSalt(doc.getString(Constantes.USUARIO_SALT));
-
-        return u;
+        return Usuario.doctoObj(doc);
     }
 
     /**
-     * A partir del parámetro único del objeto devuelve el id
+     * A partir del parámetro único del objeto devuelve el id en vez de devolver el objeto entero
+     * Se usará para ver si el objeto existe o no.
      * @param paramBD es el string del campo en la base de datos
      * @param param el parámetro a filtrar
      * @param callback

@@ -1,12 +1,15 @@
 package com.pastillerodigital.cuidamedpill.modelo.usuario;
 
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNotificacionGeneral;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario implements Persistible {
@@ -16,7 +19,7 @@ public class Usuario implements Persistible {
     private String aliasU; //nombre (como se dirigirá la app)
     private int fotoPerfil;
     protected String tipoUsuarioStr;
-    private List<String> medAsigId; //lista de ids de medicamentos de este usuario
+    private List<String> medAsigId = new ArrayList<>(); //lista de ids de medicamentos de este usuario
 
     private String passwordHash;
     private String salt;
@@ -28,7 +31,7 @@ public class Usuario implements Persistible {
     @Exclude
     protected TipoUsuario tipoUsuario;
     @Exclude
-    private List<Medicamento> medList;
+    private List<Medicamento> medList = new ArrayList<>();
     @Exclude
     private String passwordPlano;
 
@@ -127,5 +130,38 @@ public class Usuario implements Persistible {
     @Exclude
     public void setPasswordPlano(String passwordPlano) {
         this.passwordPlano = passwordPlano;
+    }
+
+    /**
+     * Devuelve el usuario sacado de la base de datos, se encarga de delegar a los hijos los campos y
+     * asignar los campos comunes
+     * @param doc
+     * @return
+     */
+    public static Usuario doctoObj(DocumentSnapshot doc) {
+        String tipoStr = doc.getString(Constantes.USUARIO_TIPOUSR);
+        TipoUsuario tipo = TipoUsuario.tipoUsrFromString(tipoStr);
+
+        Usuario u;
+
+        //Establece los campos de los hijos
+        if (tipo == TipoUsuario.ASISTIDO) {
+            u = UsuarioAsistido.doctoObj(doc); // delega al hijo
+        } else {
+            u = UsuarioEstandar.doctoObj(doc); // delega al hijo
+        }
+
+        // Campos comunes
+        u.setId(doc.getId());
+        u.setNombreUsuario(doc.getString(Constantes.USUARIO_NOMBREUSUARIO));
+        u.setAliasU(doc.getString(Constantes.USUARIO_ALIAS));
+        u.setTipoUsuarioStr(tipoStr);
+        u.setTipoUsuario(tipo);
+        u.setFotoPerfil(doc.getLong(Constantes.USUARIO_FOTO).intValue());
+        u.setMedAsigId((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
+        u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
+        u.setSalt(doc.getString(Constantes.USUARIO_SALT));
+
+        return u;
     }
 }

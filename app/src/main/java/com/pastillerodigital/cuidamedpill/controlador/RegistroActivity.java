@@ -6,11 +6,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,11 +30,10 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
-import java.util.List;
-
 public class RegistroActivity extends AppCompatActivity {
 
     //Elementos del layout
+    private LinearLayout formLayout;
     private TextInputLayout layoutAlias, layoutUsername, layoutPassword, layoutConfirmPassword, layoutTipoUsuario, layoutTutorUsername, layoutTutorPassword;
     private TextInputEditText edtAlias, edtUsername, edtPassword, edtConfirmPassword, edtTutorUsername, edtTutorPassword;
     private android.widget.ImageView imgUserPhoto;
@@ -56,6 +52,7 @@ public class RegistroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registro);
 
         //Inicialización de componentes de diseño
+        formLayout = findViewById(R.id.formLayout);
         layoutAlias = findViewById(R.id.layoutAlias);
         layoutUsername = findViewById(R.id.layoutUsername);
         layoutPassword = findViewById(R.id.layoutPassword);
@@ -84,6 +81,11 @@ public class RegistroActivity extends AppCompatActivity {
         ArrayAdapter<TipoUsuario> adapter = new ArrayAdapter<>(this, R.layout.lista_items_dropdown, TipoUsuario.values());
         actvTipoUsuario.setAdapter(adapter);
         //Que muestre el menu cuando se le da
+        actvTipoUsuario.setOnClickListener(v -> {
+            actvTipoUsuario.showDropDown();
+        });
+        //Que haga determinadas cosas segun el caso
+
         actvTipoUsuario.setOnItemClickListener((parent, view, position, id) -> {
             TipoUsuario tipo = (TipoUsuario) parent.getItemAtPosition(position);
 
@@ -96,6 +98,9 @@ public class RegistroActivity extends AppCompatActivity {
                 layoutTutorPassword.setVisibility(View.GONE);
             }
         });
+
+
+
 
         // Selección de foto
         // Set avatar por defecto
@@ -114,6 +119,7 @@ public class RegistroActivity extends AppCompatActivity {
         layoutPassword.setError(null);
         layoutConfirmPassword.setError(null);
         layoutTipoUsuario.setError(null);
+        UiUtils.limpiarErroresLayouts(formLayout);
 
         String alias = edtAlias.getText().toString().trim();
         String username = edtUsername.getText().toString().trim();
@@ -152,7 +158,12 @@ public class RegistroActivity extends AppCompatActivity {
         String hash = Utils.hashPassword(password, salt);
 
         //Creamos el usuario
-        Usuario u = new Usuario();
+        Usuario u;
+        if (TipoUsuario.tipoUsrFromString(tipoUsuario) == TipoUsuario.ASISTIDO) {
+            u = new UsuarioAsistido();
+        } else {
+            u = new UsuarioEstandar();
+        }
         u.setAliasU(alias);
         u.setNombreUsuario(username);
         u.setPasswordHash(hash);
@@ -161,64 +172,93 @@ public class RegistroActivity extends AppCompatActivity {
         u.setTipoUsuario(TipoUsuario.tipoUsrFromString(tipoUsuario));
         u.setFotoPerfil(fotoPerfilSel);
 
-        //Si es un usuario asistido, necesitará definir un usuario tutor
-        if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
-            String tutorUsername = edtTutorUsername.getText().toString().trim();
-            String tutorPassword = edtTutorPassword.getText().toString();
-
-            if (TextUtils.isEmpty(tutorUsername)) {
-                layoutTutorUsername.setError(Mensajes.REG_VAL_PUTUSUARIOTUTOR);
-                return;
-            }
-
-            if (TextUtils.isEmpty(tutorPassword)) {
-                layoutTutorPassword.setError(Mensajes.REG_VAL_PUTUSUARIOTUTORPASSWD);
-                return;
-            }
-
-            progressIndicator.setVisibility(View.VISIBLE);
-
-            usuarioDAO.getWithParameter(Constantes.USUARIO_NOMBREUSUARIO, tutorUsername, new OnDataLoadedCallback<Usuario>() {
-                        @Override
-                        public void onSuccess(Usuario tutor) {
-                            if (tutor == null || tutor.getTipoUsuario() != TipoUsuario.ESTANDAR) {
-                                progressIndicator.setVisibility(View.GONE);
-                                layoutTutorUsername.setError(Mensajes.ERROR_TUTORNOVALIDO);
-                                return;
-                            }
-
-                            // Verificación de la contraseña
-                            String hashInput = Utils.hashPassword(
-                                    tutorPassword,
-                                    tutor.getSalt()
-                            );
-
-                            if (!hashInput.equals(tutor.getPasswordHash())) {
-                                progressIndicator.setVisibility(View.GONE);
-                                layoutTutorPassword.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
-                                return;
-                            }
-
-                            addAsistido((UsuarioAsistido)u, tutor.getId());
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            progressIndicator.setVisibility(View.GONE);
-                            layoutTutorUsername.setError(Mensajes.ERROR_REINTENTAR);
-                        }
+        //Primero hay que comprobar que no haya ningún usuario con ese nombre
+        usuarioDAO.getIdWithParameter(Constantes.USUARIO_NOMBREUSUARIO, u.getNombreUsuario(), new OnDataLoadedCallback<String>() {
+            @Override
+            public void onSuccess(String data) {
+                progressIndicator.setVisibility(View.GONE);
+                if(data != null){ //nombre de usuario ya existe
+                    layoutUsername.setError(Mensajes.ERROR_USUARIO_EXISTE);
+                }
+                else{
+                    if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
+                        registroAsistido((UsuarioAsistido) u);
                     }
-            );
-        }
-        else{
-            this.addUsuario(u);
-        }
+                    else{
+                        addUsuarioEstandar((UsuarioEstandar) u);
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                progressIndicator.setVisibility(View.GONE);
+                UiUtils.mostrarErrorYReiniciar(RegistroActivity.this);
+            }
+        });
 
     }
 
+    /**
+     * Registra un usuario asistido
+     * @param u
+     */
+    private void registroAsistido(UsuarioAsistido u){
+        //Si es un usuario asistido, necesitará definir un usuario tutor
+        String tutorUsername = edtTutorUsername.getText().toString().trim();
+        String tutorPassword = edtTutorPassword.getText().toString();
 
-    private void addUsuario(Usuario u) {
+        if (TextUtils.isEmpty(tutorUsername)) {
+            layoutTutorUsername.setError(Mensajes.REG_VAL_PUTUSUARIOTUTOR);
+            return;
+        }
+
+        if (TextUtils.isEmpty(tutorPassword)) {
+            layoutTutorPassword.setError(Mensajes.REG_VAL_PUTUSUARIOTUTORPASSWD);
+            return;
+        }
+
+        progressIndicator.setVisibility(View.VISIBLE);
+
+        usuarioDAO.getWithParameter(Constantes.USUARIO_NOMBREUSUARIO, tutorUsername, new OnDataLoadedCallback<Usuario>() {
+                    @Override
+                    public void onSuccess(Usuario tutor) {
+                        if (tutor == null || tutor.getTipoUsuario() != TipoUsuario.ESTANDAR) {
+                            progressIndicator.setVisibility(View.GONE);
+                            layoutTutorUsername.setError(Mensajes.ERROR_TUTORNOVALIDO);
+                            return;
+                        }
+
+                        // Verificación de la contraseña
+                        String hashInput = Utils.hashPassword(
+                                tutorPassword,
+                                tutor.getSalt()
+                        );
+
+                        if (!hashInput.equals(tutor.getPasswordHash())) {
+                            progressIndicator.setVisibility(View.GONE);
+                            layoutTutorPassword.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
+                            return;
+                        }
+
+                        addAsistido(u, tutor.getId());
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        progressIndicator.setVisibility(View.GONE);
+                        UiUtils.mostrarErrorYReiniciar(RegistroActivity.this);
+                    }
+                }
+        );
+    }
+
+
+    /**
+     * Registra un usuario estándar
+     * @param u
+     */
+    private void addUsuarioEstandar(UsuarioEstandar u) {
         usuarioDAO.add(u, new OnOperationCallback() {
             @Override
             public void onSuccess() {
@@ -237,11 +277,17 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Añade un usuario asistido a la base de datos
+     * @param ua
+     * @param idue
+     */
     private void addAsistido(UsuarioAsistido ua, String idue) {
         usuarioDAO.add(ua, idue, new OnOperationCallback() {
             @Override
             public void onSuccess() {
                 guardarSesion(ua);
+                //todo llevar a home
                 finish();
             }
 
@@ -253,7 +299,10 @@ public class RegistroActivity extends AppCompatActivity {
 
     }
 
-    // Muestra un diálogo con los 10 avatares
+
+    /**
+     * Muestra un diálogo con los 10 avatares
+     */
     private void mostrarSelectorAvatares() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(Mensajes.REG_PUTFOTO);

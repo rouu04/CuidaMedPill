@@ -19,13 +19,14 @@ public class Constantes {
     //-----------TABLA USUARIOS
     public static final String USUARIO_NOMBREUSUARIO = "nombreUsuario";
     public static final String USUARIO_ALIAS = "aliasU";
-    public static final String USUARIO_TIPOUSR = "tipoUsuarioInt";
-    public static final String USUARIO_FOTO = "fotoURL";
-    public static final String USUARIO_MEDLISTSTR = "medListStr";
+    public static final String USUARIO_TIPOUSR = "tipoUsuarioStr";
+    public static final String USUARIO_FOTO = "fotoPerfil";
+    public static final String USUARIO_MEDLISTSTR = "medAsigId";
     public static final String USUARIO_PASSWORDHASH = "passwordHash";
     public static final String USUARIO_SALT = "salt";
 
     public static final String USUARIO_ESTANDAR_IDUSRASIST = "idUsrAsistAsig";
+    public static final String USUARIO_ASIST_IDUSRTUTORESASIG = "idUsrTutoresAsig";
 
 
 

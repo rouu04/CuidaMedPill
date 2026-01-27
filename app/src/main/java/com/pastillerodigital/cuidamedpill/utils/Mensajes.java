@@ -9,6 +9,7 @@ public class Mensajes {
     public static final String ERROR_HAYERROR = "Ha ocurrido un problema inesperado";
     public static final String ERROR_REINTENTAR = "No se ha podido realizar la operación. Por favor, inténtalo otra vez";
     public static final String ERROR_USUARIO_NOEXISTE = "No existe ningún usuario con ese nombre de usuario";
+    public static final String ERROR_USUARIO_EXISTE = "Ya existe un usuario con ese nombre, por favor prueba con otro";
     public static final String ERROR_USUARIO_CONTRASEÑAINCORRECTA = "La contraseña es incorrecta, inténtelo de nuevo";
 
     //REGISTRO

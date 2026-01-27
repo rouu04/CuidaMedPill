@@ -1,8 +1,11 @@
 package com.pastillerodigital.cuidamedpill.modelo.usuario;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,10 +14,10 @@ import java.util.List;
  */
 public class UsuarioEstandar extends Usuario{
 
-    private List<String> idUsrAsistAsig; //ids de los usuarios asistidos a los que supervisará
+    private List<String> idUsrAsistAsig = new ArrayList<>(); //ids de los usuarios asistidos a los que supervisará
 
     @Exclude
-    private List<UsuarioAsistido> usrAsistidoAsig;
+    private List<UsuarioAsistido> usrAsistidoAsig = new ArrayList<>();
 
     public UsuarioEstandar(){
         super();
@@ -37,5 +40,11 @@ public class UsuarioEstandar extends Usuario{
     @Exclude
     public void setUsrAsistidoAsig(List<UsuarioAsistido> usrAsistidoAsig) {
         this.usrAsistidoAsig = usrAsistidoAsig;
+    }
+
+    public static UsuarioEstandar doctoObj(DocumentSnapshot doc) {
+        UsuarioEstandar ue = new UsuarioEstandar();
+        ue.setIdUsrAsistAsig((List<String>) doc.get(Constantes.USUARIO_ESTANDAR_IDUSRASIST));
+        return ue;
     }
 }
