@@ -3,21 +3,22 @@
     <!-- Colores principales: se usarán para los botones -->
     <color name="md_primary">#00A09D</color>        <!-- Color principal -->
     <color name="md_primary_dark">#005052</color>
-    <color name="md_secondary">#0CB7BA</color>
+    <color name="md_secondary">#97F6DD</color>
 
     <!--
     Favoritos:
     Principal: 0CA6BA , 0CBAB1 (+verde), 0CB7BA (like), 00A09D (+oscuro y con + color)
+    Secundario: 97F6F5 azul clarito, 97F6DD más verde
     -->
 
     <!-- Fondo y superficies -->
-    <color name="md_background">#F0FBF9</color>
+    <color name="md_background">#EDFDFB</color>
     <color name="md_surface">#B5F6EF</color> <!-- En los menús -->
 
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>
-    <color name="md_on_background">#212121</color>
-    <color name="md_on_surface">#212121</color>
+    <color name="md_on_background">#7E8E8C</color>
+    <color name="md_on_surface">#515152</color>
 
     <!-- Errores -->
     <color name="md_error">#B00020</color>

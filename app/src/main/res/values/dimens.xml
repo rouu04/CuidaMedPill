@@ -1,0 +1,24 @@
+<resources>
+
+    <dimen name="padding_general">24dp</dimen>
+
+    <dimen name="size_image_width">120dp</dimen>
+    <dimen name="size_image_height">120dp</dimen>
+
+    <dimen name="margin_top_logo">64dp</dimen>
+    <dimen name="margin_elements_layout">8dp</dimen> <!-- Márgenes en el top entre elementos -->
+    <dimen name="margin_elements_buttons">24dp</dimen> <!-- Márgenes en el top entre elementos -->
+    <dimen name="margin_error">4dp</dimen>
+
+    <dimen name="margin_bottom">55dp</dimen>
+
+    <dimen name="section_separator">60dp</dimen> <!-- Separación por ej entre logo y form -->
+    <dimen name="section_separator_big">80dp</dimen> <!-- Separación por ej entre registro y log in -->
+
+    <!-- Size de textos -->
+    <dimen name="text_hint_size">13sp</dimen>
+    <dimen name="text_secondary_button_size">11sp</dimen>
+
+
+    <dimen name="progress_indicator_size">48dp</dimen>
+</resources>

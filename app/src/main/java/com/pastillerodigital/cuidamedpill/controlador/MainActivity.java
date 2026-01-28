@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.controlador;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        //borrarSesion();//todo borrar cuando esté log out
 
         navInferior = findViewById(R.id.bottomNavigation);
         navInferior.setItemIconTintList(null);
@@ -44,9 +46,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Cargamos sesión de sharedPreferences
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
+
+        boolean sesionActiva = prefs.getBoolean(Constantes.PERSIST_KEYSESIONACTIVA, false);
+
+        if (!sesionActiva) { //Es la primera vez que entramos o se nos ha borrado la sesión
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            //Flags para que no pueda volver atrás y ahora welcome tenga el control del flujo
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        uidSelf = prefs.getString(Constantes.PERSIST_KEYUSERID, null);
         String tipoStr = prefs.getString(Constantes.PERSIST_KEYTIPOUSR, TipoUsuario.ESTANDAR.name());
         tipoUsuario = TipoUsuario.tipoUsrFromString(tipoStr);
-
 
         if(tipoUsuario == TipoUsuario.ASISTIDO){ //los usuarios asistidos no tienen acceso al perfil
             Menu menu = navInferior.getMenu();
@@ -97,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
             transaction.replace(R.id.fragmentApp, fragment);
             transaction.commit();
         }
+    }
+
+    //todo borrar cuando ya esté puesto en el log out
+    private void borrarSesion(){
+        SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
+        prefs.edit().clear().apply();
     }
 
 }

@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/formLayout"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:paddingStart="@dimen/padding_general"
+        android:paddingEnd="@dimen/padding_general"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,26 +19,27 @@
         <ImageView
             android:id="@+id/imgUserPhoto"
             android:src="@drawable/ic_launcher_foreground"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="24dp"
-            android:contentDescription="Foto del usuario"
+            android:layout_width="@dimen/size_image_width"
+            android:layout_height="@dimen/size_image_height"
+            android:layout_marginTop="@dimen/margin_top_logo"
+            android:contentDescription="@string/hint_fotousr"
             android:clickable="true"
             android:focusable="true"/>
         <TextView
             android:id="@+id/tvFotoError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_hint_size"
             android:visibility="gone"
-            android:text="Error al subir la foto"
+            android:text="@string/text_error_fotousr"
             android:layout_gravity="center"
-            android:paddingTop="4dp"/>
+            android:paddingTop="@dimen/margin_error"/>
 
         <!-- Alias -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutAlias"
-            android:hint="Alias (nombre visible en la app)"
+            android:hint="@string/hint_alias"
+            android:layout_marginTop="@dimen/section_separator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
@@ -52,10 +54,10 @@
         <!-- Nombre de usuario -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutUsername"
-            android:hint="Nombre de usuario"
+            android:hint="@string/hint_nombreusr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -68,8 +70,8 @@
         <!-- Contraseña -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutPassword"
-            android:hint="Contraseña"
-            android:layout_marginTop="16dp"
+            android:hint="@string/hint_passwd"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
@@ -85,8 +87,8 @@
         <!-- Confirmar contraseña -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutConfirmPassword"
-            android:hint="Confirmar contraseña"
-            android:layout_marginTop="16dp"
+            android:hint="@string/hint_confirmpasswd"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
@@ -99,29 +101,48 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Tipo de usuario -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutTipoUsuario"
-            android:hint="Tipo de usuario"
-            android:layout_marginTop="16dp"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/actvTipoUsuario"
-                android:layout_width="match_parent"
+            <!-- Botón tipo de usuario -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTipoUsuario"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/button_tipoUsr"
+                android:icon="@drawable/ic_arrow_drop_down"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <TextView
+                android:id="@+id/tvTipoUsuarioSeleccionado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_elements_layout"
+                android:textColor="@color/md_on_background"
+                android:text="@string/text_selecciona_tipousr"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTTipoUsrError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_elements_layout"
+            android:textColor="@color/md_error"
+            android:visibility="gone"
+            android:text="@string/text_selecciona_tipousr"
+            android:textStyle="bold"/>
 
         <!-- Usuario tutor -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutTutorUsername"
-            android:hint="Usuario tutor"
-            android:layout_marginTop="16dp"
+            android:hint="@string/hint_usrtutor"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -136,8 +157,8 @@
         <!-- Contraseña tutor -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutTutorPassword"
-            android:hint="Contraseña del tutor"
-            android:layout_marginTop="16dp"
+            android:hint="@string/hint_passwdtutor"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -153,8 +174,9 @@
         <!-- Botón registrar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
-            android:text="Registrarse"
-            android:layout_marginTop="32dp"
+            android:text="@string/button_registro"
+            android:layout_marginTop="@dimen/margin_elements_buttons"
+            android:layout_marginBottom="@dimen/margin_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"/>
@@ -163,10 +185,10 @@
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
             android:visibility="gone"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/padding_general"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:indicatorSize="48dp"
+            app:indicatorSize="@dimen/progress_indicator_size"
             app:trackColor="?attr/colorOnSurfaceVariant"
             app:indicatorColor="?attr/colorPrimary"/>
 

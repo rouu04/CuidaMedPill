@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Cruz -->
+    <!-- Barra vertical -->
+    <path
+        android:fillColor="@color/md_primary_dark"
+        android:pathData="M20,4h8v40h-8z"/>
+
+    <!-- Barra horizontal -->
+    <path
+        android:fillColor="@color/md_primary_dark"
+        android:pathData="M4,20h40v8H4z"/>
+</vector>

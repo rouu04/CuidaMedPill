@@ -12,12 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CuidaMedPill">
 
-        <!-- MainActivity -->
+        <!-- MainActivity, actividad principal de la app -->
         <activity
             android:name=".controlador.MainActivity"
             android:exported="true">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
         <!-- Activity para test  -->
         <activity
             android:name=".controlador.TestsActivity"
@@ -29,12 +33,7 @@
         <!-- WelcomeActivity, registro o inicio de sesion  -->
         <activity
             android:name=".controlador.WelcomeActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false"/>
 
         <!-- RegistroActivity, registro -->
         <activity

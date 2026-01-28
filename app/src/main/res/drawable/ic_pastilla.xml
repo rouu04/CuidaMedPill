@@ -16,7 +16,7 @@
 
     <!-- Mitad izquierda -->
     <path
-        android:fillColor="#74E3E6"
+        android:fillColor="?attr/colorPrimaryDark"
         android:pathData="
             M22,50
             C22,32 32,22 50,22

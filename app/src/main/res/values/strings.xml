@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">CuidaMedPill</string>
+
+    <string name="content_desc_logo">Logo de CuidaMedPill</string>
+
+    <!-- WelcomeActivity (inicio de sesión o registro) y RegistroActivity -->
+    <string name="hint_nombreusr">Nombre de usuario</string>
+    <string name="hint_passwd">Contraseña</string>
+    <string name="hint_fotousr">Foto de perfil</string>
+    <string name="hint_alias">Alias (cómo se dirigirá la aplicación a ti)</string>
+    <string name="hint_confirmpasswd">Confirmar contraseña: vuelve a poner la misma contraseña</string>
+    <string name="hint_usrtutor">Nombre del usuario tutor que te ayudará con la medicación</string>
+    <string name="hint_passwdtutor">Contraseña del tutor que te ayudará con la medicación</string>
+
+    <string name="button_iniciarsesion">Iniciar Sesión</string>
+    <string name="button_registro">Registrarse</string>
+    <string name="button_tipoUsr">Tipo de Usuario</string>
+
+    <string name="text_hint_registro">¿Es la primera vez que entras en CuidaMedPill? Regístrate!</string>
+    <string name="text_tipousr_sel">Seleccionado: %1$s</string>
+    <string name="text_selecciona_tipousr">Selecciona un tipo de usuario</string>
+
+    <string name="text_error_fotousr">Error al subir la foto</string>
+    <string name="text_error_selecciona_tipousr">Por favor selecciona un tipo de usuario</string>
+
+
+
+
 </resources>

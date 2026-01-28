@@ -23,6 +23,7 @@ public class Mensajes {
     //-------------ELEMENTOS INTERFAZ
     // REGISTRO
     public static final String REG_PUTFOTO = "Selecciona la foto de perfil";
+    public static final String REG_PUTTIPOUSR = "Selecciona el tipo de experiencia que tendrás con la aplicación";
         //VALIDACIONES
     public static final String REG_VAL_PUTNOMBREUSR = "Introduce tu nombre de usuario";
     public static final String REG_VAL_PUTPASSW = "Introduce tu contraseña";

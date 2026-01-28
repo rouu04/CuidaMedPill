@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.controlador;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,11 +8,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -30,20 +33,23 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.util.Arrays;
+
 public class RegistroActivity extends AppCompatActivity {
 
     //Elementos del layout
     private LinearLayout formLayout;
-    private TextInputLayout layoutAlias, layoutUsername, layoutPassword, layoutConfirmPassword, layoutTipoUsuario, layoutTutorUsername, layoutTutorPassword;
+    private TextInputLayout layoutAlias, layoutUsername, layoutPassword, layoutConfirmPassword, layoutTutorUsername, layoutTutorPassword;
     private TextInputEditText edtAlias, edtUsername, edtPassword, edtConfirmPassword, edtTutorUsername, edtTutorPassword;
+    private TextView tvTipousrSel, tvTipousrErr;
     private android.widget.ImageView imgUserPhoto;
-    private MaterialAutoCompleteTextView actvTipoUsuario;
-    private MaterialButton btnRegister;
+    private MaterialButton btnRegister, btnTipoUsuario;
     private CircularProgressIndicator progressIndicator;
 
     //Elementos lógica
     private UsuarioDAO usuarioDAO;
     private int fotoPerfilSel; //foto de perfil seleccionada
+    private TipoUsuario tipoUsrSel = null; // selecciontipousr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +63,6 @@ public class RegistroActivity extends AppCompatActivity {
         layoutUsername = findViewById(R.id.layoutUsername);
         layoutPassword = findViewById(R.id.layoutPassword);
         layoutConfirmPassword = findViewById(R.id.layoutConfirmPassword);
-        layoutTipoUsuario = findViewById(R.id.layoutTipoUsuario);
         layoutTutorUsername = findViewById(R.id.layoutTutorUsername);
         layoutTutorPassword = findViewById(R.id.layoutTutorPassword);
 
@@ -69,38 +74,45 @@ public class RegistroActivity extends AppCompatActivity {
         edtTutorUsername = findViewById(R.id.edtTutorUsername);
         edtTutorPassword = findViewById(R.id.edtTutorPassword);
 
-        actvTipoUsuario = findViewById(R.id.actvTipoUsuario);
         imgUserPhoto = findViewById(R.id.imgUserPhoto);
+        tvTipousrSel = findViewById(R.id.tvTipoUsuarioSeleccionado);
+        tvTipousrErr = findViewById(R.id.tvTTipoUsrError);
+        btnTipoUsuario = findViewById(R.id.btnTipoUsuario);
         btnRegister = findViewById(R.id.btnRegister);
         progressIndicator = findViewById(R.id.progressIndicator);
 
         //Lógica
         usuarioDAO = new UsuarioDAO();
 
-        // Adapter con la lista de tipos de usuarios, que se verán en formato menú markdown
-        ArrayAdapter<TipoUsuario> adapter = new ArrayAdapter<>(this, R.layout.lista_items_dropdown, TipoUsuario.values());
-        actvTipoUsuario.setAdapter(adapter);
-        //Que muestre el menu cuando se le da
-        actvTipoUsuario.setOnClickListener(v -> {
-            actvTipoUsuario.showDropDown();
+        btnTipoUsuario.setOnClickListener(v -> {
+            // Creamos un array de nombres de los tipos
+            String[] tipos = Arrays.stream(TipoUsuario.values())
+                    .map(Enum::name)
+                    .toArray(String[]::new);
+
+            // Mostramos diálogo de selección
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(Mensajes.REG_PUTTIPOUSR)
+                    .setItems(tipos, (dialog, which) -> {
+                        tipoUsrSel = TipoUsuario.values()[which];
+                        tvTipousrSel.setText(
+                                getString(R.string.text_tipousr_sel, tipoUsrSel.name())
+                        );
+                        if(tipoUsrSel != null){
+                            tvTipousrErr.setVisibility(View.GONE);
+                        }
+
+                        // Los usuarios asistidos necesitan más elementos
+                        if(tipoUsrSel == TipoUsuario.ASISTIDO){
+                            layoutTutorUsername.setVisibility(View.VISIBLE);
+                            layoutTutorPassword.setVisibility(View.VISIBLE);
+                        } else { //necesario por si cambia de opción
+                            layoutTutorUsername.setVisibility(View.GONE);
+                            layoutTutorPassword.setVisibility(View.GONE);
+                        }
+                    })
+                    .show();
         });
-        //Que haga determinadas cosas segun el caso
-
-        actvTipoUsuario.setOnItemClickListener((parent, view, position, id) -> {
-            TipoUsuario tipo = (TipoUsuario) parent.getItemAtPosition(position);
-
-            //En función del tipo de usuario se ven unas cosas u otras.
-            if (tipo == TipoUsuario.ASISTIDO) {
-                layoutTutorUsername.setVisibility(View.VISIBLE);
-                layoutTutorPassword.setVisibility(View.VISIBLE);
-            } else {
-                layoutTutorUsername.setVisibility(View.GONE);
-                layoutTutorPassword.setVisibility(View.GONE);
-            }
-        });
-
-
-
 
         // Selección de foto
         // Set avatar por defecto
@@ -114,18 +126,13 @@ public class RegistroActivity extends AppCompatActivity {
 
     private void registrarUsuario(){
         // Limpiamos errores
-        layoutAlias.setError(null);
-        layoutUsername.setError(null);
-        layoutPassword.setError(null);
-        layoutConfirmPassword.setError(null);
-        layoutTipoUsuario.setError(null);
         UiUtils.limpiarErroresLayouts(formLayout);
 
         String alias = edtAlias.getText().toString().trim();
         String username = edtUsername.getText().toString().trim();
         String password = edtPassword.getText().toString();
         String confirmPassword = edtConfirmPassword.getText().toString();
-        String tipoUsuario = actvTipoUsuario.getText().toString();
+        String tipoUsuario;
 
         boolean error = false;
         //Validaciones
@@ -145,14 +152,14 @@ public class RegistroActivity extends AppCompatActivity {
             layoutConfirmPassword.setError(Mensajes.REG_VAL_PASSWDNOCOINCIDEN);
             error = true;
         }
-        if(TextUtils.isEmpty(tipoUsuario)){
-            layoutTipoUsuario.setError(Mensajes.REG_VAL_PUTTIPOUSR);
+        if(tipoUsrSel == null){
+            tvTipousrErr.setVisibility(View.VISIBLE);
             error = true;
         }
         if(error) return;
 
+        tipoUsuario = tipoUsrSel.toString();
         progressIndicator.setVisibility(View.VISIBLE);
-
         // Hash de la contraseña
         String salt = Utils.generarSalt();
         String hash = Utils.hashPassword(password, salt);
@@ -264,8 +271,7 @@ public class RegistroActivity extends AppCompatActivity {
             public void onSuccess() {
                 progressIndicator.setVisibility(View.GONE);
                 guardarSesion(u); //guardamos la sesión
-                //todo llevar a home
-                finish();
+                gotoMainActivity();
             }
 
             @Override
@@ -287,8 +293,7 @@ public class RegistroActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 guardarSesion(ua);
-                //todo llevar a home
-                finish();
+                gotoMainActivity();
             }
 
             @Override
@@ -338,6 +343,13 @@ public class RegistroActivity extends AppCompatActivity {
     private void borrarSesion(){
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         prefs.edit().clear().apply();
+    }
+
+    private void gotoMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
 }

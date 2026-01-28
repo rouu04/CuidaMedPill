@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -153,6 +154,8 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private void gotoMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);
+        //flags para no poder volver atrás y decir que main tiene el flujo
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

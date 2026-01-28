@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/formLayout"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:paddingStart="@dimen/padding_general"
+        android:paddingEnd="@dimen/padding_general"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,17 +19,18 @@
         <ImageView
             android:id="@+id/imgLogo"
             android:src="@drawable/logo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="32dp"
-            android:contentDescription="Logo"/>
+            android:layout_width="@dimen/size_image_width"
+            android:layout_height="@dimen/size_image_height"
+            android:layout_marginTop="@dimen/margin_top_logo"
+            android:contentDescription="@string/content_desc_logo"/>
 
         <!-- Nombre de usuario -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutUsername"
-            android:hint="Nombre de usuario"
+            android:hint="@string/hint_nombreusr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_separator"
             app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -42,8 +44,8 @@
         <!-- Contraseña -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutPassword"
-            android:hint="Contraseña"
-            android:layout_marginTop="16dp"
+            android:hint="@string/hint_passwd"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
@@ -59,26 +61,33 @@
         <!-- Botón iniciar sesión -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
-            android:text="Iniciar sesión"
-            android:layout_marginTop="32dp"
+            android:text="@string/button_iniciarsesion"
+            android:layout_marginTop="@dimen/margin_elements_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"/>
 
+        <!-- Separador para que el botón de registrarse salga abajo-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <!-- Texto aclaración y registrarse -->
         <TextView
             android:id="@+id/tvRegisterPrompt"
-            android:text="¿Es la primera vez que entras en CuidaMedPill? Regístrate!"
-            android:layout_marginTop="48dp"
+            android:text="@string/text_hint_registro"
+            android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="14sp"/>
+            android:textColor="@color/md_on_background"
+            android:textSize="@dimen/text_hint_size"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
-            android:text="Registrarse"
-            android:layout_marginTop="16dp"
+            android:text="@string/button_registro"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_marginBottom="@dimen/margin_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"/>
@@ -87,10 +96,10 @@
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
             android:visibility="gone"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/padding_general"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:indicatorSize="48dp"
+            app:indicatorSize="@dimen/progress_indicator_size"
             app:trackColor="?attr/colorOnSurfaceVariant"
             app:indicatorColor="?attr/colorPrimary"/>
 
