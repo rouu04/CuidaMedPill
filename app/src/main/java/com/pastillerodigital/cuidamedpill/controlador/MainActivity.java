@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         navInferior = findViewById(R.id.bottomNavigation);
+        navInferior.setItemIconTintList(null);
+
 
         // Cargamos sesión de sharedPreferences
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);

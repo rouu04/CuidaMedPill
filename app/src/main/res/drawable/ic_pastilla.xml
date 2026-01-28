@@ -1,21 +1,39 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:viewportWidth="100"
+    android:viewportHeight="100">
 
-    <group
-        android:scaleX="-1"
-        android:pivotX="12"
-        android:pivotY="12">
+    <!-- Borde cápsula -->
+    <path
+        android:fillColor="#42C7CC"
+        android:pathData="
+            M20,50
+            C20,30 30,20 50,20
+            C70,20 80,30 80,50
+            C80,70 70,80 50,80
+            C30,80 20,70 20,50 Z" />
 
-        <path
-            android:fillColor="#009688"
-            android:pathData="M4,12a4,4 0 0 1 8,-8l8,8a4,4 0 0 1 -8,8L4,12z"/>
+    <!-- Mitad izquierda -->
+    <path
+        android:fillColor="#74E3E6"
+        android:pathData="
+            M22,50
+            C22,32 32,22 50,22
+            L50,78
+            C32,78 22,68 22,50 Z" />
 
-        <path
-            android:fillColor="#B703F4F0"
-            android:pathData="M12,4l8,8-8,8-8,-8 8,-8z"/>
-    </group>
+    <!-- Mitad derecha -->
+    <path
+        android:fillColor="#B9F7F9"
+        android:pathData="
+            M50,22
+            C68,22 78,32 78,50
+            C78,68 68,78 50,78 Z" />
 
+    <!-- Línea separación -->
+    <path
+        android:strokeColor="#2FAFB3"
+        android:strokeWidth="2"
+        android:pathData="M50,25 L50,75" />
 </vector>

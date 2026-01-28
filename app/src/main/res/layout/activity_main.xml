@@ -18,7 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="?attr/colorPrimary"
+        app:indicatorColor="@color/md_surface"
         app:itemIconSize="36dp"
+        app:itemIconTint="@null"
         app:menu="@menu/menu_nav_inferior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

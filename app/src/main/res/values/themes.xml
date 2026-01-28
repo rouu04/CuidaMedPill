@@ -1,8 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.CuidaMedPill" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Colores base -->
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorPrimaryDark">@color/md_primary_dark</item>
+        <item name="colorSecondary">@color/md_secondary</item>
+
+        <item name="android:colorBackground">@color/md_background</item>
+        <item name="colorSurface">@color/md_surface</item>
+
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorOnBackground">@color/md_on_background</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+
+        <item name="colorError">@color/md_error</item>
     </style>
 
     <style name="Theme.CuidaMedPill" parent="Base.Theme.CuidaMedPill" />
