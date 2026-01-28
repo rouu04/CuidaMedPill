@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -95,7 +94,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         //Verificamos que exite un usuario con ese nombre
         //todo aclarar en layout que nombre de usuario no es alias
-        usuarioDAO.getWithParameter(Constantes.USUARIO_NOMBREUSUARIO, nombreUsuario, new OnDataLoadedCallback<Usuario>() {
+        usuarioDAO.getBasicWithParameter(Constantes.USUARIO_NOMBREUSUARIO, nombreUsuario, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario usuario) {
                 progressIndicator.setVisibility(View.GONE);

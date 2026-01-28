@@ -3,8 +3,8 @@ package com.pastillerodigital.cuidamedpill.modelo.dao;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
-import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -12,6 +12,7 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
 Funciones de acceso a la base de datos de usuarios
@@ -29,7 +30,12 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         this.collectionName = Constantes.COLLECTION_USUARIOS;
     }
 
-    //todo reescribir para usuarioEstandar y usuarioAsistido
+    @Override
+    public Usuario docToObj(DocumentSnapshot doc) {
+        return Usuario.doctoObj(doc);
+    }
+
+    //-------------FUNCIONES GET
     @Override
     public void get(String id, OnDataLoadedCallback<Usuario> callback) {
         db.collection(collectionName)
@@ -40,6 +46,8 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
 
                     //Lista de medicamentos asociados
                     //todo get lista medicamentos (llamar funcion y en el onsucces se guarda)
+                    //todo mirar qué método de obtener usuarios usas (habrá que reescribir)
+
 
                     callback.onSuccess(u);
                 })
@@ -57,19 +65,22 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * @param id
      * @param callback
      */
-    public void getBasico(String id, OnDataLoadedCallback<Usuario> callback){
+    public void getBasic(String id, OnDataLoadedCallback<Usuario> callback){
         db.collection(collectionName)
                 .document(id)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Usuario u = docToObj(documentSnapshot);
-                    callback.onSuccess(u);
+                    //Obtenemos los usuarios (básicos) asistidos en caso de ser tutor
+                    if(u.getTipoUsuario().equals(TipoUsuario.ESTANDAR)){
+                        UsuarioEstandar ue = (UsuarioEstandar) u;
+                        getySetUsrsAsist(ue, callback);
+                    }
+                    else{ callback.onSuccess(u);}
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(Exception e) {
-                        callback.onFailure(e);
-                    }
+                    public void onFailure(Exception e) {callback.onFailure(e);}
                 });
     }
 
@@ -77,10 +88,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     Devuelve un objeto usuario a partir del documento devuelto por firebase
     Imprescindible que los strings marcados coincidan exactamente con la base de datos
      */
-    @Override
-    public Usuario docToObj(DocumentSnapshot doc) {
-        return Usuario.doctoObj(doc);
-    }
+
 
     /**
      * A partir del parámetro único del objeto devuelve el id en vez de devolver el objeto entero
@@ -117,7 +125,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     /**
     Obtiene objeto filtrando por un parámetro
      */
-    public void getWithParameter(String paramBD, Object param, OnDataLoadedCallback<Usuario> callback){
+    public void getBasicWithParameter(String paramBD, Object param, OnDataLoadedCallback<Usuario> callback){
         if (param == null) {
             callback.onSuccess(null);
             return;
@@ -129,10 +137,12 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
                         DocumentSnapshot doc = querySnapshot.getDocuments().get(0); //primer y único documento de la consulta
-                        Usuario usuario = docToObj(doc);
-                        usuario.setId(doc.getId()); // Asignamos el ID del documento
-                        //todo get lista de medicamentos
-                        callback.onSuccess(usuario); // Devolvemos el usuario
+                        Usuario u = docToObj(doc);
+                        if(u.getTipoUsuario().equals(TipoUsuario.ESTANDAR)){
+                            UsuarioEstandar ue = (UsuarioEstandar) u;
+                            getySetUsrsAsist(ue, callback);
+                        }
+                        else{ callback.onSuccess(u);}
                     } else {
                         callback.onSuccess(null); // Tiene éxito en la consulta (no da error)
                         //pero no existe
@@ -144,6 +154,63 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 });
     }
 
+    /**
+     * Obtiene una lista de usuarios asistidos a partir de una lista de ids de usuarios
+     * asistidos asignados a un tutor.
+     * @param ids
+     * @param callback
+     */
+    public void getListAsistAsig(List<String> ids, OnDataLoadedCallback<List<UsuarioAsistido>> callback){
+        if (ids == null || ids.isEmpty()) {
+            callback.onSuccess(new ArrayList<>());
+            return;
+        }
+
+        List<UsuarioAsistido> usuarios = new ArrayList<>();
+        AtomicInteger counter = new AtomicInteger(ids.size()); //herramientas concurrentes porque
+        //firebase es asíncrono
+
+        for (String id : ids) {
+            db.collection(collectionName)
+                    .document(id)
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            usuarios.add((UsuarioAsistido) docToObj(doc));
+                        }
+                        if (counter.decrementAndGet() == 0) {
+                            callback.onSuccess(usuarios);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        callback.onFailure(e);
+                    });
+        }
+    }
+
+    /**
+     * Función auxiliar que llama a la base de datos para obtener los usuarios asignados al tutor
+     * @param ue
+     * @param callback recibe usuario porque es una función auxiliar para dar claridad al código.
+     *                 se llamará al obtener un usuario
+     */
+    //todo reescribir para sacar los medicamentos y más cosas
+    private void getySetUsrsAsist(UsuarioEstandar ue, OnDataLoadedCallback<Usuario> callback){
+        getListAsistAsig(ue.getIdUsrAsistAsig(), new OnDataLoadedCallback<List<UsuarioAsistido>>() {
+            @Override
+            public void onSuccess(List<UsuarioAsistido> asistidos) {
+                ue.setUsrAsistidoAsig(asistidos);
+                callback.onSuccess(ue);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
+    }
+
+    //------------OTRAS FUNCIONES DAO
     /**
      * Añade un usuario asistido a la aplicación, en consecuencia se actualizan las listas del tutor
      * @param ua
@@ -165,7 +232,6 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * Añade un usuario asistido al usuario estándar, el usuario estándar será un nuevo tutor del
      * usuario asistido. Los cambios se guardan en la base de datos, el objeto se actualizará en cuando
      * el tutor realice cualquier app de la aplicación.
-     * todo revisar eso (mirar en docs lo de los listeners)
      * @param idua
      * @param idue
      * @param callback

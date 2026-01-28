@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
@@ -227,7 +225,7 @@ public class RegistroActivity extends AppCompatActivity {
 
         progressIndicator.setVisibility(View.VISIBLE);
 
-        usuarioDAO.getWithParameter(Constantes.USUARIO_NOMBREUSUARIO, tutorUsername, new OnDataLoadedCallback<Usuario>() {
+        usuarioDAO.getBasicWithParameter(Constantes.USUARIO_NOMBREUSUARIO, tutorUsername, new OnDataLoadedCallback<Usuario>() {
                     @Override
                     public void onSuccess(Usuario tutor) {
                         if (tutor == null || tutor.getTipoUsuario() != TipoUsuario.ESTANDAR) {
