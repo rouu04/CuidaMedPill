@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/imgFotoAsistido"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/usuario_fotoperfil_default"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tvNombreAsistido"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Nombre Asistido"
+        android:textSize="16sp"
+        android:layout_marginStart="16dp"/>
+
+    <Button
+        android:id="@+id/btnSupervisar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supervisar" />
+</LinearLayout>

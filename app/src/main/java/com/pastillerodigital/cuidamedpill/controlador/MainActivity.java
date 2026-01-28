@@ -62,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
         String tipoStr = prefs.getString(Constantes.PERSIST_KEYTIPOUSR, TipoUsuario.ESTANDAR.name());
         tipoUsuario = TipoUsuario.tipoUsrFromString(tipoStr);
 
+        homeFragment = HomeFragment.newInstance(uidSelf);
+        medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
+        calendarioFragment = CalendarioFragment.newInstance(uidSelf);
+        perfilFragment = PerfilFragment.newInstance(uidSelf);
+
         if(tipoUsuario == TipoUsuario.ASISTIDO){ //los usuarios asistidos no tienen acceso al perfil
             Menu menu = navInferior.getMenu();
             MenuItem perfilItem = menu.findItem(R.id.nav_perfil);
             perfilItem.setVisible(false);
         }
-
-        homeFragment = HomeFragment.newInstance(uidSelf);
-        medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
-        calendarioFragment = CalendarioFragment.newInstance(uidSelf);
-        perfilFragment = PerfilFragment.newInstance(uidSelf);
 
         if (savedInstanceState == null) {
             replaceFragment(homeFragment);
@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_perfil) {
                 replaceFragment(perfilFragment);
             }
-
             return true;
         });
 

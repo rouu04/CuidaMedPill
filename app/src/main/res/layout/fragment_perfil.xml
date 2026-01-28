@@ -1,0 +1,104 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Sección superior: Foto y alias -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgFotoPerfil"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/usuario_fotoperfil_default"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tvAlias"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AliasUsuario"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvNombreUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NombreUsuario"
+                    android:textSize="16sp"
+                    android:textColor="#666" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Separador -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginVertical="16dp"/>
+
+        <!-- Título: Personas asistidas -->
+        <TextView
+            android:id="@+id/tvTituloAsistidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Personas asistidas asignadas a ti"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- RecyclerView para lista de personas asistidas -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPersonasAsistidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Botón añadir asistido -->
+        <Button
+            android:id="@+id/btnAñadirAsistido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+ Añadir persona asistida"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Sección Notificaciones generales -->
+        <TextView
+            android:id="@+id/tvTituloNotificaciones"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones generales"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Aquí podrías poner más elementos relacionados con notificaciones -->
+        <LinearLayout
+            android:id="@+id/layoutNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- Ejemplo: Switches, TextViews, etc -->
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
