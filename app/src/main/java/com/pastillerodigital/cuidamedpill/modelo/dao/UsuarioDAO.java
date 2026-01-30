@@ -12,6 +12,7 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -243,6 +244,82 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 .update( Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayUnion(idua))
                 .addOnSuccessListener(v -> callback.onSuccess())
                 .addOnFailureListener(callback::onFailure);
+    }
+
+    /**
+     * Al borrar un usuario estándar, si tiene usuarios asistidos a su cargo, hay que actualizar
+     * que ya no estarán a su cargo. Si era el único, no podrá eliminarse.
+     * @param ue
+     * @param callback deuvelve true si se ha eliminado sin problemas, false si no puede eliminarse porque es
+     *                 el único tutor
+     */
+    public void delete(UsuarioEstandar ue, OnDataLoadedCallback<Boolean> callback){
+        List<UsuarioAsistido> listUa = ue.getUsrAsistidoAsig();
+
+        if(listUa.isEmpty()) { //Se puede borrar directamente
+            super.delete(ue.getId(), new OnOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    callback.onSuccess(true);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    callback.onFailure(e);
+                }
+            });
+        }
+        else{ //No puede borrarse si es el único tutor del asistido
+            boolean borrable = true;
+            for(UsuarioAsistido ua: listUa){
+                if(ua.getIdUsrTutoresAsig().size() == 1) borrable = false;
+            }
+            if(borrable){
+                super.delete(ue.getId(), new OnOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        callback.onSuccess(true);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+            }
+            else{
+                callback.onSuccess(false);
+            }
+        }
+    }
+
+    /**
+     * Borra un usuario asistido, y en consecuencia lo borra también de las listas de sus tutores
+     * @param ua
+     * @param callback
+     */
+    public void delete(UsuarioAsistido ua, OnOperationCallback callback){
+        List<String> idsTutores = ua.getIdUsrTutoresAsig();
+
+        AtomicInteger counter = new AtomicInteger(idsTutores.size());
+        AtomicBoolean fallo = new AtomicBoolean(false);
+
+        for (String idTutor : idsTutores) {
+            db.collection(collectionName)
+                    .document(idTutor)
+                    .update(Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayRemove(ua.getId()))
+                    .addOnSuccessListener(v -> {
+                        if (counter.decrementAndGet() == 0) { // Todos los tutores actualizados, borramos el asistido
+                            if (!fallo.get()) {
+                                super.delete(ua.getId(), callback);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        fallo.set(true);
+                        callback.onFailure(e);
+                    });
+        }
     }
 
 }

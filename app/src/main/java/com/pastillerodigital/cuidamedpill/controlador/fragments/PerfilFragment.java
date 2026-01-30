@@ -1,24 +1,27 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.controlador.WelcomeActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
@@ -36,15 +39,17 @@ import java.util.List;
  */
 public class PerfilFragment extends Fragment {
 
+    private View progressPerfil, layoutContenido;
     private android.widget.ImageView imgFotoPerfil;
     private TextView tvAlias, tvNombreUsr, tvSupervisando;
     private RecyclerView rvUsrsAsist;
-    private Button btnAddAsist;
+    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta;
     private LinearLayout layoutNotis;
 
+    //Lógica
     private String uidSelf;
     private String uid;
-
+    UsuarioDAO uDAO;
     private UsuarioEstandar usrSelf;
     private Modo modo;
 
@@ -92,20 +97,21 @@ public class PerfilFragment extends Fragment {
         btnAddAsist = view.findViewById(R.id.btnAddAsistido);
         layoutNotis = view.findViewById(R.id.layoutNotificaciones);
 
+        btnEditarPerfil = view.findViewById(R.id.btnEditarPerfil);
+        btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
+        btnEliminarCuenta = view.findViewById(R.id.btnEliminarCuenta);
+
+        progressPerfil = view.findViewById(R.id.progressPerfil);
+        layoutContenido = view.findViewById(R.id.layoutContenido);
+
+        //Lógica
+        uDAO = new UsuarioDAO();
         modo = Modo.ESTANDAR;
         tvSupervisando.setVisibility(View.GONE);
+
         lecturaArgumentos();
-
-        btnAddAsist.setOnClickListener(v -> {
-            RegistroAsistidoFragment fragment = RegistroAsistidoFragment.newInstance(usrSelf.getId());
-
-            requireActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragmentApp, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        setButtonListeners();
+        mostrarCarga(); //muestra icono carga (se quitará cuando el usuario se cargue)
 
         cargarUsuario(uidSelf);
     }
@@ -119,6 +125,56 @@ public class PerfilFragment extends Fragment {
             }
             else modo = Modo.SUPERVISOR;
         }
+    }
+
+    private void setButtonListeners(){
+        btnAddAsist.setOnClickListener(v -> {
+            RegistroAsistidoFragment fragment = RegistroAsistidoFragment.newInstance(usrSelf.getId());
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentApp, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        btnEditarPerfil.setOnClickListener(v -> {
+            // todo editar perfil
+        });
+
+        btnCerrarSesion.setOnClickListener(v -> {
+            cerrarSesion();
+            gotoWelcomeActivity();
+        });
+
+        btnEliminarCuenta.setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(Mensajes.PERF_BORRARCUENTA)
+                    .setMessage(Mensajes.PERF_PREG_BORRARCUENTA)
+                    .setPositiveButton(Mensajes.BASIC_ELIMINAR, (d, w) -> {
+                        uDAO.delete((UsuarioEstandar) usrSelf, new OnDataLoadedCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean data) {
+                                if(data){
+                                    UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_BORRARCUENTA);
+                                    cerrarSesion();
+                                    gotoWelcomeActivity();
+                                }
+                                else{
+                                    UiUtils.mostrarNegConfirmacion(requireActivity(), Mensajes.PERF_NEG_BORRARCUENTA_TUTOR);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                UiUtils.mostrarErrorYReiniciar(requireActivity());
+                            }
+                        });
+                    })
+                    .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
+                    .show();
+        });
     }
 
     private void cargarUsuario(String uid) {
@@ -139,6 +195,8 @@ public class PerfilFragment extends Fragment {
                         imgFotoPerfil.setImageResource(R.drawable.usuario_fotoperfil_default);
                     }
                     setupRecyclerView();
+
+                    ocultarCarga();
                 }
             }
 
@@ -178,15 +236,23 @@ public class PerfilFragment extends Fragment {
 
             @Override
             public void onBorrarCuenta(UsuarioAsistido asistido) {
-                //todo borrar cuenta
                 new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                         .setTitle(Mensajes.PERF_BORRARCUENTA)
                         .setMessage(String.format(Mensajes.PERF_PREG_ASIST_BORRARCUENTA, asistido.getAliasU()))
                         .setPositiveButton(Mensajes.BASIC_SI, (dialog, which) -> {
-                            new UsuarioDAO().delete(asistido.getId(), new com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback() {
+                            new UsuarioDAO().delete((UsuarioAsistido) asistido, new OnOperationCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    //todo
+                                    //Quito lo correspondiente al objeto que se muestra para evitar llamada a base de datos
+                                    List<UsuarioAsistido> listua = usrSelf.getUsrAsistidoAsig();
+                                    listua.remove(asistido);
+                                    List<String> lstrua = usrSelf.getIdUsrAsistAsig();
+                                    lstrua.remove(asistido.getId());
+                                    usrSelf.setIdUsrAsistAsig(lstrua);
+                                    usrSelf.setUsrAsistidoAsig(listua);
+
+
+                                    UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_BORRARCUENTA);
                                     setupRecyclerView();
                                 }
 
@@ -204,5 +270,28 @@ public class PerfilFragment extends Fragment {
 
         rvUsrsAsist.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUsrsAsist.setAdapter(adapter);
+    }
+
+
+    private void mostrarCarga() {
+        progressPerfil.setVisibility(View.VISIBLE);
+        layoutContenido.setVisibility(View.GONE);
+    }
+
+    private void ocultarCarga() {
+        progressPerfil.setVisibility(View.GONE);
+        layoutContenido.setVisibility(View.VISIBLE);
+    }
+
+    private void cerrarSesion(){
+        SharedPreferences prefs = requireActivity().getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, requireContext().MODE_PRIVATE);
+        prefs.edit().clear().apply();
+    }
+
+    private void gotoWelcomeActivity(){
+        Intent intent = new Intent(requireActivity(), WelcomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //para que no pueda volver atrás
+        startActivity(intent);
+        requireActivity().finish();
     }
 }

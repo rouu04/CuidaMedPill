@@ -1,10 +1,7 @@
 package com.pastillerodigital.cuidamedpill.utils;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -102,6 +99,22 @@ public class UiUtils {
                 editText.setSelection(editText.getText().length());
             }
         });
+    }
+
+    public static void mostrarConfirmacion(@NonNull Activity activity, @NonNull String mensaje) {
+        new MaterialAlertDialogBuilder(activity)
+                .setTitle(Mensajes.BASIC_CONFIRMACION)
+                .setMessage(mensaje)
+                .setPositiveButton(Mensajes.BASIC_ACEPTAR, null)
+                .show();
+    }
+
+    public static void mostrarNegConfirmacion(@NonNull Activity activity, @NonNull String mensaje) {
+        new MaterialAlertDialogBuilder(activity)
+                .setTitle(Mensajes.BASIC_NEG_CONFIRMACION)
+                .setMessage(mensaje)
+                .setPositiveButton(Mensajes.BASIC_ACEPTAR, null)
+                .show();
     }
 
 

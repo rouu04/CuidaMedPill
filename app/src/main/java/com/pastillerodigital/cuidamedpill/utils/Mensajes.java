@@ -10,6 +10,9 @@ public class Mensajes {
     public static final String BASIC_NO = "No";
     public static final String BASIC_ACEPTAR = "Aceptar";
     public static final String BASIC_CANCELAR = "Cancelar";
+    public static final String BASIC_ELIMINAR = "Eliminar";
+    public static final String BASIC_CONFIRMACION = "Acción realizada correctamente";
+    public static final String BASIC_NEG_CONFIRMACION = "La acción no se ha podido realizar";
 
 
     //-------------ERROR
@@ -44,6 +47,9 @@ public class Mensajes {
     public static final String PERF_BORRARCUENTA = "Borrar cuenta";
     public static final String PERF_PREG_BORRARCUENTA = "¿Deseas borrar la cuenta?";
     public static final String PERF_PREG_ASIST_BORRARCUENTA = "¿Deseas borrar la cuenta de %s ?";
+
+    public static final String PERF_CONF_BORRARCUENTA = "El perfil ha sido eliminado correctamente";
+    public static final String PERF_NEG_BORRARCUENTA_TUTOR = "El perfil no puede eliminarse si tiene usuarios asistidos que cuentan solo con su ayuda";
 
 
     //------------EXCEPCIONES
