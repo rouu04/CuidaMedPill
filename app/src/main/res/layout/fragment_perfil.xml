@@ -1,4 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -17,10 +19,9 @@
 
             <ImageView
                 android:id="@+id/imgFotoPerfil"
+                android:src="@drawable/usuario_fotoperfil_default"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/usuario_fotoperfil_default"
-                android:scaleType="centerCrop"
                 android:layout_marginEnd="16dp" />
 
             <LinearLayout
@@ -34,16 +35,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="AliasUsuario"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
                 <TextView
                     android:id="@+id/tvNombreUsuario"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NombreUsuario"
-                    android:textSize="16sp"
-                    android:textColor="#666" />
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
             </LinearLayout>
         </LinearLayout>
@@ -52,20 +52,18 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#DDDDDD"
+            android:background="?attr/colorOutline"
             android:layout_marginVertical="16dp"/>
 
-        <!-- Título: Personas asistidas -->
+        <!-- Personas asistidas -->
         <TextView
             android:id="@+id/tvTituloAsistidos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Personas asistidas asignadas a ti"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_marginBottom="8dp" />
 
-        <!-- RecyclerView para lista de personas asistidas -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPersonasAsistidas"
             android:layout_width="match_parent"
@@ -73,32 +71,38 @@
             android:nestedScrollingEnabled="false"
             android:layout_marginBottom="8dp" />
 
-        <!-- Botón añadir asistido -->
-        <Button
-            android:id="@+id/btnAñadirAsistido"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddAsistido"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="+ Añadir persona asistida"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Sección Notificaciones generales -->
+        <!-- Notificaciones -->
         <TextView
             android:id="@+id/tvTituloNotificaciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notificaciones generales"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_marginBottom="8dp" />
 
-        <!-- Aquí podrías poner más elementos relacionados con notificaciones -->
         <LinearLayout
             android:id="@+id/layoutNotificaciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <!-- Ejemplo: Switches, TextViews, etc -->
+
+            <!-- Ejemplo: SwitchMaterial todo cuando haya notis-->
+            <!--
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchNotificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Activar notificaciones"/> -->
+
         </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

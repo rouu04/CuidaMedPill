@@ -36,7 +36,11 @@ public class Constantes {
 
     //ARGUMENTOS
     public static final String ARG_UID = "uid";
-    public static final String ARG_UIDSELF = "uid";
+    public static final String ARG_UIDSELF = "uidSelf";
+
+    //OTROS
+
+    public static final String RES_TIPO = "drawable";
 
 
 

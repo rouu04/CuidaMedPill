@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
 
@@ -69,6 +71,39 @@ public class UiUtils {
             }
         }
     }
+
+
+    /**
+     * Configura manualmente el icono del ojo en las contraseñas que permite ocultarla y visualizarla
+     * @param layout
+     * @param editText
+     * @param context
+     */
+    public static void setupPasswordToggle(@NonNull final TextInputLayout layout, @NonNull final TextInputEditText editText,
+                                           @NonNull final android.content.Context context) {
+        // Contraseña empieza oculta, ícono ojo cerrado
+        editText.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
+        layout.setEndIconMode(TextInputLayout.END_ICON_CUSTOM);
+        layout.setEndIconDrawable(ContextCompat.getDrawable(context, R.drawable.ic_ojo_cerrado));
+
+        layout.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editText.getTransformationMethod() instanceof android.text.method.PasswordTransformationMethod) {
+                    // Mostrar contraseña
+                    editText.setTransformationMethod(android.text.method.HideReturnsTransformationMethod.getInstance());
+                    layout.setEndIconDrawable(ContextCompat.getDrawable(context, R.drawable.ic_ojo_abierto));
+                } else {
+                    // Ocultar contraseña
+                    editText.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
+                    layout.setEndIconDrawable(ContextCompat.getDrawable(context, R.drawable.ic_ojo_cerrado));
+                }
+                // Mantener el cursor al final
+                editText.setSelection(editText.getText().length());
+            }
+        });
+    }
+
 
 
 }

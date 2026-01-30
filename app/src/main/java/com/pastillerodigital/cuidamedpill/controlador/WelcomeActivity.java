@@ -60,6 +60,8 @@ public class WelcomeActivity extends AppCompatActivity {
             gotoMainActivity();
         }
 
+        UiUtils.setupPasswordToggle(layoutPassword, edtPassword, this);
+
         // Botón login
         btnLogin.setOnClickListener(v -> login());
 

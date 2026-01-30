@@ -82,6 +82,11 @@ public class RegistroActivity extends AppCompatActivity {
         //Lógica
         usuarioDAO = new UsuarioDAO();
 
+        //Contraseñas que se pueden ocultar y mostrar
+        UiUtils.setupPasswordToggle(layoutPassword, edtPassword, this);
+        UiUtils.setupPasswordToggle(layoutConfirmPassword, edtConfirmPassword, this);
+        UiUtils.setupPasswordToggle(layoutTutorPassword, edtTutorPassword, this);
+
         btnTipoUsuario.setOnClickListener(v -> {
             // Creamos un array de nombres de los tipos
             String[] tipos = Arrays.stream(TipoUsuario.values())
@@ -175,7 +180,9 @@ public class RegistroActivity extends AppCompatActivity {
         u.setSalt(salt);
         u.setTipoUsuarioStr(tipoUsuario);
         u.setTipoUsuario(TipoUsuario.tipoUsrFromString(tipoUsuario));
-        u.setFotoPerfil(fotoPerfilSel);
+
+        String nombreDrawable = getResources().getResourceEntryName(fotoPerfilSel); // obtiene el nombre
+        u.setFotoPerfil(nombreDrawable);
 
         //Primero hay que comprobar que no haya ningún usuario con ese nombre
         usuarioDAO.getIdWithParameter(Constantes.USUARIO_NOMBREUSUARIO, u.getNombreUsuario(), new OnDataLoadedCallback<String>() {

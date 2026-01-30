@@ -1,6 +1,7 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ import com.pastillerodigital.cuidamedpill.utils.UiUtils;
  */
 public class PerfilFragment extends Fragment {
 
-    private ImageView imgFotoPerfil;
+    private android.widget.ImageView imgFotoPerfil;
     private TextView tvAlias, tvNombreUsr;
     private RecyclerView rvUsrsAsist;
     private Button btnAddAsist;
@@ -39,10 +40,10 @@ public class PerfilFragment extends Fragment {
     private UsuarioEstandar usrSelf;
 
 
-    public static PerfilFragment newInstance(String userIdSellf) {
+    public static PerfilFragment newInstance(String userIdSelf) {
         PerfilFragment fragment = new PerfilFragment();
         Bundle args = new Bundle();
-        args.putString(Constantes.ARG_UIDSELF, userIdSellf);
+        args.putString(Constantes.ARG_UIDSELF, userIdSelf);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,11 +62,23 @@ public class PerfilFragment extends Fragment {
         tvAlias = view.findViewById(R.id.tvAlias);
         tvNombreUsr = view.findViewById(R.id.tvNombreUsuario);
         rvUsrsAsist = view.findViewById(R.id.rvPersonasAsistidas);
-        btnAddAsist = view.findViewById(R.id.btnAñadirAsistido);
+        btnAddAsist = view.findViewById(R.id.btnAddAsistido);
         layoutNotis = view.findViewById(R.id.layoutNotificaciones);
 
-        String uid = getArguments().getString(Constantes.ARG_UIDSELF);
-        cargarUsuario(uid);
+        String uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
+
+        btnAddAsist.setOnClickListener(v -> {
+            RegistroAsistidoFragment fragment = RegistroAsistidoFragment.newInstance(usrSelf.getId());
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentApp, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        cargarUsuario(uidSelf);
     }
 
     private void cargarUsuario(String uid) {
@@ -77,7 +90,14 @@ public class PerfilFragment extends Fragment {
                     usrSelf = (UsuarioEstandar) usuario;
                     tvAlias.setText(usrSelf.getAliasU());
                     tvNombreUsr.setText(usrSelf.getNombreUsuario());
-                    imgFotoPerfil.setImageResource(usrSelf.getFotoPerfil());
+
+                    String nombreDrawable = usrSelf.getFotoPerfil();
+                    int resId = getResources().getIdentifier(nombreDrawable, Constantes.RES_TIPO, requireContext().getPackageName());
+                    if(resId != 0){
+                        imgFotoPerfil.setImageResource(resId);
+                    } else {//por si el drawable no existe
+                        imgFotoPerfil.setImageResource(R.drawable.usuario_fotoperfil_default);
+                    }
 
                     setupRecyclerView();
                 }
@@ -85,7 +105,7 @@ public class PerfilFragment extends Fragment {
 
             @Override
             public void onFailure(Exception e) {
-                //todo manejar error
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
     }
@@ -97,9 +117,5 @@ public class PerfilFragment extends Fragment {
 
         rvUsrsAsist.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUsrsAsist.setAdapter(adapter);
-
-        btnAddAsist.setOnClickListener(v -> {
-            // todo add persona asistida
-        });
     }
 }

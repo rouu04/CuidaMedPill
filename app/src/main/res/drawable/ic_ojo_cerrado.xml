@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Contorno del ojo -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M1,12c1.73,-4.39 6,-7.5 11,-7.5s9.27,3.11 11,7.5c-0.49,1.25 -1.21,2.39 -2.11,3.36l-1.42,-1.42c0.69,-0.77 1.22,-1.69 1.53,-2.66C19.27,7.61 15,4.5 12,4.5S4.73,7.61 3,12c0.52,1.31 1.37,2.49 2.42,3.45l-1.42,1.42C2.21,14.39 1.49,13.25 1,12z"/>
+    <!-- Línea central que simboliza ojo cerrado -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M2,2 L22,22"
+        android:strokeWidth="2"
+        android:strokeColor="#FF000000"
+        android:fillAlpha="0"/>
+</vector>

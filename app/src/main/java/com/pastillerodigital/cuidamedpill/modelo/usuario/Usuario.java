@@ -17,7 +17,7 @@ public class Usuario implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreUsuario;
     private String aliasU; //nombre (como se dirigirá la app)
-    private int fotoPerfil;
+    private String fotoPerfil; //guardará el nombre del drawable
     protected String tipoUsuarioStr;
     private List<String> medAsigId = new ArrayList<>(); //lista de ids de medicamentos de este usuario
 
@@ -49,11 +49,11 @@ public class Usuario implements Persistible {
         this.nombreUsuario = nombreU;
     }
 
-    public int getFotoPerfil() {
+    public String getFotoPerfil() {
         return fotoPerfil;
     }
 
-    public void setFotoPerfil(int fotoPerfil) {
+    public void setFotoPerfil(String fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
     }
 
@@ -157,7 +157,7 @@ public class Usuario implements Persistible {
         u.setAliasU(doc.getString(Constantes.USUARIO_ALIAS));
         u.setTipoUsuarioStr(tipoStr);
         u.setTipoUsuario(tipo);
-        u.setFotoPerfil(doc.getLong(Constantes.USUARIO_FOTO).intValue());
+        u.setFotoPerfil(doc.getString(Constantes.USUARIO_FOTO));
         u.setMedAsigId((List<String>) doc.get(Constantes.USUARIO_MEDLISTSTR));
         u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
         u.setSalt(doc.getString(Constantes.USUARIO_SALT));
