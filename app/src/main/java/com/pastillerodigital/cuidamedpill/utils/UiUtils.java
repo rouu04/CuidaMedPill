@@ -46,7 +46,7 @@ public class UiUtils {
                 .setTitle(Mensajes.ERROR_HAYERROR)
                 .setMessage(Mensajes.ERROR_REINTENTAR)
                 .setCancelable(false)
-                .setPositiveButton(Mensajes.ACEPTAR, (dialog, which) -> reiniciarActivity(activity))
+                .setPositiveButton(Mensajes.BASIC_ACEPTAR, (dialog, which) -> reiniciarActivity(activity))
                 .show();
     }
 

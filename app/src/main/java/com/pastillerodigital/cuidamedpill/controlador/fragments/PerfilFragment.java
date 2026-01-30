@@ -20,10 +20,15 @@ import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+
+import java.util.List;
 
 /**
  * Fragmento que se muestra al darle al icono de la persona. Los usuarios asistidos no tienen acceso a
@@ -32,13 +37,34 @@ import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 public class PerfilFragment extends Fragment {
 
     private android.widget.ImageView imgFotoPerfil;
-    private TextView tvAlias, tvNombreUsr;
+    private TextView tvAlias, tvNombreUsr, tvSupervisando;
     private RecyclerView rvUsrsAsist;
     private Button btnAddAsist;
     private LinearLayout layoutNotis;
 
-    private UsuarioEstandar usrSelf;
+    private String uidSelf;
+    private String uid;
 
+    private UsuarioEstandar usrSelf;
+    private Modo modo;
+
+
+    //CREACIONES DEL FRAGMENT
+
+    /**
+     * Será para el modo supervisión, donde userIdSelf observa los datos de userId
+     * @param userIdSelf
+     * @param userId
+     * @return
+     */
+    public static PerfilFragment newInstance(String userIdSelf,String userId) {
+        PerfilFragment fragment = new PerfilFragment();
+        Bundle args = new Bundle();
+        args.putString(Constantes.ARG_UIDSELF, userIdSelf);
+        args.putString(Constantes.ARG_UID, userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static PerfilFragment newInstance(String userIdSelf) {
         PerfilFragment fragment = new PerfilFragment();
@@ -61,11 +87,14 @@ public class PerfilFragment extends Fragment {
         imgFotoPerfil = view.findViewById(R.id.imgFotoPerfil);
         tvAlias = view.findViewById(R.id.tvAlias);
         tvNombreUsr = view.findViewById(R.id.tvNombreUsuario);
+        tvSupervisando = view.findViewById(R.id.tvSupervisando);
         rvUsrsAsist = view.findViewById(R.id.rvPersonasAsistidas);
         btnAddAsist = view.findViewById(R.id.btnAddAsistido);
         layoutNotis = view.findViewById(R.id.layoutNotificaciones);
 
-        String uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
+        modo = Modo.ESTANDAR;
+        tvSupervisando.setVisibility(View.GONE);
+        lecturaArgumentos();
 
         btnAddAsist.setOnClickListener(v -> {
             RegistroAsistidoFragment fragment = RegistroAsistidoFragment.newInstance(usrSelf.getId());
@@ -79,6 +108,17 @@ public class PerfilFragment extends Fragment {
         });
 
         cargarUsuario(uidSelf);
+    }
+
+    private void lecturaArgumentos(){
+        if(getArguments() != null){
+            uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
+            uid = getArguments().getString(Constantes.ARG_UID);
+            if(uid == null){
+                uid = uidSelf;
+            }
+            else modo = Modo.SUPERVISOR;
+        }
     }
 
     private void cargarUsuario(String uid) {
@@ -98,7 +138,6 @@ public class PerfilFragment extends Fragment {
                     } else {//por si el drawable no existe
                         imgFotoPerfil.setImageResource(R.drawable.usuario_fotoperfil_default);
                     }
-
                     setupRecyclerView();
                 }
             }
@@ -111,8 +150,56 @@ public class PerfilFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        AsistidosAdapter adapter = new AsistidosAdapter(usrSelf.getUsrAsistidoAsig(), asistido -> {
-            // todo lo que pase al supervisar
+        AsistidosAdapter adapter = new AsistidosAdapter(usrSelf.getUsrAsistidoAsig(), new AsistidosAdapter.OnClickListener() {
+            @Override
+            public void onSupervisar(UsuarioAsistido asistido) {
+                modo = Modo.SUPERVISOR;
+                uid = asistido.getId();
+                tvSupervisando.setText(String.format(Mensajes.PERF_ASIST_SUPERVISANDO, asistido.getAliasU()));
+                tvSupervisando.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onDejarDeSupervisar() {
+                modo = Modo.ESTANDAR;
+                uid = uidSelf;
+                tvSupervisando.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onEditarPerfil(UsuarioAsistido asistido) {
+                // TODO: abrir fragmento de edición del asistido
+            }
+
+            @Override
+            public void onCerrarSesion(UsuarioAsistido asistido) {
+                // TODO: cerrar sesión asistido
+            }
+
+            @Override
+            public void onBorrarCuenta(UsuarioAsistido asistido) {
+                //todo borrar cuenta
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle(Mensajes.PERF_BORRARCUENTA)
+                        .setMessage(String.format(Mensajes.PERF_PREG_ASIST_BORRARCUENTA, asistido.getAliasU()))
+                        .setPositiveButton(Mensajes.BASIC_SI, (dialog, which) -> {
+                            new UsuarioDAO().delete(asistido.getId(), new com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    //todo
+                                    setupRecyclerView();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    UiUtils.mostrarErrorYReiniciar(requireActivity());
+                                }
+                            });
+                        })
+                        .setNegativeButton(Mensajes.BASIC_NO, null)
+                        .show();
+            }
+
         });
 
         rvUsrsAsist.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
@@ -46,6 +47,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     //Elementos lógica
     private UsuarioDAO usuarioDAO;
+    private Modo modo;
     private int fotoPerfilSel; //foto de perfil seleccionada
     private TipoUsuario tipoUsrSel = null; // selecciontipousr
 
@@ -107,9 +109,11 @@ public class RegistroActivity extends AppCompatActivity {
 
                         // Los usuarios asistidos necesitan más elementos
                         if(tipoUsrSel == TipoUsuario.ASISTIDO){
+                            modo = Modo.ASISTIDO;
                             layoutTutorUsername.setVisibility(View.VISIBLE);
                             layoutTutorPassword.setVisibility(View.VISIBLE);
                         } else { //necesario por si cambia de opción
+                            modo = Modo.ESTANDAR;
                             layoutTutorUsername.setVisibility(View.GONE);
                             layoutTutorPassword.setVisibility(View.GONE);
                         }
@@ -169,7 +173,7 @@ public class RegistroActivity extends AppCompatActivity {
 
         //Creamos el usuario
         Usuario u;
-        if (TipoUsuario.tipoUsrFromString(tipoUsuario) == TipoUsuario.ASISTIDO) {
+        if (modo.equals(Modo.ASISTIDO)) {
             u = new UsuarioAsistido();
         } else {
             u = new UsuarioEstandar();
@@ -193,7 +197,7 @@ public class RegistroActivity extends AppCompatActivity {
                     layoutUsername.setError(Mensajes.ERROR_USUARIO_EXISTE);
                 }
                 else{
-                    if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
+                    if(modo.equals(Modo.ASISTIDO)){
                         registroAsistido((UsuarioAsistido) u);
                     }
                     else{
@@ -275,7 +279,7 @@ public class RegistroActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 progressIndicator.setVisibility(View.GONE);
-                guardarSesion(u); //guardamos la sesión
+                guardarSesion(u, modo); //guardamos la sesión
                 gotoMainActivity();
             }
 
@@ -297,7 +301,7 @@ public class RegistroActivity extends AppCompatActivity {
         usuarioDAO.add(ua, idue, new OnOperationCallback() {
             @Override
             public void onSuccess() {
-                guardarSesion(ua);
+                guardarSesion(ua, modo);
                 gotoMainActivity();
             }
 
@@ -335,11 +339,11 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
 
-    private void guardarSesion(Usuario u){
+    private void guardarSesion(Usuario u, Modo modo){
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
-        editor.putString(Constantes.PERSIST_KEYTIPOUSR, u.getTipoUsuarioStr());
+        editor.putString(Constantes.PERSIST_KEYUSERSELFID, u.getId());
+        editor.putString(Constantes.PERSIST_KEYMODO, modo.toString());
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply();
     }

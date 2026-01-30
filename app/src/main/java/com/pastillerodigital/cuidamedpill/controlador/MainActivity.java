@@ -17,6 +17,7 @@ import com.pastillerodigital.cuidamedpill.controlador.fragments.CalendarioFragme
 import com.pastillerodigital.cuidamedpill.controlador.fragments.HomeFragment;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.MedicamentosFragment;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.PerfilFragment;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
@@ -25,12 +26,15 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navInferior;
     private TipoUsuario tipoUsuario;
 
-    private String uidSelf; //id del usuario
+    private String uidSelf; //id del usuario identidad
+    private String uid; //id del usuario que estamos visualizando (puede ser el self)
 
     private HomeFragment homeFragment;
     private MedicamentosFragment medicamentosFragment;
     private CalendarioFragment calendarioFragment;
     private PerfilFragment perfilFragment;
+
+    private Modo modo;
 
 
     @Override
@@ -42,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         navInferior = findViewById(R.id.bottomNavigation);
         navInferior.setItemIconTintList(null);
-
 
         // Cargamos sesión de sharedPreferences
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
@@ -58,16 +61,19 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        uidSelf = prefs.getString(Constantes.PERSIST_KEYUSERID, null);
-        String tipoStr = prefs.getString(Constantes.PERSIST_KEYTIPOUSR, TipoUsuario.ESTANDAR.name());
-        tipoUsuario = TipoUsuario.tipoUsrFromString(tipoStr);
+        uidSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
+        uid = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, uidSelf);
+        String modoStr = prefs.getString(Constantes.PERSIST_KEYMODO, Modo.ESTANDAR.toString());
+        modo = Modo.modoFromString(modoStr);
+        //todo diferenciar oepraciones con self y uid
+
 
         homeFragment = HomeFragment.newInstance(uidSelf);
         medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
         calendarioFragment = CalendarioFragment.newInstance(uidSelf);
         perfilFragment = PerfilFragment.newInstance(uidSelf);
 
-        if(tipoUsuario == TipoUsuario.ASISTIDO){ //los usuarios asistidos no tienen acceso al perfil
+        if(modo.equals(Modo.ASISTIDO)){ //los usuarios asistidos no tienen acceso al perfil
             Menu menu = navInferior.getMenu();
             MenuItem perfilItem = menu.findItem(R.id.nav_perfil);
             perfilItem.setVisible(false);

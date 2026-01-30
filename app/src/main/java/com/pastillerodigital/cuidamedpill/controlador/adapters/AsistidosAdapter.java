@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,14 @@ import java.util.List;
 public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.AsistidoVH>{
     private List<UsuarioAsistido> lista;
     private OnClickListener listener;
+    private String uidSupervisando = null; // id del asistido actualmente supervisado
 
     public interface OnClickListener {
-        void onClick(UsuarioAsistido ua);
+        void onSupervisar(UsuarioAsistido ua);
+        void onDejarDeSupervisar();
+        void onEditarPerfil(UsuarioAsistido ua);
+        void onCerrarSesion(UsuarioAsistido ua);
+        void onBorrarCuenta(UsuarioAsistido ua);
     }
 
     public AsistidosAdapter(List<UsuarioAsistido> lista, OnClickListener listener) {
@@ -39,8 +45,26 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     public void onBindViewHolder(@NonNull AsistidoVH holder, int position) {
         UsuarioAsistido ua = lista.get(position);
         holder.tvNombre.setText(ua.getAliasU());
-        // holder.imgFoto.setImageResource(...) o Glide
-        holder.btnSupervisar.setOnClickListener(v -> listener.onClick(ua));
+        // todo poner foto
+
+        boolean estaSupervisando = ua.getId().equals(uidSupervisando);
+        holder.btnSupervisar.setText(estaSupervisando ? "Dejar de supervisar" : "Supervisar");
+        holder.layoutOpciones.setVisibility(estaSupervisando ? View.VISIBLE : View.GONE);
+
+        holder.btnSupervisar.setOnClickListener(v -> {
+            if (estaSupervisando) { //si estaba supervisando, deja de hacerlo
+                uidSupervisando = null;
+                listener.onDejarDeSupervisar();
+            } else {
+                uidSupervisando = ua.getId();
+                listener.onSupervisar(ua);
+            }
+            notifyDataSetChanged();
+        });
+
+        holder.btnEditarPerfil.setOnClickListener(v -> listener.onEditarPerfil(ua));
+        holder.btnCerrarSesion.setOnClickListener(v -> listener.onCerrarSesion(ua));
+        holder.btnBorrarCuenta.setOnClickListener(v -> listener.onBorrarCuenta(ua));
     }
 
     @Override
@@ -51,13 +75,18 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     static class AsistidoVH extends RecyclerView.ViewHolder {
         ImageView imgFoto;
         TextView tvNombre;
-        Button btnSupervisar;
+        Button btnSupervisar, btnEditarPerfil, btnCerrarSesion, btnBorrarCuenta;
+        LinearLayout layoutOpciones;
 
         public AsistidoVH(@NonNull View itemView) {
             super(itemView);
             imgFoto = itemView.findViewById(R.id.imgFotoAsistido);
             tvNombre = itemView.findViewById(R.id.tvNombreAsistido);
             btnSupervisar = itemView.findViewById(R.id.btnSupervisar);
+            layoutOpciones = itemView.findViewById(R.id.layoutOpciones);
+            btnEditarPerfil = itemView.findViewById(R.id.btnEditarPerfil);
+            btnCerrarSesion = itemView.findViewById(R.id.btnCerrarSesion);
+            btnBorrarCuenta = itemView.findViewById(R.id.btnBorrarCuenta);
         }
     }
 }

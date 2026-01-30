@@ -14,6 +14,8 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
@@ -135,8 +137,12 @@ public class WelcomeActivity extends AppCompatActivity {
         //preferencias
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit(); //editor necesario para modificar archivo preferencias
-        editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
-        editor.putString(Constantes.PERSIST_KEYTIPOUSR, u.getTipoUsuarioStr());
+        editor.putString(Constantes.PERSIST_KEYUSERSELFID, u.getId());
+        Modo modo = Modo.ESTANDAR;
+        if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
+            modo = Modo.ASISTIDO;
+        }
+        editor.putString(Constantes.PERSIST_KEYMODO, modo.toString());
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply(); //aplica los cambios de forma asíncrona
     }

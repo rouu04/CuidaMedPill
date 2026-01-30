@@ -45,6 +45,17 @@
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
+                <!-- TextView que muestra "Supervisando a: ..." -->
+                <TextView
+                    android:id="@+id/tvSupervisando"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone"
+                    android:layout_marginBottom="8dp"/>
+
             </LinearLayout>
         </LinearLayout>
 

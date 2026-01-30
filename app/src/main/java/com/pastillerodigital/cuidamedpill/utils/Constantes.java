@@ -8,10 +8,9 @@ public class Constantes {
         //PERSISTENCIA SESIÓN
     public static final String PERSIST_NOMBREARCHIVOPREF = "CUIDAMEDPILL_PREFS";
     public static final String PERSIST_KEYUSERID = "USERID";
-    public static final String PERSIST_KEYNOMBREUSER = "NOMBREUSER";
+    public static final String PERSIST_KEYUSERSELFID = "USERSELFID";
     public static final String PERSIST_KEYSESIONACTIVA = "SESIONACTIVA";
-    public static final String PERSIST_KEYTIPOUSR = "TIPOUSR";
-    public static final String PERSIST_KEYFOTOPERFIL = "FOTOPERFIL";
+    public static final String PERSIST_KEYMODO = "MODO";
 
     //----------STORAGE (fotos)
     public static final String STOR_FN_USUARIOS = "usuarios/";
@@ -33,6 +32,10 @@ public class Constantes {
     //ENUMERADOS
     public static final String TIPOUSR_ESTANDAR = "Estándar";
     public static final String TIPOUSR_ASISTIDO = "Asistido";
+    public static final String MODO_ESTANDAR = "Modo Estándar";
+    public static final String MODO_ASISTIDO = "Modo Asistido";
+    public static final String MODO_SUPERVISOR = "Modo Supervisor";
+
 
     //ARGUMENTOS
     public static final String ARG_UID = "uid";
