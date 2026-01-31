@@ -23,6 +23,7 @@ import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -33,7 +34,7 @@ import com.pastillerodigital.cuidamedpill.utils.Utils;
 /**
  * Se usará cuando un tutor quiera añadir o editar un usuario asistido a su cargo
  */
-public class AddAndEditAsistidoFragment extends Fragment {
+public class AddAndEditUsuarioFragment extends Fragment {
 
     // Elementos interfaz
     private LinearLayout formLayout;
@@ -47,22 +48,27 @@ public class AddAndEditAsistidoFragment extends Fragment {
     private UsuarioDAO usuarioDAO;
     private int fotoPerfilSel;
     private String uidSelf, uidAsist;
-    private UsuarioAsistido uaEdit;
-    private boolean valido; //auxiliar para saber si cumple las validaciones para poder editarlo
+    private Usuario uEdit;
+    Modo modo;
 
-    public static AddAndEditAsistidoFragment newInstance(String uidTutor) {
-        AddAndEditAsistidoFragment fragment = new AddAndEditAsistidoFragment();
+
+    //NUEVAS INSTANCIAS
+
+    public static AddAndEditUsuarioFragment newInstance(String uidTutor, Modo modo) {
+        AddAndEditUsuarioFragment fragment = new AddAndEditUsuarioFragment();
         Bundle args = new Bundle();
         args.putString(Constantes.ARG_UIDSELF, uidTutor);
+        args.putString(Constantes.ARG_MODO, modo.toString());
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static AddAndEditAsistidoFragment newInstance(String uidTutor, String uidAsist) {
-        AddAndEditAsistidoFragment fragment = new AddAndEditAsistidoFragment();
+    public static AddAndEditUsuarioFragment newInstance(String uidTutor, String uidAsist, Modo modo) {
+        AddAndEditUsuarioFragment fragment = new AddAndEditUsuarioFragment();
         Bundle args = new Bundle();
         args.putString(Constantes.ARG_UIDSELF, uidTutor);
         args.putString(Constantes.ARG_UID, uidAsist);
+        args.putString(Constantes.ARG_MODO, modo.toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -109,28 +115,34 @@ public class AddAndEditAsistidoFragment extends Fragment {
 
         imgUserPhoto.setOnClickListener(v -> mostrarSelectorAvatares());
         btnGuardar.setOnClickListener(v -> {
-            if(uidAsist == null) registrarAsistido();
-            else actualizarAsistido();
 
+            if(uidAsist == null && modo.equals(Modo.SUPERVISOR)) registrarAsistido();
+            else actualizar();
         });
     }
 
 
 
-    private void cargarAsistido(){
+    private void cargarUsr(String uid){
         progressIndicator.setVisibility(View.VISIBLE);
         progressIndicator.setVisibility(View.VISIBLE);
 
-        usuarioDAO.getBasic(uidAsist, new OnDataLoadedCallback<Usuario>() {
+        usuarioDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario usuario) {
-                uaEdit = (UsuarioAsistido) usuario;
+                uEdit = usuario;
 
-                edtAlias.setText(uaEdit.getAliasU());
-                edtUsername.setText(uaEdit.getNombreUsuario());
+                edtAlias.setText(uEdit.getAliasU());
+                edtUsername.setText(uEdit.getNombreUsuario());
 
-                int resId = getResources().getIdentifier(uaEdit.getFotoPerfil(),Constantes.RES_TIPO,requireContext().getPackageName());
-                imgUserPhoto.setImageResource(resId);
+                int resId = getResources().getIdentifier(uEdit.getFotoPerfil(),Constantes.RES_TIPO,requireContext().getPackageName());
+                if (resId != 0) {
+                    fotoPerfilSel = resId;
+                    imgUserPhoto.setImageResource(resId);
+                } else {
+                    fotoPerfilSel = R.drawable.usuario_fotoperfil_default;
+                    imgUserPhoto.setImageResource(fotoPerfilSel);
+                }
 
                 layoutPassword.setHint(Mensajes.PERF_EDITPASSWD);
 
@@ -203,7 +215,7 @@ public class AddAndEditAsistidoFragment extends Fragment {
         });
     }
 
-    private void actualizarAsistido() {
+    private void actualizar() {
         UiUtils.limpiarErroresLayouts(formLayout);
 
         String alias = edtAlias.getText().toString().trim();
@@ -215,7 +227,7 @@ public class AddAndEditAsistidoFragment extends Fragment {
 
         progressIndicator.setVisibility(View.VISIBLE);
 
-        if(uaEdit.getNombreUsuario().equals(username)){
+        if(uEdit.getNombreUsuario().equals(username)){
             aplicarCambiosYEditar(alias, username, password);
             return;
         }
@@ -239,13 +251,22 @@ public class AddAndEditAsistidoFragment extends Fragment {
     }
 
     //FUNCIONES AUXILIARES
+
+    /**
+     * uidSelf es el que realiza la acción. Si hay uidAsist es que vamos a editarlo. Si no hay uidAsist es
+     * que podría crearse, o si estamos en modo estándar queremos editar el usuario estándar.
+     */
     private void leerArgumentos(){
         if(getArguments() != null){
             uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
             uidAsist = getArguments().getString(Constantes.ARG_UID);
+            modo = Modo.modoFromString(getArguments().getString(Constantes.ARG_MODO));
 
-            if(uidAsist != null){
-                cargarAsistido();
+            if(uidAsist != null && modo == Modo.SUPERVISOR){
+                cargarUsr(uidAsist);
+            }
+            else if(modo == Modo.ESTANDAR){
+                cargarUsr(uidSelf);
             }
         }
     }
@@ -279,19 +300,17 @@ public class AddAndEditAsistidoFragment extends Fragment {
 
     private void aplicarCambiosYEditar(String alias, String username, String password) {
 
-        uaEdit.setAliasU(alias);
-        uaEdit.setNombreUsuario(username);
-        uaEdit.setFotoPerfil(
-                getResources().getResourceEntryName(fotoPerfilSel)
-        );
+        uEdit.setAliasU(alias);
+        uEdit.setNombreUsuario(username);
+        uEdit.setFotoPerfil(getResources().getResourceEntryName(fotoPerfilSel));
 
         if (!TextUtils.isEmpty(password)) {
             String salt = Utils.generarSalt();
-            uaEdit.setSalt(salt);
-            uaEdit.setPasswordHash(Utils.hashPassword(password, salt));
+            uEdit.setSalt(salt);
+            uEdit.setPasswordHash(Utils.hashPassword(password, salt));
         }
 
-        usuarioDAO.edit(uaEdit, new OnOperationCallback() {
+        usuarioDAO.edit(uEdit, new OnOperationCallback() {
             @Override
             public void onSuccess() {
                 progressIndicator.setVisibility(View.GONE);

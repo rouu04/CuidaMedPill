@@ -40,6 +40,7 @@ public class Constantes {
     //ARGUMENTOS
     public static final String ARG_UID = "uid";
     public static final String ARG_UIDSELF = "uidSelf";
+    public static final String ARG_MODO = "Modo";
 
     //OTROS
 

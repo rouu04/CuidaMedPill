@@ -28,6 +28,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
         void onDejarDeSupervisar();
         void onEditarPerfil(UsuarioAsistido ua);
         void onBorrarCuenta(UsuarioAsistido ua);
+        void onDesvincular(UsuarioAsistido ua);
     }
 
     public AsistidosAdapter(List<UsuarioAsistido> lista, OnClickListener listener) {
@@ -74,6 +75,8 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
 
         holder.btnEditarPerfil.setOnClickListener(v -> listener.onEditarPerfil(ua));
         holder.btnBorrarCuenta.setOnClickListener(v -> listener.onBorrarCuenta(ua));
+        holder.btnDesvincular.setOnClickListener(v -> listener.onDesvincular(ua));
+
     }
 
     @Override
@@ -84,7 +87,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     static class AsistidoVH extends RecyclerView.ViewHolder {
         ImageView imgFoto;
         TextView tvNombre;
-        Button btnSupervisar, btnEditarPerfil, btnBorrarCuenta;
+        Button btnSupervisar, btnEditarPerfil, btnDesvincular, btnBorrarCuenta;
         LinearLayout layoutOpciones;
 
         public AsistidoVH(@NonNull View itemView) {
@@ -94,6 +97,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
             btnSupervisar = itemView.findViewById(R.id.btnSupervisar);
             layoutOpciones = itemView.findViewById(R.id.layoutOpciones);
             btnEditarPerfil = itemView.findViewById(R.id.btnEditarPerfilAsist);
+            btnDesvincular = itemView.findViewById(R.id.btnDesvincularAsist);
             btnBorrarCuenta = itemView.findViewById(R.id.btnEliminarCuentaAsist);
         }
     }

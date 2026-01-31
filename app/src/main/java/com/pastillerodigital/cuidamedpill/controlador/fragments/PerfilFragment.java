@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,19 +18,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.WelcomeActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
+import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.List;
 
@@ -43,16 +49,19 @@ public class PerfilFragment extends Fragment {
     private android.widget.ImageView imgFotoPerfil;
     private TextView tvAlias, tvNombreUsr, tvSupervisando;
     private RecyclerView rvUsrsAsist;
-    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta;
-    private LinearLayout layoutNotis;
+    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist, btnRegAsist;
+    private LinearLayout layoutNotis, layoutAddAsist;
+    private TextInputEditText etUa, etPasswdAsist;
+    private TextInputLayout layoutNombreUa, layoutPasswdUa;
 
     //Lógica
-    private String uidSelf;
-    private String uid;
-    UsuarioDAO uDAO;
+    private String uidSelf, uid;
+    private UsuarioDAO uDAO;
     private UsuarioEstandar usrSelf;
     private Modo modo;
     private boolean updateNeeded = false;
+    private int fotoPerfilSel;
+
 
 
     //CREACIONES DEL FRAGMENT
@@ -80,6 +89,7 @@ public class PerfilFragment extends Fragment {
         return fragment;
     }
 
+    //INICIALIZACIONES
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_perfil, container, false);
@@ -89,7 +99,7 @@ public class PerfilFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //Elementos del layout
+        //ELEMENTOS DEL LAYOUT
         imgFotoPerfil = view.findViewById(R.id.imgFotoPerfil);
         tvAlias = view.findViewById(R.id.tvAlias);
         tvNombreUsr = view.findViewById(R.id.tvNombreUsuario);
@@ -101,6 +111,15 @@ public class PerfilFragment extends Fragment {
         btnEditarPerfil = view.findViewById(R.id.btnEditarPerfil);
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
         btnEliminarCuenta = view.findViewById(R.id.btnEliminarCuenta);
+
+        //Elementos de añadir / registrar usuario asistido
+        layoutAddAsist = view.findViewById(R.id.layoutVincularAsistido);
+        etUa = view.findViewById(R.id.etUsuarioAsistido);
+        layoutNombreUa = view.findViewById(R.id.layoutNombreUa);
+        etPasswdAsist = view.findViewById(R.id.etPasswordAsistido);
+        layoutPasswdUa = view.findViewById(R.id.layoutPasswdUa);
+        btnRegAsist = view.findViewById(R.id.btnRegAsist);
+        btnConfirmAddAsist = view.findViewById(R.id.btnConfirmarAddAsistido);
 
         progressPerfil = view.findViewById(R.id.progressPerfil);
         layoutContenido = view.findViewById(R.id.layoutContenido);
@@ -117,20 +136,17 @@ public class PerfilFragment extends Fragment {
         cargarUsuario(uidSelf);
     }
 
-    private void lecturaArgumentos(){
-        if(getArguments() != null){
-            uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
-            uid = getArguments().getString(Constantes.ARG_UID);
-            if(uid == null){
-                uid = uidSelf;
-            }
-            else modo = Modo.SUPERVISOR;
-        }
-    }
 
+    //FUNCIONES BÁSICAS
     private void setButtonListeners(){
         btnAddAsist.setOnClickListener(v -> {
-            AddAndEditAsistidoFragment fragment = AddAndEditAsistidoFragment.newInstance(usrSelf.getId());
+            layoutAddAsist.setVisibility(View.VISIBLE);
+            btnAddAsist.setVisibility(View.GONE);
+
+        });
+
+        btnRegAsist.setOnClickListener(v -> {
+            AddAndEditUsuarioFragment fragment = AddAndEditUsuarioFragment.newInstance(usrSelf.getId(), Modo.SUPERVISOR);
 
             requireActivity()
                     .getSupportFragmentManager()
@@ -140,8 +156,23 @@ public class PerfilFragment extends Fragment {
                     .commit();
         });
 
-        btnEditarPerfil.setOnClickListener(v -> {
+        btnConfirmAddAsist.setOnClickListener(v ->{
+            addAsist();
+        });
 
+        btnEditarPerfil.setOnClickListener(v -> {
+            AddAndEditUsuarioFragment fragment =
+                    AddAndEditUsuarioFragment.newInstance(
+                            uidSelf,
+                            Modo.ESTANDAR
+                    );
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentApp, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
         btnCerrarSesion.setOnClickListener(v -> {
@@ -150,31 +181,7 @@ public class PerfilFragment extends Fragment {
         });
 
         btnEliminarCuenta.setOnClickListener(v -> {
-            new AlertDialog.Builder(requireContext())
-                    .setTitle(Mensajes.PERF_BORRARCUENTA)
-                    .setMessage(Mensajes.PERF_PREG_BORRARCUENTA)
-                    .setPositiveButton(Mensajes.BASIC_ELIMINAR, (d, w) -> {
-                        uDAO.delete((UsuarioEstandar) usrSelf, new OnDataLoadedCallback<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean data) {
-                                if(data){
-                                    UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_BORRARCUENTA);
-                                    cerrarSesion();
-                                    gotoWelcomeActivity();
-                                }
-                                else{
-                                    UiUtils.mostrarNegConfirmacion(requireActivity(), Mensajes.PERF_NEG_BORRARCUENTA_TUTOR);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                UiUtils.mostrarErrorYReiniciar(requireActivity());
-                            }
-                        });
-                    })
-                    .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
-                    .show();
+            borrarCuenta();
         });
     }
 
@@ -228,7 +235,7 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onEditarPerfil(UsuarioAsistido ua) {
                 updateNeeded = true;
-                AddAndEditAsistidoFragment fragment = AddAndEditAsistidoFragment.newInstance(uidSelf, ua.getId());
+                AddAndEditUsuarioFragment fragment = AddAndEditUsuarioFragment.newInstance(uidSelf, ua.getId(), Modo.SUPERVISOR);
 
                 requireActivity()
                         .getSupportFragmentManager()
@@ -270,10 +277,137 @@ public class PerfilFragment extends Fragment {
                         .show();
             }
 
+            /**
+             * Usuario actual dejará de ser tutor de este usuario asistido
+             * @param ua
+             */
+            @Override
+            public void onDesvincular(UsuarioAsistido ua) {
+                if(ua.getIdUsrTutoresAsig().size() == 1){
+                    UiUtils.mostrarNegConfirmacion(requireActivity(), Mensajes.PERF_NEG_DESVINCULAR);
+                    return;
+                }
+                uDAO.desvincular(ua.getId(), usrSelf.getId(), new OnOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_DESVINCULAR);
+                        recargarDatos();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    }
+                });
+            }
         });
 
         rvUsrsAsist.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUsrsAsist.setAdapter(adapter);
+    }
+
+    //--------FUNCIONES AUXILIARES CON GRANDES FUNCIONALIDADES
+
+    private void addAsist(){
+        String nombreU = etUa.getText().toString().trim();
+        String passwd = etPasswdAsist.getText().toString().trim();
+
+        if (nombreU.isEmpty()) {
+            layoutNombreUa.setError(Mensajes.REG_VAL_PUTNOMBREUSR);
+            return;
+        }
+        if(passwd.isEmpty()){
+            layoutPasswdUa.setError(Mensajes.REG_VAL_PUTPASSW);
+            return;
+        }
+
+        //Hay que comprobar que el nombre de usuario existe
+        uDAO.getBasicWithParameter(Constantes.USUARIO_NOMBREUSUARIO, nombreU, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario ua) {
+                if(ua != null){
+                    if(!ua.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
+                        layoutNombreUa.setError(Mensajes.PERF_ERROR_UNOUA);
+                        return;
+                    }
+                    String hashIntroducido = Utils.hashPassword(passwd, ua.getSalt());
+                    if(!hashIntroducido.equals(ua.getPasswordHash())){
+                        layoutPasswdUa.setError(Mensajes.ERROR_USUARIO_CONTRASEÑAINCORRECTA);
+                    }
+
+                    //Existe, actualizamos las listas de ambos
+                    uDAO.vincularAsistATutor(ua.getId(), uidSelf, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            layoutAddAsist.setVisibility(View.GONE);
+                            btnAddAsist.setVisibility(View.VISIBLE);
+                            etUa.setText("");
+                            etPasswdAsist.setText("");
+                            layoutNombreUa.setError(null);
+                            layoutPasswdUa.setError(null);
+
+                            recargarDatos();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+                }
+                else{
+                    layoutNombreUa.setError(Mensajes.ERROR_USUARIO_NOEXISTE);
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void borrarCuenta(){
+        new AlertDialog.Builder(requireContext())
+                .setTitle(Mensajes.PERF_BORRARCUENTA)
+                .setMessage(Mensajes.PERF_PREG_BORRARCUENTA)
+                .setPositiveButton(Mensajes.BASIC_ELIMINAR, (d, w) -> {
+                    uDAO.delete((UsuarioEstandar) usrSelf, new OnDataLoadedCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean data) {
+                            if(data){
+                                UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_BORRARCUENTA);
+                                cerrarSesion();
+                                gotoWelcomeActivity();
+                            }
+                            else{
+                                UiUtils.mostrarNegConfirmacion(requireActivity(), Mensajes.PERF_NEG_BORRARCUENTA_TUTOR);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+                })
+                .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
+                .show();
+    }
+
+
+
+    //---------FUNCIONES AUXILIARES
+    private void lecturaArgumentos(){
+        if(getArguments() != null){
+            uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
+            uid = getArguments().getString(Constantes.ARG_UID);
+            if(uid == null){
+                uid = uidSelf;
+            }
+            else modo = Modo.SUPERVISOR;
+        }
     }
 
 
@@ -311,5 +445,33 @@ public class PerfilFragment extends Fragment {
             mostrarCarga();
             cargarUsuario(uidSelf);
         }
+    }
+
+    /**
+     * Función necesaria cuando haya que recargar cuando el usuario no vaya a viajar entre pantallas
+     */
+    private void recargarDatos(){
+        mostrarCarga();
+        cargarUsuario(uidSelf);
+    }
+
+    private void mostrarSelectorAvatares() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(Mensajes.REG_PUTFOTO);
+
+        GridView gridView = new GridView(requireContext());
+        gridView.setNumColumns(3);
+        gridView.setAdapter(new FotoPerfilAdapter(requireContext(), UiUtils.fotosPerfil));
+
+        builder.setView(gridView);
+        AlertDialog dialog = builder.create();
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            fotoPerfilSel = UiUtils.fotosPerfil[position];
+            imgFotoPerfil.setImageResource(fotoPerfilSel);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }

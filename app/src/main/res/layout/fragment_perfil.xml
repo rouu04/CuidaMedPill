@@ -72,6 +72,7 @@
                 </LinearLayout>
             </LinearLayout>
 
+
             <!-- Separador -->
             <View
                 android:layout_width="match_parent"
@@ -102,6 +103,59 @@
                 android:text="+ Añadir persona asistida"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_marginBottom="16dp"/>
+
+            <!-- Layout para vincular asistido -->
+            <LinearLayout
+                android:id="@+id/layoutVincularAsistido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutNombreUa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de usuario">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUsuarioAsistido"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutPasswdUa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:layout_marginTop="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPasswordAsistido"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Registrar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegAsist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registrar"
+                    android:layout_marginTop="12dp"/>
+
+                <!-- Botón añadir -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnConfirmarAddAsistido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Añadir"
+                    android:layout_marginTop="12dp"/>
+
+            </LinearLayout>
 
             <!-- Notificaciones -->
             <TextView

@@ -232,7 +232,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     /**
      * Añade un usuario asistido al usuario estándar, el usuario estándar será un nuevo tutor del
      * usuario asistido. Los cambios se guardan en la base de datos, el objeto se actualizará en cuando
-     * el tutor realice cualquier app de la aplicación.
+     * el tutor realice cualquier acción de la aplicación.
      * @param idua
      * @param idue
      * @param callback
@@ -244,6 +244,50 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 .update( Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayUnion(idua))
                 .addOnSuccessListener(v -> callback.onSuccess())
                 .addOnFailureListener(callback::onFailure);
+    }
+
+
+    /**
+     * Actualiza tanto la lista de asistido como la del tutor. Se usará cuando un tutor añada a un asistido que ya
+     * existe
+     * @param idua
+     * @param idue
+     * @param callback
+     */
+    public void vincularAsistATutor(String idua, String idue, OnOperationCallback callback){
+        db.collection(collectionName)
+                .document(idua)
+                .update( Constantes.USUARIO_ASIST_IDUSRTUTORESASIG, FieldValue.arrayUnion(idue))
+                .addOnSuccessListener(v ->{
+                    db.collection(collectionName)
+                            .document(idue)
+                            .update( Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayUnion(idua))
+                            .addOnSuccessListener(vo -> callback.onSuccess())
+                            .addOnFailureListener(callback::onFailure);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    /**
+     * Desvincula un asistido de un tutor
+     * @param idua
+     * @param idue
+     * @param callback
+     */
+    public void desvincular(String idua, String idue, OnOperationCallback callback){
+        db.collection(collectionName)
+                .document(idua)
+                .update(Constantes.USUARIO_ASIST_IDUSRTUTORESASIG, FieldValue.arrayRemove(idue))
+                .addOnSuccessListener(v -> {
+                    db.collection(collectionName)
+                            .document(idue)
+                            .update(Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayRemove(idua))
+                            .addOnSuccessListener(vo -> callback.onSuccess())
+                            .addOnFailureListener(callback::onFailure);
+
+                })
+                .addOnFailureListener(callback::onFailure);
+
     }
 
     /**
