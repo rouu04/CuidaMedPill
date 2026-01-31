@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
-import com.pastillerodigital.cuidamedpill.controlador.WelcomeActivity;
+import com.pastillerodigital.cuidamedpill.controlador.activities.WelcomeActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
@@ -52,6 +52,7 @@ public class PerfilFragment extends Fragment {
     UsuarioDAO uDAO;
     private UsuarioEstandar usrSelf;
     private Modo modo;
+    private boolean updateNeeded = false;
 
 
     //CREACIONES DEL FRAGMENT
@@ -129,7 +130,7 @@ public class PerfilFragment extends Fragment {
 
     private void setButtonListeners(){
         btnAddAsist.setOnClickListener(v -> {
-            RegistroAsistidoFragment fragment = RegistroAsistidoFragment.newInstance(usrSelf.getId());
+            AddAndEditAsistidoFragment fragment = AddAndEditAsistidoFragment.newInstance(usrSelf.getId());
 
             requireActivity()
                     .getSupportFragmentManager()
@@ -140,7 +141,7 @@ public class PerfilFragment extends Fragment {
         });
 
         btnEditarPerfil.setOnClickListener(v -> {
-            // todo editar perfil
+
         });
 
         btnCerrarSesion.setOnClickListener(v -> {
@@ -225,13 +226,16 @@ public class PerfilFragment extends Fragment {
             }
 
             @Override
-            public void onEditarPerfil(UsuarioAsistido asistido) {
-                // TODO: abrir fragmento de edición del asistido
-            }
+            public void onEditarPerfil(UsuarioAsistido ua) {
+                updateNeeded = true;
+                AddAndEditAsistidoFragment fragment = AddAndEditAsistidoFragment.newInstance(uidSelf, ua.getId());
 
-            @Override
-            public void onCerrarSesion(UsuarioAsistido asistido) {
-                // TODO: cerrar sesión asistido
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentApp, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override
@@ -293,5 +297,19 @@ public class PerfilFragment extends Fragment {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //para que no pueda volver atrás
         startActivity(intent);
         requireActivity().finish();
+    }
+
+    /**
+     * Para que se actualicen las listas cuando vuelve a la interfaz
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (updateNeeded) {
+            updateNeeded = false;
+            mostrarCarga();
+            cargarUsuario(uidSelf);
+        }
     }
 }

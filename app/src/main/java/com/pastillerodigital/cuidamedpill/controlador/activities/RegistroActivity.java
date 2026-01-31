@@ -1,4 +1,4 @@
-package com.pastillerodigital.cuidamedpill.controlador;
+package com.pastillerodigital.cuidamedpill.controlador.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

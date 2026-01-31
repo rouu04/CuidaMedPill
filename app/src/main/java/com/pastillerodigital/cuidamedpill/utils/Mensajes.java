@@ -11,6 +11,7 @@ public class Mensajes {
     public static final String BASIC_ACEPTAR = "Aceptar";
     public static final String BASIC_CANCELAR = "Cancelar";
     public static final String BASIC_ELIMINAR = "Eliminar";
+    public static final String BASIC_GUARDAR = "Guardar";
     public static final String BASIC_CONFIRMACION = "Acción realizada correctamente";
     public static final String BASIC_NEG_CONFIRMACION = "La acción no se ha podido realizar";
 
@@ -18,6 +19,8 @@ public class Mensajes {
     //-------------ERROR
     public static final String ERROR_HAYERROR = "Ha ocurrido un problema inesperado";
     public static final String ERROR_REINTENTAR = "No se ha podido realizar la operación. Por favor, inténtalo otra vez";
+
+        //USUARIO
     public static final String ERROR_USUARIO_NOEXISTE = "No existe ningún usuario con ese nombre de usuario";
     public static final String ERROR_USUARIO_EXISTE = "Ya existe un usuario con ese nombre, por favor prueba con otro";
     public static final String ERROR_USUARIO_CONTRASEÑAINCORRECTA = "La contraseña es incorrecta, inténtelo de nuevo";
@@ -41,7 +44,7 @@ public class Mensajes {
 
     public static final String REG_VAL_PUTUSUARIOTUTOR= "Introduce el nombre de usuario de la persona que te ayudará con la medicación";
     public static final String REG_VAL_PUTUSUARIOTUTORPASSWD = "Introduce la contraseña de la persona que te ayudará con la aplicación";
-
+    public static final String USR_VAL_PUTCONFPASSWD = "Confirma la contraseña, vuelve a escribirla";
     //PERFIL
     public static final String PERF_ASIST_SUPERVISANDO = "Supervisando a: %s";
     public static final String PERF_BORRARCUENTA = "Borrar cuenta";
@@ -50,6 +53,7 @@ public class Mensajes {
 
     public static final String PERF_CONF_BORRARCUENTA = "El perfil ha sido eliminado correctamente";
     public static final String PERF_NEG_BORRARCUENTA_TUTOR = "El perfil no puede eliminarse si tiene usuarios asistidos que cuentan solo con su ayuda";
+    public static final String PERF_EDITPASSWD = "Puede cambiar su contraseña";
 
 
     //------------EXCEPCIONES

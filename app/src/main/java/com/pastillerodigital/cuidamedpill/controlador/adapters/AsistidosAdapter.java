@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.AsistidoVH>{
     private List<UsuarioAsistido> lista;
@@ -25,7 +27,6 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
         void onSupervisar(UsuarioAsistido ua);
         void onDejarDeSupervisar();
         void onEditarPerfil(UsuarioAsistido ua);
-        void onCerrarSesion(UsuarioAsistido ua);
         void onBorrarCuenta(UsuarioAsistido ua);
     }
 
@@ -45,7 +46,16 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     public void onBindViewHolder(@NonNull AsistidoVH holder, int position) {
         UsuarioAsistido ua = lista.get(position);
         holder.tvNombre.setText(ua.getAliasU());
-        // todo poner foto
+        //Cargar foto de perfil:
+        String nombreDrawable = ua.getFotoPerfil();
+        int resId = holder.itemView.getContext().getResources().getIdentifier(nombreDrawable, Constantes.RES_TIPO,
+                        holder.itemView.getContext().getPackageName());
+
+        if (resId != 0) {
+            holder.imgFoto.setImageResource(resId);
+        } else {
+            holder.imgFoto.setImageResource(R.drawable.usuario_fotoperfil_default);
+        }
 
         boolean estaSupervisando = ua.getId().equals(uidSupervisando);
         holder.btnSupervisar.setText(estaSupervisando ? "Dejar de supervisar" : "Supervisar");
@@ -63,7 +73,6 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
         });
 
         holder.btnEditarPerfil.setOnClickListener(v -> listener.onEditarPerfil(ua));
-        holder.btnCerrarSesion.setOnClickListener(v -> listener.onCerrarSesion(ua));
         holder.btnBorrarCuenta.setOnClickListener(v -> listener.onBorrarCuenta(ua));
     }
 
@@ -75,7 +84,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     static class AsistidoVH extends RecyclerView.ViewHolder {
         ImageView imgFoto;
         TextView tvNombre;
-        Button btnSupervisar, btnEditarPerfil, btnCerrarSesion, btnBorrarCuenta;
+        Button btnSupervisar, btnEditarPerfil, btnBorrarCuenta;
         LinearLayout layoutOpciones;
 
         public AsistidoVH(@NonNull View itemView) {
@@ -84,9 +93,8 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
             tvNombre = itemView.findViewById(R.id.tvNombreAsistido);
             btnSupervisar = itemView.findViewById(R.id.btnSupervisar);
             layoutOpciones = itemView.findViewById(R.id.layoutOpciones);
-            btnEditarPerfil = itemView.findViewById(R.id.btnEditarPerfil);
-            btnCerrarSesion = itemView.findViewById(R.id.btnCerrarSesion);
-            btnBorrarCuenta = itemView.findViewById(R.id.btnBorrarCuenta);
+            btnEditarPerfil = itemView.findViewById(R.id.btnEditarPerfilAsist);
+            btnBorrarCuenta = itemView.findViewById(R.id.btnEliminarCuentaAsist);
         }
     }
 }

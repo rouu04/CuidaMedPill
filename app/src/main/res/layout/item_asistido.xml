@@ -33,14 +33,12 @@
                 android:src="@drawable/usuario_fotoperfil_default"
                 android:scaleType="centerCrop"
                 android:contentDescription="Foto asistido"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clipToOutline="true" />
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <TextView
                 android:id="@+id/tvNombreAsistido"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="AliasAsistido"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="?attr/colorOnSurface" />
@@ -64,7 +62,7 @@
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditarPerfil"
+                android:id="@+id/btnEditarPerfilAsist"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,15 +70,7 @@
                 android:textAllCaps="false" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCerrarSesion"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cerrar sesión"
-                android:textAllCaps="false" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBorrarCuenta"
+                android:id="@+id/btnEliminarCuentaAsist"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

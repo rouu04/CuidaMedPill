@@ -14,7 +14,7 @@
 
         <!-- MainActivity, actividad principal de la app -->
         <activity
-            android:name=".controlador.MainActivity"
+            android:name=".controlador.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,12 +32,12 @@
 
         <!-- WelcomeActivity, registro o inicio de sesion  -->
         <activity
-            android:name=".controlador.WelcomeActivity"
+            android:name=".controlador.activities.WelcomeActivity"
             android:exported="false"/>
 
         <!-- RegistroActivity, registro -->
         <activity
-            android:name=".controlador.RegistroActivity"
+            android:name=".controlador.activities.RegistroActivity"
             android:exported="false" />
 
 
