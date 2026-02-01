@@ -3,6 +3,11 @@
 
     <string name="content_desc_logo">Logo de CuidaMedPill</string>
 
+    <!-- BASICOS -->
+    <string name="basic_hint_add">Añadir</string>
+    <string name="basic_hint_editar">Editar</string>
+
+
     <!-- WelcomeActivity (inicio de sesión o registro) y RegistroActivity -->
     <string name="hint_nombreusr">Nombre de usuario</string>
     <string name="hint_passwd">Contraseña</string>
@@ -23,6 +28,15 @@
     <string name="text_error_fotousr">Error al subir la foto</string>
     <string name="text_error_selecciona_tipousr">Por favor selecciona un tipo de usuario</string>
 
+
+    <!-- PERFIL -->
+    <string name="hint_asist_asig">Personas que asistes</string>
+    <string name="hint_asist_add">+</string>
+
+    <string name="button_cerrarsesion">Cerrar sesión</string>
+    <string name="button_eliminar_cuenta">Eliminar cuenta</string>
+
+    <string name="text_title_notisgen">Notificaciones generales</string>
 
 
 

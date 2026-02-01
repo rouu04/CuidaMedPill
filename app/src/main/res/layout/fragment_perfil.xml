@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:padding="16dp">
+        android:padding="@dimen/padding_scroll">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,13 +28,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_top"
                 android:gravity="center_vertical">
 
                 <ImageView
                     android:id="@+id/imgFotoPerfil"
                     android:src="@drawable/usuario_fotoperfil_default"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="@dimen/size_image_width"
+                    android:layout_height="@dimen/size_image_height"
                     android:layout_marginEnd="16dp" />
 
                 <LinearLayout
@@ -47,14 +48,14 @@
                         android:id="@+id/tvAlias"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="AliasUsuario"
+                        android:text="@string/hint_alias"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
                     <TextView
                         android:id="@+id/tvNombreUsuario"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="NombreUsuario"
+                        android:text="@string/hint_nombreusr"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -78,14 +79,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="?attr/colorOutline"
-                android:layout_marginVertical="16dp"/>
+                android:layout_marginVertical="@dimen/section_separator_mini"/>
 
             <!-- Personas asistidas -->
             <TextView
                 android:id="@+id/tvTituloAsistidos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Personas asistidas asignadas a ti"
+                android:text="@string/hint_asist_asig"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginBottom="8dp" />
 
@@ -101,7 +102,7 @@
                 android:id="@+id/btnAddAsistido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+ Añadir persona asistida"
+                android:text="@string/hint_asist_add"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_marginBottom="16dp"/>
 
@@ -118,7 +119,7 @@
                     android:id="@+id/layoutNombreUa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nombre de usuario">
+                    android:hint="@string/hint_nombreusr">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etUsuarioAsistido"
@@ -130,7 +131,7 @@
                     android:id="@+id/layoutPasswdUa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Contraseña"
+                    android:hint="@string/hint_passwd"
                     android:layout_marginTop="8dp">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -140,20 +141,20 @@
                         android:inputType="textPassword"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Registrar -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRegAsist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Registrar"
-                    android:layout_marginTop="12dp"/>
-
                 <!-- Botón añadir -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnConfirmarAddAsistido"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Añadir"
+                    android:text="@string/basic_hint_add"
+                    android:layout_marginTop="12dp"/>
+
+                <!-- Registrar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegAsist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_registro"
                     android:layout_marginTop="12dp"/>
 
             </LinearLayout>
@@ -163,7 +164,7 @@
                 android:id="@+id/tvTituloNotificaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Notificaciones generales"
+                android:text="@string/text_title_notisgen"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginBottom="8dp" />
 
@@ -189,24 +190,24 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Editar"
+                android:text="@string/basic_hint_editar"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_editar"
                 app:iconGravity="textStart"
-                app:iconPadding="8dp"/>
+                app:iconPadding="@dimen/padding_icon"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCerrarSesion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cerrar sesión"
+                android:text="@string/button_cerrarsesion"
                 android:textAllCaps="false"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEliminarCuenta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Eliminar cuenta"
+                android:text="@string/button_eliminar_cuenta"
                 android:textAllCaps="false"
                 android:textColor="@color/md_error"
                 app:strokeColor="@color/md_error"/>

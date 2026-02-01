@@ -19,8 +19,8 @@
         <ImageView
             android:id="@+id/imgLogo"
             android:src="@drawable/logo"
-            android:layout_width="@dimen/size_image_width"
-            android:layout_height="@dimen/size_image_height"
+            android:layout_width="@dimen/size_image_big_width"
+            android:layout_height="@dimen/size_image_big_height"
             android:layout_marginTop="@dimen/margin_top_logo"
             android:contentDescription="@string/content_desc_logo"/>
 

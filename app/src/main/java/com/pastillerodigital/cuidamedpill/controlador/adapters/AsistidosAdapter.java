@@ -60,7 +60,8 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
 
         boolean estaSupervisando = ua.getId().equals(uidSupervisando);
         holder.btnSupervisar.setText(estaSupervisando ? "Dejar de supervisar" : "Supervisar");
-        holder.layoutOpciones.setVisibility(estaSupervisando ? View.VISIBLE : View.GONE);
+        holder.layoutOpciones.setVisibility(View.GONE);
+
 
         holder.btnSupervisar.setOnClickListener(v -> {
             if (estaSupervisando) { //si estaba supervisando, deja de hacerlo
@@ -71,6 +72,14 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
                 listener.onSupervisar(ua);
             }
             notifyDataSetChanged();
+        });
+
+        holder.btnAjustes.setOnClickListener(v -> {
+            if (holder.layoutOpciones.getVisibility() == View.VISIBLE) {
+                holder.layoutOpciones.setVisibility(View.GONE);
+            } else {
+                holder.layoutOpciones.setVisibility(View.VISIBLE);
+            }
         });
 
         holder.btnEditarPerfil.setOnClickListener(v -> listener.onEditarPerfil(ua));
@@ -87,7 +96,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
     static class AsistidoVH extends RecyclerView.ViewHolder {
         ImageView imgFoto;
         TextView tvNombre;
-        Button btnSupervisar, btnEditarPerfil, btnDesvincular, btnBorrarCuenta;
+        Button btnSupervisar, btnAjustes, btnEditarPerfil, btnDesvincular, btnBorrarCuenta;
         LinearLayout layoutOpciones;
 
         public AsistidoVH(@NonNull View itemView) {
@@ -95,6 +104,7 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
             imgFoto = itemView.findViewById(R.id.imgFotoAsistido);
             tvNombre = itemView.findViewById(R.id.tvNombreAsistido);
             btnSupervisar = itemView.findViewById(R.id.btnSupervisar);
+            btnAjustes = itemView.findViewById(R.id.btnOpciones);
             layoutOpciones = itemView.findViewById(R.id.layoutOpciones);
             btnEditarPerfil = itemView.findViewById(R.id.btnEditarPerfilAsist);
             btnDesvincular = itemView.findViewById(R.id.btnDesvincularAsist);
