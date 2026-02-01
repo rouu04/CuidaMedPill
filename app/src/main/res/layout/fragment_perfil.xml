@@ -93,7 +93,8 @@
                 android:id="@+id/rvPersonasAsistidas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="ifContentScrolls"
                 android:layout_marginBottom="8dp" />
 
             <com.google.android.material.button.MaterialButton

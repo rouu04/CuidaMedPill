@@ -15,6 +15,7 @@
         <!-- MainActivity, actividad principal de la app -->
         <activity
             android:name=".controlador.activities.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
