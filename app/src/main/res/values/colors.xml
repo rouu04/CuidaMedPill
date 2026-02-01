@@ -4,6 +4,7 @@
     <color name="md_primary">#00A09D</color>        <!-- Color principal -->
     <color name="md_primary_dark">#005052</color>
     <color name="md_secondary">#97F6DD</color>
+    <color name="md_third">#03C8C5</color>
 
     <!--
     Favoritos:
@@ -17,9 +18,11 @@
 
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_black">#000000</color>
     <color name="md_on_background">#7E8E8C</color>
     <color name="md_on_surface">#515152</color>
 
     <!-- Errores -->
     <color name="md_error">#B00020</color>
+    <color name="md_error_on_primary">#B00020</color>
 </resources>

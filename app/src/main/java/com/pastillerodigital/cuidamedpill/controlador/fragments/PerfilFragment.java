@@ -49,7 +49,7 @@ public class PerfilFragment extends Fragment {
     private android.widget.ImageView imgFotoPerfil;
     private TextView tvAlias, tvNombreUsr, tvSupervisando;
     private RecyclerView rvUsrsAsist;
-    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist, btnRegAsist;
+    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist, btnRegAsist, btnCancelarAddAsist;
     private LinearLayout layoutNotis, layoutAddAsist;
     private TextInputEditText etUa, etPasswdAsist;
     private TextInputLayout layoutNombreUa, layoutPasswdUa;
@@ -114,6 +114,7 @@ public class PerfilFragment extends Fragment {
 
         //Elementos de añadir / registrar usuario asistido
         layoutAddAsist = view.findViewById(R.id.layoutVincularAsistido);
+        btnCancelarAddAsist = view.findViewById(R.id.btnCancelarAddAsistido);
         etUa = view.findViewById(R.id.etUsuarioAsistido);
         layoutNombreUa = view.findViewById(R.id.layoutNombreUa);
         etPasswdAsist = view.findViewById(R.id.etPasswordAsistido);
@@ -182,6 +183,17 @@ public class PerfilFragment extends Fragment {
 
         btnEliminarCuenta.setOnClickListener(v -> {
             borrarCuenta();
+        });
+
+        btnCancelarAddAsist.setOnClickListener(v -> {
+            layoutAddAsist.setVisibility(View.GONE);
+            btnAddAsist.setVisibility(View.VISIBLE);
+
+            // Se limpian los campos y errores
+            etUa.setText("");
+            etPasswdAsist.setText("");
+            layoutNombreUa.setError(null);
+            layoutPasswdUa.setError(null);
         });
     }
 

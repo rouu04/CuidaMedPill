@@ -36,7 +36,7 @@
                     android:src="@drawable/usuario_fotoperfil_default"
                     android:layout_width="@dimen/size_image_width"
                     android:layout_height="@dimen/size_image_height"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="@dimen/margin_end" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -68,9 +68,22 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:visibility="gone"
-                        android:layout_marginBottom="8dp"/>
+                        android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
                 </LinearLayout>
+
+                <!-- BOTÓN EDITAR PERFIL -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditarPerfil"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basic_hint_editar"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_editar"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/padding_icon"/>
+
             </LinearLayout>
 
 
@@ -87,8 +100,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hint_asist_asig"
+                android:textStyle="bold"
+                android:textColor="@color/md_primary_dark"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="@dimen/margin_bottom_element" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPersonasAsistidas"
@@ -96,15 +111,18 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="true"
                 android:overScrollMode="ifContentScrolls"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="@dimen/margin_bottom_element"  />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddAsistido"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hint_asist_add"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_marginBottom="16dp"/>
+                android:layout_gravity="start"
+                android:layout_marginBottom="@dimen/margin_bottom_element"
+                android:layout_marginStart="@dimen/margin_start_aux_button"/>
+
 
             <!-- Layout para vincular asistido -->
             <LinearLayout
@@ -113,7 +131,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="@dimen/margin_top_element">
+
+                <TextView
+                    android:text="@string/text_hint_add_asist"
+                    android:layout_marginTop="@dimen/margin_elements_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/md_on_background"
+                    android:textSize="@dimen/text_hint_size"/>
+
+                <!-- Botón cancelar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelarAddAsistido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:text="@string/basic_button_cancelar"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layoutNombreUa"
@@ -132,7 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_passwd"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="@dimen/margin_top_element">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordAsistido"
@@ -146,18 +182,28 @@
                     android:id="@+id/btnConfirmarAddAsistido"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/basic_hint_add"
-                    android:layout_marginTop="12dp"/>
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:text="@string/hint_asist_add"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
 
                 <!-- Registrar -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRegAsist"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_registro"
-                    android:layout_marginTop="12dp"/>
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_gravity="end"
+                    android:text="@string/button_asist_registro"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
 
             </LinearLayout>
+
+            <!-- Separador -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="?attr/colorOutline"
+                android:layout_marginVertical="@dimen/section_separator_mini"/>
 
             <!-- Notificaciones -->
             <TextView
@@ -166,7 +212,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_title_notisgen"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_marginBottom="8dp" />
+                android:textStyle="bold"
+                android:textColor="@color/md_primary_dark"
+                android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
             <LinearLayout
                 android:id="@+id/layoutNotificaciones"
@@ -184,34 +232,45 @@
 
             </LinearLayout>
 
-            <!-- BOTÓN EDITAR PERFIL -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditarPerfil"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+            <!-- Separador -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="?attr/colorOutline"
+                android:layout_marginVertical="@dimen/section_separator_mini"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/basic_hint_editar"
-                android:textAllCaps="false"
-                app:icon="@drawable/ic_editar"
-                app:iconGravity="textStart"
-                app:iconPadding="@dimen/padding_icon"/>
+                android:text="@string/text_title_opciones"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textStyle="bold"
+                android:textColor="@color/md_primary_dark"
+                android:layout_marginBottom="@dimen/margin_bottom_element"/>
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCerrarSesion"
-                android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_cerrarsesion"
-                android:textAllCaps="false"/>
+                android:textAllCaps="false"
+                android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEliminarCuenta"
-                android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_eliminar_cuenta"
                 android:textAllCaps="false"
-                android:textColor="@color/md_error"
+                android:textColor="@color/md_error_on_primary"
+                app:icon="@drawable/ic_basura"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/padding_icon"
+                app:iconTint="@color/md_error_on_primary"
                 app:strokeColor="@color/md_error"/>
-
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

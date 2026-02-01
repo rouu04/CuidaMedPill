@@ -6,6 +6,7 @@
     <!-- BASICOS -->
     <string name="basic_hint_add">Añadir</string>
     <string name="basic_hint_editar">Editar</string>
+    <string name="basic_button_cancelar">Cancelar</string>
 
 
     <!-- WelcomeActivity (inicio de sesión o registro) y RegistroActivity -->
@@ -31,12 +32,21 @@
 
     <!-- PERFIL -->
     <string name="hint_asist_asig">Personas que asistes</string>
-    <string name="hint_asist_add">+</string>
+    <string name="hint_asist_add">+ Vincular</string>
+    <string name="hint_asist_foto">Foto del asistido</string>
+    <string name="hint_asist_alias">Alias del asistido</string>
+    <string name="hint_supervisar">Supervisar</string>
 
     <string name="button_cerrarsesion">Cerrar sesión</string>
     <string name="button_eliminar_cuenta">Eliminar cuenta</string>
+    <string name="button_perf_editar">Editar perfil</string>
+    <string name="button_perf_desvincular">Desvincular</string>
+    <string name="button_asist_registro">Registrar</string>
+    <string name="button_asist_add">Vincular</string>
 
     <string name="text_title_notisgen">Notificaciones generales</string>
+    <string name="text_title_opciones">Opciones</string>
+    <string name="text_hint_add_asist">Vincula un usuario asistido existente. Si el asistido no tiene cuenta, puedes registrarlo</string>
 
 
 

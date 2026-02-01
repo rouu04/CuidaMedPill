@@ -5,10 +5,10 @@
     android:id="@+id/cardAsistido"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="6dp"
-    android:layout_marginHorizontal="8dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginVertical="@dimen/margin_vertical"
+    android:layout_marginHorizontal="@dimen/margin_horizontal"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardCornerRadius="@dimen/card_cornerradious"
     app:strokeColor="?attr/colorOutline"
     app:strokeWidth="1dp">
 
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="@dimen/padding_scroll">
 
         <!-- Fila principal: foto, nombre y botón supervisar -->
         <LinearLayout
@@ -27,19 +27,19 @@
 
             <ImageView
                 android:id="@+id/imgFotoAsistido"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginEnd="12dp"
+                android:layout_width="@dimen/size_image_mini_width"
+                android:layout_height="@dimen/size_image_mini_height"
+                android:layout_marginEnd="@dimen/margin_end"
                 android:src="@drawable/usuario_fotoperfil_default"
                 android:scaleType="centerCrop"
-                android:contentDescription="Foto asistido"
+                android:contentDescription="@string/hint_asist_foto"
                 android:background="?attr/selectableItemBackgroundBorderless" />
 
             <TextView
                 android:id="@+id/tvNombreAsistido"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AliasAsistido"
+                android:text="@string/hint_asist_alias"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="?attr/colorOnSurface" />
         </LinearLayout>
@@ -50,25 +50,32 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="@dimen/margin_top_element">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSupervisar"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Supervisar"
+                android:backgroundTint="@color/md_third"
+                android:text="@string/hint_supervisar"
                 android:textAllCaps="false" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnOpciones"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_third"
                 app:icon="@drawable/ic_ajustes"
-                app:iconTint="?attr/colorOnSurface"
-                android:contentDescription="Opciones"
-                android:layout_marginStart="8dp" />
+                android:contentDescription="@string/text_title_opciones"
+                android:layout_marginStart="@dimen/margin_start_element"
+                android:layout_marginEnd="@dimen/margin_end_element"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:text=""
+                android:padding="@dimen/padding_icon_mini"/>
+
         </LinearLayout>
 
         <!-- Layout de opciones oculto -->
@@ -77,32 +84,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="8dp"
+            android:paddingTop="@dimen/padding_top"
+            android:gravity="start"
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditarPerfilAsist"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Editar perfil"
+                android:layout_gravity="start"
+                android:text="@string/button_perf_editar"
+                android:backgroundTint="@color/md_background"
+                android:textColor="@color/md_black"
                 android:textAllCaps="false" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDesvincularAsist"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Desvincular usuario asistido de mi cuenta"
+                android:layout_gravity="start"
+                android:text="@string/button_perf_desvincular"
+                android:textColor="@color/md_black"
+                android:backgroundTint="@color/md_background"
                 android:textAllCaps="false" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEliminarCuentaAsist"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Borrar cuenta"
+                android:layout_gravity="start"
+                android:text="@string/button_eliminar_cuenta"
                 android:textAllCaps="false"
+                android:backgroundTint="@color/md_background"
                 android:textColor="@color/md_error" />
         </LinearLayout>
 

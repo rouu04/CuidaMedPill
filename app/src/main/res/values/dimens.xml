@@ -3,22 +3,41 @@
     <dimen name="padding_general">24dp</dimen>
     <dimen name="padding_scroll">12dp</dimen>
     <dimen name="padding_icon">8dp</dimen>
+    <dimen name="padding_icon_mini">6dp</dimen>
+    <dimen name="padding_top">8dp</dimen>
 
     <dimen name="size_image_big_width">120dp</dimen>
     <dimen name="size_image_big_height">120dp</dimen>
-    <dimen name="size_image_width">80dp</dimen>
-    <dimen name="size_image_height">80dp</dimen>
+    <dimen name="size_image_width">100dp</dimen>
+    <dimen name="size_image_height">100dp</dimen>
+    <dimen name="size_image_mini_width">70dp</dimen>
+    <dimen name="size_image_mini_height">70dp</dimen>
 
     <dimen name="margin_top_logo">64dp</dimen>
     <dimen name="margin_elements_layout">8dp</dimen> <!-- Márgenes en el top entre elementos -->
-    <dimen name="margin_elements_buttons">24dp</dimen> <!-- Márgenes en el top entre elementos -->
+    <dimen name="margin_elements_buttons">24dp</dimen>
     <dimen name="margin_error">4dp</dimen>
+
+    <dimen name="margin_start_aux_button">12dp</dimen>
 
     <dimen name="margin_bottom">55dp</dimen>
     <dimen name="margin_top">24dp</dimen>
+    <dimen name="margin_start">16dp</dimen>
+    <dimen name="margin_end">16dp</dimen>
+    <dimen name="margin_bottom_element">8dp</dimen>
+    <dimen name="margin_top_element">8dp</dimen>
+    <dimen name="margin_start_element">8dp</dimen>
+    <dimen name="margin_end_element">8dp</dimen>
+    <dimen name="margin_vertical">6dp</dimen>
+    <dimen name="margin_horizontal">8dp</dimen>
+
 
     <dimen name="width_0">0dp</dimen>
     <dimen name="weight_1">1dp</dimen>
+
+    <!-- Card views -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_cornerradious">12dp</dimen>
 
     <dimen name="section_separator">60dp</dimen> <!-- Separación por ej entre logo y form -->
     <dimen name="section_separator_big">80dp</dimen> <!-- Separación por ej entre registro y log in -->
@@ -27,6 +46,8 @@
     <!-- Size de textos -->
     <dimen name="text_hint_size">13sp</dimen>
     <dimen name="text_secondary_button_size">11sp</dimen>
+
+    <dimen name="button_size_icon">48dp</dimen>
 
 
     <dimen name="progress_indicator_size">48dp</dimen>
