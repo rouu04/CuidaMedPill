@@ -1,26 +1,32 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 /**
-Clase abstracta que implementa el dao y hará las funciones generales
+ * Clase del dao abstracta de una subcolección. Aunque la funcionalidad es parecida a la del AbstractDAO
+ * es necesaria por firebase porque necesita saber la ubicación en las colecciones.
  */
-public abstract class AbstractDAO<T extends Persistible> extends GeneralDAO<T> implements DAO<T>{
+public abstract class AbstractDAOSubcol<T extends Persistible> extends GeneralDAO<T> implements DAO<T> {
 
-    public AbstractDAO() {
+    protected String subColName;
+    protected String idCollection; //el id del elemento de la colección padre
+    public AbstractDAOSubcol(){
         super();
     }
 
+    protected abstract void setSubColName();
+    protected abstract void setIdCollection(String id);
+
     /**
-    Función que añade un elemento a la coleccion. Cada objeto debería preguntar si existe en función
-    de sus restricciones.
+     Función que añade un elemento a la coleccion. Cada objeto debería preguntar si existe en función
+     de sus restricciones.
      */
     @Override
     public void add(T obj, OnOperationCallback callback) {
         db.collection(this.collectionName)
+                .document(this.idCollection)
+                .collection(this.subColName)
                 .add(obj)
                 .addOnSuccessListener(documentReference -> {
                     obj.setId(documentReference.getId());
@@ -30,7 +36,7 @@ public abstract class AbstractDAO<T extends Persistible> extends GeneralDAO<T> i
     }
 
     /**
-    Usamos set, que reemplaza el documento con el id por el nuevo que le pasamos
+     Usamos set, que reemplaza el documento con el id por el nuevo que le pasamos
      */
     @Override
     public void edit(T nuevo, OnOperationCallback callback) {
@@ -41,10 +47,12 @@ public abstract class AbstractDAO<T extends Persistible> extends GeneralDAO<T> i
         }
 
         db.collection(collectionName)
-            .document(id)
-            .set(nuevo)
-            .addOnSuccessListener(v -> callback.onSuccess())
-            .addOnFailureListener(callback::onFailure);
+                .document(this.idCollection)
+                .collection(this.subColName)
+                .document(id)
+                .set(nuevo)
+                .addOnSuccessListener(v -> callback.onSuccess())
+                .addOnFailureListener(callback::onFailure);
     }
 
     @Override
@@ -55,6 +63,8 @@ public abstract class AbstractDAO<T extends Persistible> extends GeneralDAO<T> i
         }
 
         db.collection(collectionName)
+                .document(this.idCollection)
+                .collection(this.subColName)
                 .document(id)
                 .delete()
                 .addOnSuccessListener(v -> callback.onSuccess())

@@ -3,7 +3,7 @@ package com.pastillerodigital.cuidamedpill.modelo.usuario;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
-import com.pastillerodigital.cuidamedpill.modelo.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNotificacionGeneral;
