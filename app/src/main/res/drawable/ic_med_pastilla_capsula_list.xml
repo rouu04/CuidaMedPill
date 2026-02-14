@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/capa_capsula_superior"
+        android:drawable="@drawable/ic_med_pastilla_capsula_superior" />
+    <item
+        android:id="@+id/capa_capsula_inferior"
+        android:drawable="@drawable/ic_med_pastilla_capsula_inferior" />
+</layer-list>

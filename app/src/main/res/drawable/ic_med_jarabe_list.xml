@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/capa_jarabe_color"
+        android:drawable="@drawable/ic_med_jarabe_color" />
+
+    <item
+        android:drawable="@drawable/ic_med_jarabe_fija" />
+</layer-list>

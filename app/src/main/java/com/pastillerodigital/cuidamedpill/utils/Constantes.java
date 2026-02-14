@@ -50,6 +50,7 @@ public class Constantes {
 
         //TIPO MEDICAMENTO
     public static final String TIPOMED_PASTILLA = "Pastilla";
+    public static final String TIPOMED_CAPSULA = "Cápsula";
     public static final String TIPOMED_VACUNA = "Vacuna";
     public static final String TIPOMED_INYECCION = "Inyección";
     public static final String TIPOMED_INHALADOR= "Inhalador";

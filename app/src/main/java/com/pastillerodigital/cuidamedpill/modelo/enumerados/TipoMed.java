@@ -5,14 +5,12 @@ import com.pastillerodigital.cuidamedpill.utils.Constantes;
 public enum TipoMed {
 
     PASTILLA(Constantes.TIPOMED_PASTILLA),
-    VACUNA(Constantes.TIPOMED_VACUNA),
+    CAPSULA(Constantes.TIPOMED_PASTILLA),
     INYECCION(Constantes.TIPOMED_INYECCION),
     INHALADOR(Constantes.TIPOMED_INHALADOR),
     CREMA(Constantes.TIPOMED_CREMA),
     JARABE(Constantes.TIPOMED_JARABE),
-    GOTAS(Constantes.TIPOMED_GOTAS),
-    AEROSOL(Constantes.TIPOMED_AEROSOL),
-    PARCHE(Constantes.TIPOMED_PARCHE);
+    GOTAS(Constantes.TIPOMED_GOTAS);
 
     private final String descripcion;
 

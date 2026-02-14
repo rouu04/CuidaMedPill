@@ -3,20 +3,12 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-
     <group
         android:pivotX="12"
         android:pivotY="12"
         android:rotation="45">
-
         <path
-            android:fillColor="@color/md_surface"
+            android:fillColor="#E0E0E0"
             android:pathData="M12,4C9.79,4 8,5.79 8,8V12H16V8C16,5.79 14.21,4 12,4Z" />
-
-        <path
-            android:name="color_path"
-            android:fillColor="@color/md_primary_dark"
-            android:pathData="M8,12V16C8,18.21 9.79,20 12,20C14.21,20 16,18.21 16,16V12H8Z" />
-
     </group>
 </vector>

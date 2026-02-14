@@ -18,7 +18,6 @@ public class Medicamento implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreMed;
     private String colorSimb;
-    //todo hacer vectores de formas y poner colores
     private float pauta;
     private TipoMed tipoMed;
 

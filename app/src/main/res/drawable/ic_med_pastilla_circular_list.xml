@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/capa_capsula_color"
+        android:drawable="@drawable/ic_med_pastilla_circular_color" />
+
+    <item
+        android:drawable="@drawable/ic_med_pastilla_circular_fija" />
+</layer-list>
