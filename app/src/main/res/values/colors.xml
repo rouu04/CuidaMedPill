@@ -18,11 +18,23 @@
 
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>
-    <color name="md_black">#000000</color>
+
     <color name="md_on_background">#7E8E8C</color>
     <color name="md_on_surface">#515152</color>
 
     <!-- Errores -->
     <color name="md_error">#B00020</color>
     <color name="md_error_on_primary">#B00020</color>
+
+    <!-- Colores basicos -->
+    <color name="md_rojo">#FF0000</color>
+    <color name="md_naranja">#FF5722</color>
+    <color name="md_amarillo">#FFEB3B</color>
+    <color name="md_verde">#4CAF50</color>
+    <color name="md_azul">#03A9F4</color>
+    <color name="md_azul_oscuro">#3F51B5</color>
+    <color name="md_violeta">#673AB7</color>
+    <color name="md_black">#000000</color>
+    <color name="md_blanco">#FFFFFF</color>
+
 </resources>

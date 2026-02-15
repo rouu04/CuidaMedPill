@@ -10,7 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- FOTO + NOMBRE -->
+        <!-- Texto titulo -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:text="Medicamento:"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_primary_dark"
+            android:textSize="18dp"/>
+
+        <!-- FOTO  -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -24,20 +34,30 @@
                 android:layout_height="64dp"
                 android:contentDescription="Símbolo medicamento"/>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutNombreMed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:hint="Nombre medicamento">
+            <!-- CÍRCULO COLOR -->
+            <View
+                android:id="@+id/viewColor"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_circle_color"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtNombreMed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
+
+        <!-- NOMBRE -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutNombreMed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre medicamento"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtNombreMed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- TIPO DE MEDICAMENTO -->
         <com.google.android.material.textfield.TextInputLayout
@@ -70,7 +90,26 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Texto Opcionales -->
+        <TextView
+            android:id="@+id/tvOpcionales"
+            android:text="Campos opcionales que podrán llenarse en el futuro"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_primary_dark"
+            android:textSize="18dp"/>
+
         <!-- HORARIO -->
+        <!-- Texto Opcionales -->
+        <TextView
+            android:id="@+id/tvHorario"
+            android:text="Horario"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_primary_dark"
+            android:textSize="15dp"/>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -133,6 +172,15 @@
         </LinearLayout>
 
         <!-- DETALLES -->
+        <!-- Texto detalles -->
+        <TextView
+            android:id="@+id/tvDetalles"
+            android:text="Detalles"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_primary_dark"
+            android:textSize="15dp"/>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

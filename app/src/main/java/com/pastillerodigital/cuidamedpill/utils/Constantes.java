@@ -86,23 +86,23 @@ public class Constantes {
 
     //SIMBOLOS MEDICAMENTOS
     public static final int RES_IC_MED_CREMA_LIST = R.drawable.ic_med_crema_list;
-    public static final int RES_IC_MED_CREMA_COLOR = R.drawable.ic_med_crema_color;
+    public static final int RES_IC_MED_CREMA_COLOR = R.id.ic_med_crema_color;
     public static final int RES_IC_MED_CREMA_FIJA = R.drawable.ic_med_crema_fija;
     public static final int RES_IC_MED_GOTAS = R.drawable.ic_med_gotas;
     public static final int RES_IC_MED_INHALADOR_LIST = R.drawable.ic_med_inhalador_list;
-    public static final int RES_IC_MED_INHALADOR_COLOR= R.drawable.ic_med_inhalador_color;
+    public static final int RES_IC_MED_INHALADOR_COLOR= R.id.ic_med_inhalador_color;
     public static final int RES_IC_MED_INHALADOR_FIJA = R.drawable.ic_med_inhalador_fija;
     public static final int RES_IC_MED_INYECCION_LIST = R.drawable.ic_med_inyeccion_list;
-    public static final int RES_IC_MED_INYECCION_COLOR= R.drawable.ic_med_inyeccion_color;
+    public static final int RES_IC_MED_INYECCION_COLOR= R.id.ic_med_inyeccion_color;
     public static final int RES_IC_MED_INYECCION_FIJA = R.drawable.ic_med_inyeccion_fija;
     public static final int RES_IC_MED_JARABE_LIST = R.drawable.ic_med_jarabe_list;
-    public static final int RES_IC_MED_JARABE_COLOR = R.drawable.ic_med_jarabe_color;
+    public static final int RES_IC_MED_JARABE_COLOR = R.id.ic_med_jarabe_color;
     public static final int RES_IC_MED_JARABE_FIJA = R.drawable.ic_med_jarabe_fija;
     public static final int RES_IC_MED_PASTILLA_CAPSULA_LIST = R.drawable.ic_med_pastilla_capsula_list;
     public static final int RES_IC_MED_PASTILLA_CAPSULA_SUPERIOR = R.drawable.ic_med_pastilla_capsula_superior;
-    public static final int RES_IC_MED_PASTILLA_CAPSULA_INFERIOR = R.drawable.ic_med_pastilla_capsula_inferior;
+    public static final int RES_IC_MED_PASTILLA_CAPSULA_INFERIOR = R.id.ic_med_pastilla_capsula_inferior;
     public static final int RES_IC_MED_PASTILLA_CIRCULAR_LIST = R.drawable.ic_med_pastilla_circular_list;
-    public static final int RES_IC_MED_PASTILLA_CIRCULAR_COLOR = R.drawable.ic_med_pastilla_circular_color;
+    public static final int RES_IC_MED_PASTILLA_CIRCULAR_COLOR = R.id.ic_med_pastilla_circular_color;
     public static final int RES_IC_MED_PASTILLA_CIRCULAR_FIJA= R.drawable.ic_med_pastilla_circular_fija;
 
     //EXCEPCIONES

@@ -1,14 +1,23 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments.extra;
 
 import android.app.DatePickerDialog;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -21,7 +30,6 @@ import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
-import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
@@ -39,6 +47,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
     private CircularProgressIndicator progressIndicator;
+    private View viewColor;
+
+    private TextView tvTitulo;
 
     //Elementos lógicos
     private MedicamentoDAO medDAO;
@@ -46,6 +57,21 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private boolean isEdit;
     private String uid, uidSelf, medId;
     private Modo modo;
+    private int selectedColorRes = R.color.md_primary;
+    private TipoMed selectedTipo = TipoMed.CAPSULA;
+
+    private final int[] coloresDisponibles = {
+            R.color.md_primary,
+            R.color.md_rojo,
+            R.color.md_naranja,
+            R.color.md_amarillo,
+            R.color.md_verde,
+            R.color.md_azul,
+            R.color.md_azul_oscuro,
+            R.color.md_violeta,
+            R.color.md_black,
+            R.color.md_blanco
+    };
 
     public static AddAndEditMedicamentoFragment newInstance(Medicamento med, String uid, String uidSelf, Modo modo){
         AddAndEditMedicamentoFragment fragment = new AddAndEditMedicamentoFragment();
@@ -96,6 +122,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         layoutMedActualCaja = view.findViewById(R.id.layoutMedActualCaja);
         edtMedActualCaja = view.findViewById(R.id.edtMedActualCaja);
 
+        tvTitulo = view.findViewById(R.id.tvTitle);
+
+        viewColor = view.findViewById(R.id.viewColor);
+
         btnGuardar = view.findViewById(R.id.btnGuardar);
         btnAgregarHora = view.findViewById(R.id.btnAgregarHora);
         progressIndicator = view.findViewById(R.id.progressIndicator);
@@ -104,24 +134,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO = new MedicamentoDAO(uid);
         leerArgumentos();
         setButtonListeners();
-
-        /*
-        COLOR MEDICAMENTO
-        ImageView ivMed = findViewById(R.id.ivTipoMed);
-
-        // Carga el layer-list
-        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.ic_med_crema);
-
-        // Obtén la capa coloreable
-        Drawable tuboColor = layerDrawable.findDrawableByLayerId(R.id.capa_tubo_color);
-
-        // Aplica tint
-        tuboColor.setColorFilter(Color.parseColor(medicamento.getColorSimb()), PorterDuff.Mode.SRC_IN);
-
-        // Asigna al ImageView
-        ivMed.setImageDrawable(layerDrawable);
-
-         */
 
     }
 
@@ -133,8 +145,14 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             if(uid == null) uid = uidSelf;
             medId = getArguments().getString(Constantes.ARG_MEDID);
             if(medId != null){ //edición
+                tvTitulo.setText("Editar medicamento");
                 isEdit = true;
                 cargarDatos(medId);
+            }
+            else{
+                tvTitulo.setText("Añadir un medicamento");
+                edtTipoMed.setText(TipoMed.CAPSULA.toString());
+                actualizarImagenTipo(TipoMed.CAPSULA);
             }
         }
     }
@@ -143,21 +161,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
         edtFechaCad.setOnClickListener(v -> mostrarDatePicker());
         btnGuardar.setOnClickListener(v -> guardarOEditarMedicamento());
+        viewColor.setOnClickListener(v -> mostrarSelectorColor());
+
     }
 
     private void cargarDatos(String medId){
         // todo
-    }
-
-    /**
-     * Mostrará opciones de los tipos de medicamento para que el usuario lo seleccione
-     */
-    private void mostrarSelectorTipo(){
-        String[] tipos = TipoMed.getAllTipos();
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar tipo")
-                .setItems(tipos, (dialog, which) -> edtTipoMed.setText(tipos[which]))
-                .show();
     }
 
     /**
@@ -190,6 +199,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String nCajasStr = edtNCajas.getText().toString().trim();
         String nMedPorCajaStr = edtMedPorCaja.getText().toString().trim();
         String nMedActualStr = edtMedActualCaja.getText().toString().trim();
+        String colorString = getResources().getResourceEntryName(selectedColorRes);
 
         if(!validaciones(nombre, tipoStr, pautaStr)) return;
         if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nCajasStr, nMedPorCajaStr, nMedActualStr)) return;
@@ -202,8 +212,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         Timestamp fechaFin = fechaFinStr.isEmpty() ? null : Utils.stringToTimestamp(fechaFinStr);
 
 
-        //todo revisar y hacer horario y el color
-        Medicamento medActual = new Medicamento("@color/md_primary", Float.parseFloat(pautaStr), TipoMed.tipoMedFromString(tipoStr),
+        //todo revisar y hacer horario
+
+        Medicamento medActual = new Medicamento(colorString, Float.parseFloat(pautaStr), TipoMed.tipoMedFromString(tipoStr),
                 fechaCad , nombre, fechaFin, nCajas, nMedPorCaja, nMedActual, null, null);
 
         if(isEdit) medActual.setId(medEdit.getId());
@@ -345,5 +356,92 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         });
     }
 
+    //--------FUNCIONES PARA EL SIMBOLO Y COLOR DEL ICONO DEL MEDICAMENTO
+    private void actualizarImagenTipo(TipoMed tipo){
+        selectedTipo = tipo;
+        imgMedicamento.setImageResource(tipo.getDrawableRes());
+    }
 
+    private void mostrarSelectorTipo(){
+        String[] tipos = TipoMed.getAllTipos();
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleccionar tipo")
+                .setItems(tipos, (dialog, which) -> {
+                    edtTipoMed.setText(tipos[which]);
+                    TipoMed tipoSeleccionado = TipoMed.tipoMedFromString(tipos[which]);
+                    actualizarImagenTipo(tipoSeleccionado);
+                })
+                .show();
+    }
+
+    private void mostrarSelectorColor(){
+
+        // Grid View para enseñar los posibles colores
+        GridView gridView = new GridView(requireContext());
+        gridView.setNumColumns(5); // ajustable
+        gridView.setHorizontalSpacing(16);
+        gridView.setVerticalSpacing(16);
+        gridView.setPadding(16,16,16,16);
+
+        // Adaptador simple para mostrar los colores
+        gridView.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return coloresDisponibles.length;
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return coloresDisponibles[position];
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = new View(requireContext());
+                int size = 120; // tamaño de cada círculo
+                GridView.LayoutParams params = new GridView.LayoutParams(size, size);
+                v.setLayoutParams(params);
+                v.setBackgroundResource(R.drawable.bg_circle_color);
+                v.getBackground().setTint(getResources().getColor(coloresDisponibles[position]));
+                return v;
+            }
+        });
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleccionar color")
+                .setView(gridView)
+                .create();
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            selectedColorRes = coloresDisponibles[position];
+
+            // Actualiza el viewColor
+            viewColor.getBackground().setTint(getResources().getColor(selectedColorRes));
+            actualizarImagenColor(selectedTipo, selectedColorRes);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void actualizarImagenColor(TipoMed tipo, int colorRes) {
+        // Carga drawable correspondiente al tipo de medicamento
+        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireContext(), tipo.getDrawableRes());
+
+        if (layerDrawable != null) {
+            // Capa coloreable (color dinámico)
+            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipo.getDrawableResColoreable());
+            if (capaColor != null) {//Aplicamos color seleccionado
+                capaColor.setColorFilter(getResources().getColor(colorRes), PorterDuff.Mode.SRC_IN);
+            }
+            // Asigna drawable coloreado al ImageView
+            imgMedicamento.setImageDrawable(layerDrawable);
+        }
+    }
 }
