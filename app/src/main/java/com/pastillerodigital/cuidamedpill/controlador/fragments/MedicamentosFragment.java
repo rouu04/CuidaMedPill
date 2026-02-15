@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
+import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditMedicamentoFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 
@@ -106,7 +109,13 @@ public class MedicamentosFragment extends Fragment {
 
     private void setButtonListeners(){
         this.fab.setOnClickListener(v->{
-            //todo llevar a añadir medicamento
+            AddAndEditMedicamentoFragment addEditMedFragment = AddAndEditMedicamentoFragment.newInstance(uid, uidSelf, modo);
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentApp, addEditMedFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
     }
 
@@ -157,5 +166,24 @@ public class MedicamentosFragment extends Fragment {
         });
         rvMed.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMed.setAdapter(medAdapter);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (updateNeeded) {
+            updateNeeded = false;
+            mostrarCarga();
+            cargarMeds();
+        }
+
+        //Si está supervisando a alguien se actualiza la vista correspondiente.
+        //todo revisar
+        MainActivity ma = (MainActivity) requireActivity();
+        modo = ma.getModo();
+        uidSelf = ma.getUidSelf();
+
     }
 }

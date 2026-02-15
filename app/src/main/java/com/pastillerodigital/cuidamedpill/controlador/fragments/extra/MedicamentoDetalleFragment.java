@@ -1,4 +1,4 @@
-package com.pastillerodigital.cuidamedpill.controlador.fragments;
+package com.pastillerodigital.cuidamedpill.controlador.fragments.extra;
 
 import androidx.fragment.app.Fragment;
 

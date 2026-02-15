@@ -4,9 +4,16 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.util.Base64;
 
+import com.google.firebase.Timestamp;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class Utils {
 
@@ -29,6 +36,25 @@ public class Utils {
         }
     }
 
+    public static String calendarToString(Calendar calendar) {
+        if (calendar == null) return "";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return sdf.format(calendar.getTime());
+    }
+
+    public static Timestamp stringToTimestamp(String fechaStr) {
+        if (fechaStr == null || fechaStr.isEmpty()) return null;
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date date = sdf.parse(fechaStr);
+            return new Timestamp(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 }

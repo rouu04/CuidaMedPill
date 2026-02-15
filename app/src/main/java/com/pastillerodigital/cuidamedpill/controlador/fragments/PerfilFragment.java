@@ -1,6 +1,5 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.activities.WelcomeActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
+import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditUsuarioFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;

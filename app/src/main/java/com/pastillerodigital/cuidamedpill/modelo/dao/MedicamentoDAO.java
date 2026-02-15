@@ -2,8 +2,12 @@ package com.pastillerodigital.cuidamedpill.modelo.dao;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +85,31 @@ public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
                     callback.onSuccess(listaMedicamentos);
                 })
                 .addOnFailureListener(callback::onFailure);
+    }
+
+    public void getBasicWithParameter(String paramBD, Object param, OnDataLoadedCallback<Medicamento> callback){
+        if (param == null) {
+            callback.onSuccess(null);
+            return;
+        }
+
+        db.collection(collectionName)
+                .document(idCollection)
+                .collection(this.subColName)
+                .whereEqualTo(paramBD, param)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0); //primer y único documento de la consulta
+                        callback.onSuccess(Medicamento.doctoObj(doc));
+                    } else {
+                        callback.onSuccess(null); // Tiene éxito en la consulta (no da error)
+                        //pero no existe
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onFailure(new Exception(Mensajes.EX_EXISTE));
+                });
     }
 }
