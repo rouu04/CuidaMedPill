@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.AsistidoVH>{
     private List<UsuarioAsistido> lista;
     private OnClickListener listener;
-    private String uidSupervisando = null; // id del asistido actualmente supervisado
+    private String uidSupervisando; // id del asistido actualmente supervisado
 
     public interface OnClickListener {
         void onSupervisar(UsuarioAsistido ua);
@@ -31,8 +31,9 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
         void onDesvincular(UsuarioAsistido ua);
     }
 
-    public AsistidosAdapter(List<UsuarioAsistido> lista, OnClickListener listener) {
+    public AsistidosAdapter(List<UsuarioAsistido> lista, String uidSupervisando, OnClickListener listener) {
         this.lista = lista;
+        this.uidSupervisando = uidSupervisando;
         this.listener = listener;
     }
 
@@ -111,4 +112,10 @@ public class AsistidosAdapter extends RecyclerView.Adapter<AsistidosAdapter.Asis
             btnBorrarCuenta = itemView.findViewById(R.id.btnEliminarCuentaAsist);
         }
     }
+
+    public void setUidSupervisando(String uidSupervisando) {
+        this.uidSupervisando = uidSupervisando;
+        notifyDataSetChanged();
+    }
+
 }

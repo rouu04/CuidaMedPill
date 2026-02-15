@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.activities.WelcomeActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
@@ -72,11 +74,12 @@ public class PerfilFragment extends Fragment {
      * @param userId
      * @return
      */
-    public static PerfilFragment newInstance(String userIdSelf,String userId) {
+    public static PerfilFragment newInstance(String userIdSelf,String userId, Modo modo) {
         PerfilFragment fragment = new PerfilFragment();
         Bundle args = new Bundle();
         args.putString(Constantes.ARG_UIDSELF, userIdSelf);
         args.putString(Constantes.ARG_UID, userId);
+        args.putString(Constantes.ARG_MODO, modo.toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -127,7 +130,6 @@ public class PerfilFragment extends Fragment {
 
         //Lógica
         uDAO = new UsuarioDAO();
-        modo = Modo.ESTANDAR;
         tvSupervisando.setVisibility(View.GONE);
 
         lecturaArgumentos();
@@ -214,8 +216,15 @@ public class PerfilFragment extends Fragment {
                     } else {//por si el drawable no existe
                         imgFotoPerfil.setImageResource(R.drawable.usuario_fotoperfil_default);
                     }
-                    setupRecyclerView();
 
+                    //Si el usuario estaba supervisando a un asistido, hay que cargar el asistido para poder
+                    //indicar a quién supervisa
+                    if(modo == Modo.SUPERVISOR){
+                        cargarModoSupervisor();
+                    }
+                    else setVistaModo("");
+
+                    setupRecyclerView();
                     ocultarCarga();
                 }
             }
@@ -227,21 +236,45 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    /**
+     * Carga el usuario asistido que estamos supervisando para poder enseñar a quien supervisa
+     */
+    private void cargarModoSupervisor(){
+        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario usuario) {
+                if (usuario != null) {
+                    setVistaModo(usuario.getAliasU());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
     private void setupRecyclerView() {
-        AsistidosAdapter adapter = new AsistidosAdapter(usrSelf.getUsrAsistidoAsig(), new AsistidosAdapter.OnClickListener() {
+        AsistidosAdapter adapter = new AsistidosAdapter(usrSelf.getUsrAsistidoAsig(),uid, new AsistidosAdapter.OnClickListener() {
             @Override
             public void onSupervisar(UsuarioAsistido asistido) {
                 modo = Modo.SUPERVISOR;
                 uid = asistido.getId();
-                tvSupervisando.setText(String.format(Mensajes.PERF_ASIST_SUPERVISANDO, asistido.getAliasU()));
-                tvSupervisando.setVisibility(View.VISIBLE);
+                //Indica al main que tiene que actualizar el estado de la aplicación para que si vamos a
+                //otra pestaña se mantenga
+                MainActivity ma = (MainActivity) getActivity();
+                ma.actualizarSesionModo(modo, uid, uidSelf);
+                setVistaModo(asistido.getAliasU());
             }
 
             @Override
             public void onDejarDeSupervisar() {
                 modo = Modo.ESTANDAR;
                 uid = uidSelf;
-                tvSupervisando.setVisibility(View.GONE);
+                MainActivity ma = (MainActivity) getActivity();
+                ma.actualizarSesionModo(modo, uid, uidSelf);
+                setVistaModo("");
             }
 
             @Override
@@ -422,6 +455,20 @@ public class PerfilFragment extends Fragment {
         }
     }
 
+    /**
+     * Enseña el texto de supervisando o no en función del modo
+     * @param uaAlias
+     */
+    private void setVistaModo(String uaAlias){
+        if(modo == Modo.SUPERVISOR){
+            tvSupervisando.setText(String.format(Mensajes.PERF_ASIST_SUPERVISANDO, uaAlias));
+            tvSupervisando.setVisibility(View.VISIBLE);
+        }
+        else{
+            tvSupervisando.setVisibility(View.GONE);
+        }
+    }
+
 
     private void mostrarCarga() {
         progressPerfil.setVisibility(View.VISIBLE);
@@ -446,7 +493,8 @@ public class PerfilFragment extends Fragment {
     }
 
     /**
-     * Para que se actualicen las listas cuando vuelve a la interfaz
+     * Llamado al volver a entrar en la interfaz. Si necesitan actualizarse los datos, se actualizan
+     * para mantener coherencia en la vista. Si está supervisando a alguien se actualiza
      */
     @Override
     public void onResume() {
@@ -457,6 +505,29 @@ public class PerfilFragment extends Fragment {
             mostrarCarga();
             cargarUsuario(uidSelf);
         }
+
+        //Si está supervisando a alguien se actualiza la vista correspondiente.
+        MainActivity ma = (MainActivity) requireActivity();
+        modo = ma.getModo();
+        uidSelf = ma.getUidSelf();
+
+        if(modo == Modo.SUPERVISOR){
+            uid = ma.getUid();
+            uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+                @Override
+                public void onSuccess(Usuario usuario) {
+                    if (usuario != null) {
+                        setVistaModo(usuario.getAliasU());
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    UiUtils.mostrarErrorYReiniciar(requireActivity());
+                }
+            });
+        }
+        else setVistaModo("");
     }
 
     /**

@@ -71,16 +71,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         uidSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
-        uid = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, uidSelf);
+        uid = prefs.getString(Constantes.PERSIST_KEYUSERID, uidSelf);
         String modoStr = prefs.getString(Constantes.PERSIST_KEYMODO, Modo.ESTANDAR.toString());
         modo = Modo.modoFromString(modoStr);
-        //todo diferenciar oepraciones con self y uid
-
-
-        homeFragment = HomeFragment.newInstance(uidSelf);
-        medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
-        calendarioFragment = CalendarioFragment.newInstance(uidSelf);
-        perfilFragment = PerfilFragment.newInstance(uidSelf);
+        initializeFragmentsModo(uidSelf, uid, modo);
 
         if(modo.equals(Modo.ASISTIDO)){ //los usuarios asistidos no tienen acceso al perfil
             Menu menu = navInferior.getMenu();
@@ -131,6 +125,72 @@ public class MainActivity extends AppCompatActivity {
     private void borrarSesion(){
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         prefs.edit().clear().apply();
+    }
+
+    /**
+     * Métod*o que permite supervisar /dejar de supervisar a un asistido manteniendo el modo en la app.
+     * @param nuevoModo
+     * @param nuevoUid
+     * @param nuevoUidSelf
+     */
+    public void actualizarSesionModo(Modo nuevoModo, String nuevoUid, String nuevoUidSelf) {
+        this.modo = nuevoModo;
+        this.uid = nuevoUid;
+        this.uidSelf = nuevoUidSelf;
+
+        SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
+
+        if(modo == Modo.SUPERVISOR){
+            prefs.edit()
+                    .putString(Constantes.PERSIST_KEYMODO, nuevoModo.toString())
+                    .putString(Constantes.PERSIST_KEYUSERID, nuevoUid)
+                    .putString(Constantes.PERSIST_KEYUSERSELFID, nuevoUidSelf)
+                    .apply();
+
+            initializeFragmentsModo(nuevoUidSelf, uid, modo);
+        }
+        else if(modo == Modo.ESTANDAR){
+            prefs.edit()
+                    .putString(Constantes.PERSIST_KEYMODO, nuevoModo.toString())
+                    .putString(Constantes.PERSIST_KEYUSERID, nuevoUidSelf)
+                    .putString(Constantes.PERSIST_KEYUSERSELFID, nuevoUidSelf)
+                    .apply();
+            initializeFragmentsModo(nuevoUidSelf, nuevoUidSelf, modo);
+        }
+    }
+
+    /**
+     * Crea la instancia de los fragments en función del modo para mantener el estado en la aplicación
+     * @param uidSelf
+     * @param uid
+     * @param modo
+     */
+    private void initializeFragmentsModo(String uidSelf, String uid, Modo modo){
+        if(modo ==  Modo.SUPERVISOR){
+            homeFragment = HomeFragment.newInstance(uidSelf, uid, modo);
+            medicamentosFragment = MedicamentosFragment.newInstance(uidSelf, uid, modo);
+            calendarioFragment = CalendarioFragment.newInstance(uidSelf, uid, modo);
+            perfilFragment = PerfilFragment.newInstance(uidSelf, uid, modo);
+        }
+        else{
+            homeFragment = HomeFragment.newInstance(uidSelf);
+            medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
+            calendarioFragment = CalendarioFragment.newInstance(uidSelf);
+            perfilFragment = PerfilFragment.newInstance(uidSelf);
+        }
+
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public String getUidSelf() {
+        return uidSelf;
+    }
+
+    public Modo getModo() {
+        return modo;
     }
 
 }
