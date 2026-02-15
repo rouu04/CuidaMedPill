@@ -84,10 +84,11 @@ public class PerfilFragment extends Fragment {
         return fragment;
     }
 
-    public static PerfilFragment newInstance(String userIdSelf) {
+    public static PerfilFragment newInstance(String userIdSelf, Modo modo) {
         PerfilFragment fragment = new PerfilFragment();
         Bundle args = new Bundle();
         args.putString(Constantes.ARG_UIDSELF, userIdSelf);
+        args.putString(Constantes.ARG_MODO, modo.toString());
         fragment.setArguments(args);
         return fragment;
     }

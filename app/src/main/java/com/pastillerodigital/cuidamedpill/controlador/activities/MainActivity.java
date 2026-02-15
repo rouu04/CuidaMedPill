@@ -173,10 +173,10 @@ public class MainActivity extends AppCompatActivity {
             perfilFragment = PerfilFragment.newInstance(uidSelf, uid, modo);
         }
         else{
-            homeFragment = HomeFragment.newInstance(uidSelf);
-            medicamentosFragment = MedicamentosFragment.newInstance(uidSelf);
-            calendarioFragment = CalendarioFragment.newInstance(uidSelf);
-            perfilFragment = PerfilFragment.newInstance(uidSelf);
+            homeFragment = HomeFragment.newInstance(uidSelf, modo);
+            medicamentosFragment = MedicamentosFragment.newInstance(uidSelf, modo);
+            calendarioFragment = CalendarioFragment.newInstance(uidSelf, modo);
+            perfilFragment = PerfilFragment.newInstance(uidSelf, modo);
         }
 
     }

@@ -8,6 +8,7 @@ listo al devolverse y por tanto no funcionaría.
 public interface DAO<T> {
 
     public void get(String id, OnDataLoadedCallback<T> callback);
+    public void getBasic(String id, OnDataLoadedCallback<T> callback);
     public void add(T obj, OnOperationCallback callback);
     public void edit(T nuevo, OnOperationCallback callback);
     public void delete(String id, OnOperationCallback callback);

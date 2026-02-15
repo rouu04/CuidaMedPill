@@ -66,6 +66,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * @param id
      * @param callback
      */
+    @Override
     public void getBasic(String id, OnDataLoadedCallback<Usuario> callback){
         db.collection(collectionName)
                 .document(id)

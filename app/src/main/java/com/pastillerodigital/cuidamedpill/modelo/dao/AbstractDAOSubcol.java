@@ -1,7 +1,10 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+
+import java.util.List;
 
 /**
  * Clase del dao abstracta de una subcolección. Aunque la funcionalidad es parecida a la del AbstractDAO
@@ -17,6 +20,14 @@ public abstract class AbstractDAOSubcol<T extends Persistible> extends GeneralDA
 
     protected abstract void setSubColName();
     protected abstract void setIdCollection(String id);
+
+
+    public abstract void getList(String idCollection, OnDataLoadedCallback<List<Medicamento>> callback);
+    /**
+     * Recoge lista de todos los items de forma básica de la coleccion padre con id idCollection
+     * @param idCollection
+     */
+    public abstract void getListBasic(String idCollection, OnDataLoadedCallback<List<Medicamento>> callback);
 
     /**
      Función que añade un elemento a la coleccion. Cada objeto debería preguntar si existe en función

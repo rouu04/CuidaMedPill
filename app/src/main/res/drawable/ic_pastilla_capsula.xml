@@ -10,7 +10,7 @@
         android:rotation="45">
 
         <path
-            android:fillColor="@color/md_surface"
+            android:fillColor="@color/md_third"
             android:pathData="M12,4C9.79,4 8,5.79 8,8V12H16V8C16,5.79 14.21,4 12,4Z" />
 
         <path

@@ -9,10 +9,11 @@ import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class CalendarioFragment extends Fragment {
 
-    public static CalendarioFragment newInstance(String userIdSellf) {
+    public static CalendarioFragment newInstance(String userIdSelf, Modo modo) {
         CalendarioFragment fragment = new CalendarioFragment();
         Bundle args = new Bundle();
-        args.putString(Constantes.ARG_UIDSELF, userIdSellf);
+        args.putString(Constantes.ARG_UIDSELF, userIdSelf);
+        args.putString(Constantes.ARG_MODO, modo.toString());
         fragment.setArguments(args);
         return fragment;
     }
