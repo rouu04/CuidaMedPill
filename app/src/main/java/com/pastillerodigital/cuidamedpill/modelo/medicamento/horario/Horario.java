@@ -73,6 +73,11 @@ public class Horario {
                 case SEMANAL:
                     actual.add(Calendar.WEEK_OF_YEAR, intervalo);
                     break;
+                case QUINCENAL:
+                    actual.add(Calendar.WEEK_OF_YEAR, 2 * intervalo);
+                    break;
+                case MENSUAL:
+                    actual.add(Calendar.MONTH, intervalo);
                 case TRIMESTRAL:
                     actual.add(Calendar.MONTH, 3 * intervalo);
                     break;

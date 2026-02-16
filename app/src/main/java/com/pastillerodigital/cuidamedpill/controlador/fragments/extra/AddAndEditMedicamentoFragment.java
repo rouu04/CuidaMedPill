@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -21,35 +22,47 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class AddAndEditMedicamentoFragment extends Fragment {
 
-    private TextInputLayout layoutNombre, layoutTipoMed, layoutPauta, layoutFechaCad, layoutFechaFin, layoutNCajas, layoutMedPorCaja, layoutMedActualCaja;
-    private TextInputEditText edtNombre, edtTipoMed, edtPauta, edtFechaCad, edtFechaFin,edtNCajas, edtMedPorCaja, edtMedActualCaja;
+    private TextInputLayout layoutNombre, layoutTipoMed, layoutPauta, layoutTipoIntervalo, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes;
+    private TextInputEditText edtNombre, edtTipoMed, edtPauta, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes;
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
     private CircularProgressIndicator progressIndicator;
     private View viewColor;
-
     private TextView tvTitulo;
+    private List<Hora> listaHoras = new ArrayList<>();
+    private ChipGroup layoutHorasContainer; //como un layout pero más profesional
 
     //Elementos lógicos
     private MedicamentoDAO medDAO;
@@ -59,6 +72,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private Modo modo;
     private int selectedColorRes = R.color.md_primary;
     private TipoMed selectedTipo = TipoMed.CAPSULA;
+    private int colorMed;
+    private TipoIntervalo tipoIntervaloSel;
 
     private final int[] coloresDisponibles = {
             R.color.md_primary,
@@ -111,16 +126,19 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtTipoMed = view.findViewById(R.id.edtTipoMed);
         layoutPauta = view.findViewById(R.id.layoutPauta);
         edtPauta = view.findViewById(R.id.edtPauta);
+
+        layoutTipoIntervalo = view.findViewById(R.id.layoutTipoIntervalo);
+        edtTipoIntervalo = view.findViewById(R.id.edtTipoIntervalo);
+        layoutIntervaloNum = view.findViewById(R.id.layoutIntervaloNum);
+        edtIntervaloNum = view.findViewById(R.id.edtIntervaloNum);
+        layoutHorasContainer = view.findViewById(R.id.layoutHorasContainer);
+
         layoutFechaCad = view.findViewById(R.id.layoutFechaCad);
         edtFechaCad = view.findViewById(R.id.edtFechaCad);
         layoutFechaFin = view.findViewById(R.id.layoutFechaFin);
         edtFechaFin = view.findViewById(R.id.edtFechaFin);
-        layoutNCajas = view.findViewById(R.id.layoutNCajas);
-        edtNCajas = view.findViewById(R.id.edtNCajas);
-        layoutMedPorCaja = view.findViewById(R.id.layoutMedPorCaja);
-        edtMedPorCaja = view.findViewById(R.id.edtMedPorCaja);
-        layoutMedActualCaja = view.findViewById(R.id.layoutMedActualCaja);
-        edtMedActualCaja = view.findViewById(R.id.edtMedActualCaja);
+        layoutNMedRestantes = view.findViewById(R.id.layoutNMedRestantes);
+        edtNMedRestantes = view.findViewById(R.id.edtNMedRestantes);
 
         tvTitulo = view.findViewById(R.id.tvTitle);
 
@@ -132,6 +150,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
         //Lógica:
         medDAO = new MedicamentoDAO(uid);
+
         leerArgumentos();
         setButtonListeners();
 
@@ -152,6 +171,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             else{
                 tvTitulo.setText("Añadir un medicamento");
                 edtTipoMed.setText(TipoMed.CAPSULA.toString());
+                colorMed = R.color.md_primary;
+                tipoIntervaloSel = TipoIntervalo.DIARIO;
                 actualizarImagenTipo(TipoMed.CAPSULA);
             }
         }
@@ -159,14 +180,17 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
     private void setButtonListeners(){
         edtTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
+        edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo());
         edtFechaCad.setOnClickListener(v -> mostrarDatePicker());
         btnGuardar.setOnClickListener(v -> guardarOEditarMedicamento());
+        btnAgregarHora.setOnClickListener(v -> mostrarMenuSeleccionHora());
         viewColor.setOnClickListener(v -> mostrarSelectorColor());
 
     }
 
     private void cargarDatos(String medId){
         // todo
+        //todo poner color atrib y tipo intervalo (sacalo del horario) como el del medicamento
     }
 
     /**
@@ -186,6 +210,117 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         dpd.show();
     }
 
+    private void mostrarSelectorIntervalo(){
+        String[] tipos = TipoIntervalo.getAllTipos();
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleccionar intervalo")
+                .setItems(tipos, (dialog, which) -> {
+                    edtTipoIntervalo.setText(tipos[which]);
+                    TipoIntervalo tipoSeleccionado = TipoIntervalo.tipoIntervaloFromString(tipos[which]);
+                    //todo que hacer cuando se selecciona
+                })
+                .show();
+    }
+
+    private void mostrarSelectorTipo(){
+        String[] tipos = TipoMed.getAllTipos();
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleccionar tipo")
+                .setItems(tipos, (dialog, which) -> {
+                    edtTipoMed.setText(tipos[which]);
+                    TipoMed tipoSeleccionado = TipoMed.tipoMedFromString(tipos[which]);
+                    actualizarImagenTipo(tipoSeleccionado);
+                })
+                .show();
+    }
+
+    private void mostrarMenuSeleccionHora() {
+
+        String[] opciones = {
+                "Seleccionar hora manualmente",
+                "Seleccionar por momentos del día"
+        };
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Añadir hora")
+                .setItems(opciones, (dialog, which) -> {
+
+                    if (which == 0) {
+                        mostrarSelectorHora();
+                    } else {
+                        mostrarSelectorMomentos();
+                    }
+
+                })
+                .show();
+    }
+
+
+    private void mostrarSelectorHora() {
+
+        MaterialTimePicker picker =
+                new MaterialTimePicker.Builder()
+                        .setTimeFormat(TimeFormat.CLOCK_24H)
+                        .setHour(8)
+                        .setMinute(0)
+                        .setTitleText("Seleccionar hora")
+                        .build();
+
+        picker.addOnPositiveButtonClickListener(view -> {
+
+            int hour = picker.getHour();
+            int minute = picker.getMinute();
+
+            Hora nuevaHora = new Hora(hour, minute);
+
+            if(!existeHora(nuevaHora)){
+                listaHoras.add(nuevaHora);
+                ordenarYRepintarHoras();
+            }
+        });
+
+        picker.show(getParentFragmentManager(), "TIME_PICKER");
+    }
+
+
+    private void mostrarSelectorMomentos() {
+
+        EMomentoDia[] momentos = EMomentoDia.values();
+
+        String[] textos = new String[momentos.length];
+
+        for(int i = 0; i < momentos.length; i++){
+            textos[i] = momentos[i].toString() + " (" +
+                    String.format(Locale.getDefault(),
+                            "%02d:%02d",
+                            momentos[i].getHoraDefault(),
+                            momentos[i].getMinDefault()) + ")";
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleccionar momento del día")
+                .setItems(textos, (dialog, which) -> {
+
+                    EMomentoDia momento = momentos[which];
+
+                    Hora nuevaHora = new Hora(
+                            momento.getHoraDefault(),
+                            momento.getMinDefault()
+                    );
+
+                    if(!existeHora(nuevaHora)){
+                        listaHoras.add(nuevaHora);
+                        ordenarYRepintarHoras();
+                    }
+
+                })
+                .show();
+    }
+
+
+
     private void guardarOEditarMedicamento(){
         // Validar campos
         // Crear nuevo Medicamento o actualizar medEdit
@@ -194,28 +329,30 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String nombre = edtNombre.getText().toString().trim();
         String tipoStr = edtTipoMed.getText().toString().trim();
         String pautaStr = edtPauta.getText().toString().trim();
+        String intervaloNumStr = edtIntervaloNum.getText().toString().trim();
         String fechaCadStr = edtFechaCad.getText().toString().trim();
         String fechaFinStr = edtFechaFin.getText().toString().trim();
-        String nCajasStr = edtNCajas.getText().toString().trim();
-        String nMedPorCajaStr = edtMedPorCaja.getText().toString().trim();
-        String nMedActualStr = edtMedActualCaja.getText().toString().trim();
+        String nMedRestantesStr = edtNMedRestantes.getText().toString().trim();
         String colorString = getResources().getResourceEntryName(selectedColorRes);
 
         if(!validaciones(nombre, tipoStr, pautaStr)) return;
-        if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nCajasStr, nMedPorCajaStr, nMedActualStr)) return;
+        if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nMedRestantesStr, intervaloNumStr)) return;
 
-        int nCajas = nCajasStr.isEmpty() ? -1 : Integer.parseInt(nCajasStr);
-        int nMedPorCaja = nMedPorCajaStr.isEmpty() ? -1 : Integer.parseInt(nMedPorCajaStr);
-        int nMedActual = nMedActualStr.isEmpty() ? -1 : Integer.parseInt(nMedActualStr);
+        int nCajas = nMedRestantesStr.isEmpty() ? -1 : Integer.parseInt(nMedRestantesStr);
+        int intervaloNum = intervaloNumStr.isEmpty() ? -1 : Integer.parseInt(intervaloNumStr); //-1 por simplicidad y coherencia
 
         Timestamp fechaCad = fechaCadStr.isEmpty() ? null : Utils.stringToTimestamp(fechaCadStr);
         Timestamp fechaFin = fechaFinStr.isEmpty() ? null : Utils.stringToTimestamp(fechaFinStr);
 
 
-        //todo revisar y hacer horario
+        Horario horario = new Horario(
+                tipoIntervaloSel,
+                intervaloNum,
+                listaHoras
+        );
 
         Medicamento medActual = new Medicamento(colorString, Float.parseFloat(pautaStr), TipoMed.tipoMedFromString(tipoStr),
-                fechaCad , nombre, fechaFin, nCajas, nMedPorCaja, nMedActual, null, null);
+                fechaCad , nombre, fechaFin, nCajas, horario, null);
 
         if(isEdit) medActual.setId(medEdit.getId());
 
@@ -230,7 +367,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
                     }
                     else{
-
+                        addMedicamento(medActual);
                     }
                 }
             }
@@ -261,8 +398,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         return valid;
     }
 
-    private boolean validacionesOpcionales(String fechaCadStr, String fechaFinStr, String nCajasStr,
-                                           String nMedPorCajaStr, String nMedActualStr){
+    private boolean validacionesOpcionales(String fechaCadStr, String fechaFinStr, String nMedRestantesStr, String intervaloNumStr){
         boolean valid = true;
 
         if(!fechaFinStr.isEmpty()){
@@ -286,52 +422,28 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
         }
 
-        if(!nCajasStr.isEmpty()){
+        if(!nMedRestantesStr.isEmpty()){
             try{
-                int nCajas = Integer.parseInt(nCajasStr);
+                int nCajas = Integer.parseInt(nMedRestantesStr);
                 if(nCajas < 0){
-                    layoutNCajas.setError("Debe ser un número más grande que 0");
+                    layoutNMedRestantes.setError("Debe ser un número más grande o igual que 0");
                     valid = false;
                 }
             }catch (NumberFormatException e){
-                layoutNCajas.setError("Número inválido");
+                layoutNMedRestantes.setError("Número inválido");
                 valid = false;
             }
         }
 
-        if(!nMedPorCajaStr.isEmpty()){
+        if(!nMedRestantesStr.isEmpty()){
             try{
-                int nMedPorCaja = Integer.parseInt(nMedPorCajaStr);
-                if(nMedPorCaja <= 0){
-                    layoutMedPorCaja.setError("Debe ser más grande que 0");
+                int intervaloNum = Integer.parseInt(intervaloNumStr);
+                if(intervaloNum <= 0){
+                    layoutNMedRestantes.setError("Debe ser un número más grande que 0");
                     valid = false;
                 }
             }catch (NumberFormatException e){
-                layoutMedPorCaja.setError("Número inválido");
-                valid = false;
-            }
-        }
-
-        if(!nMedActualStr.isEmpty()){
-            try{
-                int nMedActual = Integer.parseInt(nMedActualStr);
-
-                if(nMedActual < 0){
-                    layoutMedActualCaja.setError("Debe ser un número más grande que 0");
-                    valid = false;
-                }
-
-                if(!nMedPorCajaStr.isEmpty()){
-                    int nMedPorCaja = Integer.parseInt(nMedPorCajaStr);
-
-                    if(nMedActual > nMedPorCaja){
-                        layoutMedActualCaja.setError("No puede ser mayor que los medicamentos por caja");
-                        valid = false;
-                    }
-                }
-
-            }catch (NumberFormatException e){
-                layoutMedActualCaja.setError("Número inválido");
+                layoutNMedRestantes.setError("Número inválido");
                 valid = false;
             }
         }
@@ -356,24 +468,21 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         });
     }
 
+
+
     //--------FUNCIONES PARA EL SIMBOLO Y COLOR DEL ICONO DEL MEDICAMENTO
     private void actualizarImagenTipo(TipoMed tipo){
         selectedTipo = tipo;
         imgMedicamento.setImageResource(tipo.getDrawableRes());
+        //cambio también el selector de colores al default para mantener el mismo color que el icono
+        selectedColorRes = colorMed; //default si es añadir
+        viewColor.getBackground().setTint(
+                ContextCompat.getColor(requireContext(), selectedColorRes)
+        );
+        actualizarImagenColor(tipo, selectedColorRes);
     }
 
-    private void mostrarSelectorTipo(){
-        String[] tipos = TipoMed.getAllTipos();
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar tipo")
-                .setItems(tipos, (dialog, which) -> {
-                    edtTipoMed.setText(tipos[which]);
-                    TipoMed tipoSeleccionado = TipoMed.tipoMedFromString(tipos[which]);
-                    actualizarImagenTipo(tipoSeleccionado);
-                })
-                .show();
-    }
 
     private void mostrarSelectorColor(){
 
@@ -432,16 +541,114 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
     private void actualizarImagenColor(TipoMed tipo, int colorRes) {
         // Carga drawable correspondiente al tipo de medicamento
-        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(requireContext(), tipo.getDrawableRes());
+        Drawable drawable = ContextCompat.getDrawable(requireContext(), tipo.getDrawableRes());
+        if(drawable == null) return;
 
-        if (layerDrawable != null) {
-            // Capa coloreable (color dinámico)
+        int color = ContextCompat.getColor(requireContext(), colorRes);
+
+        if (drawable instanceof LayerDrawable) { //si es un layout con capa fija y otra con color se cambia solo la capa color
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
             Drawable capaColor = layerDrawable.findDrawableByLayerId(tipo.getDrawableResColoreable());
-            if (capaColor != null) {//Aplicamos color seleccionado
-                capaColor.setColorFilter(getResources().getColor(colorRes), PorterDuff.Mode.SRC_IN);
+
+            if (capaColor != null) {
+                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
             }
-            // Asigna drawable coloreado al ImageView
-            imgMedicamento.setImageDrawable(layerDrawable);
+            imgMedicamento.setImageDrawable(layerDrawable); //asigna dawable colorado a imageview
+
+        } else { //en caso de tener un icono simple con tod*o coloreable
+            drawable = drawable.mutate(); // importante para no afectar otras instancias
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            imgMedicamento.setImageDrawable(drawable);
         }
     }
+
+    //--------FUNCIONES DE LAS HORAS
+    private void pintarHora(Hora hora){
+
+        LinearLayout fila = new LinearLayout(requireContext());
+        fila.setOrientation(LinearLayout.HORIZONTAL);
+        fila.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        fila.setPadding(0,16,0,16);
+
+        TextView tvHora = new TextView(requireContext());
+        tvHora.setText(String.format(Locale.getDefault(),
+                "%02d:%02d",
+                hora.getHora(),
+                hora.getMin()));
+        tvHora.setTextSize(16f);
+        tvHora.setLayoutParams(new LinearLayout.LayoutParams(
+                0,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1
+        ));
+
+        ImageView btnDelete = new ImageView(requireContext());
+        btnDelete.setImageResource(R.drawable.ic_basura);
+
+        btnDelete.setOnClickListener(v -> {
+            listaHoras.remove(hora);
+            layoutHorasContainer.removeView(fila);
+        });
+
+        fila.addView(tvHora);
+        fila.addView(btnDelete);
+
+        layoutHorasContainer.addView(fila);
+    }
+
+    private boolean existeHora(Hora nueva){
+
+        for(Hora h : listaHoras){
+            if(h.getHora() == nueva.getHora() &&
+                    h.getMin() == nueva.getMin()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void pintarChipHora(Hora hora){
+
+        Chip chip = new Chip(requireContext());
+        chip.setText(String.format(Locale.getDefault(),
+                "%02d:%02d",
+                hora.getHora(),
+                hora.getMin()));
+
+        chip.setCloseIconVisible(true);
+        chip.setClickable(false);
+        chip.setCheckable(false);
+
+        /*
+        Más bonito
+        chip.setChipIconResource(R.drawable.ic_clock);
+        chip.setChipIconVisible(true);
+
+         */
+
+        chip.setOnCloseIconClickListener(v -> {
+            listaHoras.remove(hora);
+            layoutHorasContainer.removeView(chip);
+        });
+
+        layoutHorasContainer.addView(chip);
+    }
+
+    private void ordenarYRepintarHoras(){
+
+        Collections.sort(listaHoras);
+
+        layoutHorasContainer.removeAllViews();
+
+        for(Hora h : listaHoras){
+            pintarChipHora(h);
+        }
+    }
+
+
+
+
 }

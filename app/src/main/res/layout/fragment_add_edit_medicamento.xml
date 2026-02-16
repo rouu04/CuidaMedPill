@@ -17,6 +17,8 @@
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
             android:textColor="@color/md_primary_dark"
             android:textSize="18dp"/>
 
@@ -41,8 +43,6 @@
                 android:layout_height="32dp"
                 android:layout_marginStart="12dp"
                 android:background="@drawable/bg_circle_color"/>
-
-
         </LinearLayout>
 
         <!-- NOMBRE -->
@@ -93,7 +93,7 @@
         <!-- Texto Opcionales -->
         <TextView
             android:id="@+id/tvOpcionales"
-            android:text="Campos opcionales que podrán llenarse en el futuro"
+            android:text="Opcional"
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,6 +132,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
+                    android:id="@+id/layoutTipoIntervalo"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Intervalo"
@@ -146,6 +147,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutIntervaloNum"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -160,6 +162,15 @@
                         android:layout_height="wrap_content"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/layoutHorasContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp"/>
+
 
             <!-- Horas -->
             <com.google.android.material.button.MaterialButton
@@ -218,42 +229,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutNCajas"
+                android:id="@+id/layoutNMedRestantes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Numero de cajas"
+                android:hint="Medicamentos restantes en posesión"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtNCajas"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutMedPorCaja"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Medicamentos por caja"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtMedPorCaja"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutMedActualCaja"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Medicamentos en la caja actual"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtMedActualCaja"
+                    android:id="@+id/edtNMedRestantes"
                     android:inputType="number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>

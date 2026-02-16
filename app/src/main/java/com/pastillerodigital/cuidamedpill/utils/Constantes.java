@@ -37,9 +37,7 @@ public class Constantes {
     public static final String MED_TIPOMED = "tipoMed";
     public static final String MED_FECHACAD = "fechaCad";
     public static final String MED_FECHAFIN = "fechaFin";
-    public static final String MED_NCAJASMED= "nCajasMed";
-    public static final String MED_NMEDCAJA = "nMedCaja";
-    public static final String MED_NMEDACTCAJA= "nMedActCaja";
+    public static final String MED_NMEDRESTANTES= "nMedRestantes";
     public static final String MED_HORARIO= "horario";
 
 
@@ -68,6 +66,7 @@ public class Constantes {
     public static final String TIPOMOM_COMIDA = "Comida";
     public static final String TIPOMOM_MERIENDA = "Merienda";
     public static final String TIPOMOM_CENA = "Cena";
+    public static final String TIPOMOM_ANTESDORMIR= "Antes de dormir";
 
         //TIPO INTERVALO
     public static final String TIPOINTERVALO_DIARIO = "Diario";
@@ -75,7 +74,7 @@ public class Constantes {
     public static final String TIPOINTERVALO_SEMANAL = "Semanal";
     public static final String TIPOINTERVALO_MENSUAL = "Mensual";
     public static final String TIPOINTERVALO_TRIMESTRAL = "Trimestral";
-    public static final String TIPOINTERVALO_ANUNAL= "Anual";
+    public static final String TIPOINTERVALO_ANUAL = "Anual";
 
 
     //ARGUMENTOS

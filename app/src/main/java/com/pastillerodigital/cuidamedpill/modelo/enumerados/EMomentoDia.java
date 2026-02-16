@@ -8,7 +8,8 @@ public enum EMomentoDia {
     ALMUERZO(Constantes.TIPOMOM_ALMUERZO, 11, 0),
     COMIDA(Constantes.TIPOMOM_COMIDA, 14, 0),
     MERIENDA(Constantes.TIPOMOM_MERIENDA, 18, 0),
-    CENA(Constantes.TIPOMOM_CENA, 21, 0);
+    CENA(Constantes.TIPOMOM_CENA, 21, 0),
+    ANTES_DORMIR(Constantes.TIPOMOM_CENA, 23, 0);
 
     private final String descripcion;
     private final int horaDefault;

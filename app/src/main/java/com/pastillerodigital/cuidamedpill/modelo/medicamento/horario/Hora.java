@@ -1,6 +1,6 @@
 package com.pastillerodigital.cuidamedpill.modelo.medicamento.horario;
 
-public class Hora {
+public class Hora implements Comparable<Hora>{
 
     //En firebase:
     private int hora;
@@ -28,4 +28,19 @@ public class Hora {
     public void setMin(int min) {
         this.min = min;
     }
+
+    /**
+     * Para poder ordenar horas fácilmente
+     * @param otra the object to be compared.
+     * @return
+     */
+    @Override
+    public int compareTo(Hora otra) {
+        if(this.hora != otra.hora){
+            return this.hora - otra.hora;
+        }
+
+        return this.min - otra.min;
+    }
+
 }
