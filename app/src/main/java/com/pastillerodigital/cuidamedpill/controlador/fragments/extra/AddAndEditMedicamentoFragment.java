@@ -59,7 +59,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private TextInputEditText edtNombre, edtPauta, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes;
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
-    private CircularProgressIndicator progressIndicator;
     private View viewColor;
     private TextView tvTitulo;
     private List<Hora> listaHoras = new ArrayList<>();
@@ -153,7 +152,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
         btnGuardar = view.findViewById(R.id.btnGuardar);
         btnAgregarHora = view.findViewById(R.id.btnAgregarHora);
-        progressIndicator = view.findViewById(R.id.progressIndicator);
 
         //Lógica:
         leerArgumentosYConsec();
@@ -174,12 +172,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
             //Modo edicion o añadir medicamento
             if(medId != null){ //edición
-                tvTitulo.setText("Editar medicamento");
+                tvTitulo.setText(R.string.text_title_edit_med);
                 isEdit = true;
                 cargarDatos(medId);
             }
             else{
-                tvTitulo.setText("Añadir un medicamento");
+                tvTitulo.setText(R.string.text_title_add_med);
                 colorMed = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
                 selectedTipo = TipoMed.CAPSULA;
@@ -192,7 +190,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         cardTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
 
         edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo());
-        edtFechaCad.setOnClickListener(v -> mostrarDatePicker());
+        edtFechaCad.setOnClickListener(v -> mostrarDatePicker(edtFechaCad));
+        edtFechaFin.setOnClickListener(v -> mostrarDatePicker(edtFechaFin));
         btnGuardar.setOnClickListener(v -> guardarOEditarMedicamento());
         btnAgregarHora.setOnClickListener(v -> mostrarMenuSeleccionHora());
         viewColor.setOnClickListener(v -> mostrarSelectorColor());
@@ -230,12 +229,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
      * Abre un date picker para los atributos con fecha, para que no tenga que ser introducido manualmente
      * por el usuario y así evitar errores, además de añadir un aspecto profesional a la interfaz
      */
-    private void mostrarDatePicker(){
+    private void mostrarDatePicker(TextInputEditText edtFecha){
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog dpd = new DatePickerDialog(requireContext(),
                 (view, year, month, dayOfMonth) -> {
                     calendar.set(year, month, dayOfMonth);
-                    edtFechaCad.setText(Utils.calendarToString(calendar));
+                    edtFecha.setText(Utils.calendarToString(calendar));
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -250,8 +249,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 .setTitle("Seleccionar intervalo")
                 .setItems(tipos, (dialog, which) -> {
                     edtTipoIntervalo.setText(tipos[which]);
-                    TipoIntervalo tipoSeleccionado = TipoIntervalo.tipoIntervaloFromString(tipos[which]);
-                    //todo que hacer cuando se selecciona
                 })
                 .show();
     }
@@ -356,7 +353,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private void guardarOEditarMedicamento(){
         UiUtils.limpiarErroresLayouts((ViewGroup) getView().findViewById(R.id.formLayout));
 
-        String nombre = edtNombre.getText().toString().trim();
+        String nombre = edtNombre.getText().toString().trim().toUpperCase();
         String pautaStr = edtPauta.getText().toString().trim();
         String intervaloNumStr = edtIntervaloNum.getText().toString().trim();
         String fechaCadStr = edtFechaCad.getText().toString().trim();
@@ -392,21 +389,17 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
-                if(data.isEmpty()){ //si no tiene medicamentos registrados
-                    if(isEdit){ //todo
-
-                    }
-                    else addMedicamento(medActual);
-                }
-
                 for(Medicamento med: data){
-                    if(med.getNombreMed().equals(nombre)) return;
-
-                    if(isEdit){ //todo
-
+                    if(med.getNombreMed().equals(nombre)) {
+                        layoutNombre.setError("No puedes tener dos medicamentos con el mismo nombre");
+                        return;
                     }
-                    else addMedicamento(medActual);
                 }
+
+                if(isEdit){ //todo
+
+                }
+                else addMedicamento(medActual);
             }
 
             @Override
@@ -441,7 +434,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaFin.toDate().before(hoy.toDate())){
-                        layoutFechaFin.setError("La fecha fin no puede ser anterior a hoy");
+                        layoutFechaFin.setError("La fecha fin no puede ser anterior o igual a hoy");
                         valid = false;
                     }
                 }
@@ -453,7 +446,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
         if(!fechaCadStr.isEmpty()){
             try{
-                Timestamp fechaCad = Utils.stringToTimestamp(fechaFinStr);
+                Timestamp fechaCad = Utils.stringToTimestamp(fechaCadStr);
 
                 if(fechaCad == null){
                     layoutFechaCad.setError("Fecha inválida");
@@ -462,7 +455,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaCad.toDate().before(hoy.toDate())){
-                        layoutFechaCad.setError("La fecha fin no puede ser anterior a hoy");
+                        layoutFechaCad.setError("La fecha fin no puede ser anterior o igual a hoy");
                         valid = false;
                     }
                 }
@@ -486,7 +479,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         }
 
 
-
         return valid;
     }
 
@@ -505,6 +497,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 valid = false;
             }
         }
+        else{
+            layoutIntervaloNum.setError("Con el horario activo se necesita saber el periodo del intervalo");
+            valid = false;
+        }
 
         if(!pautaStr.isEmpty()){
             try{
@@ -518,9 +514,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 valid = false;
             }
         }
+        else{
+            layoutPauta.setError("Con el horario activo se necesita saber cuantos medicamentos se toman cada vez");
+        }
 
         if(horarioActivo && listaHoras.isEmpty()){
-            UiUtils.mostrarConfirmacion(requireActivity(), "Si el horario está activo necesita al menos una hora");
+            UiUtils.mostrarNegConfirmacion(requireActivity(), "Si el horario está activo necesita al menos una hora");
             return false;
         }
 

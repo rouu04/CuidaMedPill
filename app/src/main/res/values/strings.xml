@@ -7,6 +7,7 @@
     <string name="basic_hint_add">Añadir</string>
     <string name="basic_hint_editar">Editar</string>
     <string name="basic_button_cancelar">Cancelar</string>
+    <string name="basic_hint_guardar">Guardar</string>
 
 
     <!-- WelcomeActivity (inicio de sesión o registro) y RegistroActivity -->
@@ -48,6 +49,26 @@
     <string name="text_title_opciones">Opciones</string>
     <string name="text_hint_add_asist">Vincula un usuario asistido existente. Si el asistido no tiene cuenta, puedes registrarlo</string>
 
+    <!-- MEDICAMENTOS -->
+    <string name="text_title_edit_med">Editar medicamento</string>
+    <string name="text_title_add_med">Añadir medicamento</string>
+    <string name="text_title_med_detalles">Detalles del medicamento</string>
+
+    <string name="text_hint_med_opcionales">Para guardar un medicamento, sólo es necesario un nombre</string>
+    <string name="text_hint_med_horario">Cada cuantos "intervalos", cuantos medicamentos (cada 2 días 1.5 pastillas)</string>
+
+    <string name="contdesc_med_simb">Símbolo medicamento</string>
+
+    <string name="hint_med_nombremed">Nombre medicamento</string>
+    <string name="hint_med_horariotoggle">Horario </string>
+    <string name="hint_med_intervalo">Intervalo</string>
+    <string name="hint_med_frecuencia">Cada cuantos intervalos</string>
+    <string name="hint_med_pauta">Cuantos medicamentos cada vez</string>
+    <string name="hint_med_fecha_fintratamiento">Fecha fin del tratamiento</string>
+    <string name="hint_med_fecha_caducidad">Fecha de caducidad</string>
+    <string name="hint_med_restantes">Medicamentos restates en posesión</string>
+
+    <string name="btn_med_addhora">Añadir hora</string>
 
 
 </resources>

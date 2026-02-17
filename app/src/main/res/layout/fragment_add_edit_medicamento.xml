@@ -6,28 +6,36 @@
     <LinearLayout
         android:id="@+id/formLayout"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="@dimen/padding_general_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <!-- Texto titulo -->
         <TextView
             android:id="@+id/tvTitle"
-            android:text="Medicamento:"
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
             android:textStyle="bold"
-            android:textColor="@color/md_primary_dark"
-            android:textSize="18dp"/>
+            android:textColor="@color/md_primary_dark"/>
+
+        <!-- Texto Opcionales -->
+        <TextView
+            android:id="@+id/tvOpcionales"
+            android:text="@string/text_hint_med_opcionales"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_on_background"
+            android:textSize="@dimen/text_hint_size"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="@dimen/margin_top"
+            android:layout_marginBottom="@dimen/margin_bottom_element">
 
             <!-- Columna izquierda -->
             <LinearLayout
@@ -39,11 +47,11 @@
                 <!-- Card icono -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardTipoMed"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:contentPadding="6dp"
+                    android:layout_width="@dimen/size_image_icon_card_width"
+                    android:layout_height="@dimen/size_image_icon_card_height"
+                    app:cardCornerRadius="@dimen/card_cornerradious"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:contentPadding="@dimen/card_contentPadding"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
@@ -51,18 +59,18 @@
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/imgMedicamento"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/size_image_icon_width"
+                        android:layout_height="@dimen/size_image_icon_height"
                         android:layout_gravity="center"
-                        android:contentDescription="Símbolo medicamento"/>
+                        android:contentDescription="@string/contdesc_med_simb"/>
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Color debajo -->
                 <View
                     android:id="@+id/viewColor"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="@dimen/size_image_icon_mini_width"
+                    android:layout_height="@dimen/size_image_icon_mini_height"
+                    android:layout_marginTop="@dimen/margin_vertical"
                     android:background="@drawable/bg_circle_color"/>
             </LinearLayout>
 
@@ -72,8 +80,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:hint="Nombre medicamento"
+                android:layout_marginStart="@dimen/margin_start"
+                android:hint="@string/hint_med_nombremed"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -84,32 +92,18 @@
 
         </LinearLayout>
 
-        <!-- Texto Opcionales -->
-        <TextView
-            android:id="@+id/tvOpcionales"
-            android:text="Opcional"
-            android:layout_marginTop="@dimen/margin_elements_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/md_primary_dark"
-            android:textSize="18dp"/>
+
 
         <!-- HORARIO -->
-        <TextView
-            android:id="@+id/tvHorario"
-            android:text="Horario"
-            android:layout_marginTop="@dimen/margin_elements_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/md_primary_dark"
-            android:textSize="15dp"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchHorario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Horario activo"
-            android:layout_marginTop="8dp"/>
+            android:text="@string/hint_med_horariotoggle"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_marginTop="@dimen/margin_top"
+            android:textColor="@color/md_primary_dark"/>
 
         <!-- Contenedor que se oculta -->
         <LinearLayout
@@ -118,44 +112,54 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:paddingTop="8dp">
+            android:paddingTop="@dimen/margin_top_element">
+
+            <!-- Texto aclaratorio horario -->
+            <TextView
+                android:id="@+id/tvHintHorario"
+                android:text="@string/text_hint_med_horario"
+                android:layout_marginTop="@dimen/margin_elements_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/md_on_background"
+                android:textSize="@dimen/text_hint_size"/>
 
             <!-- Intervalo -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/margin_top_element"
                 android:weightSum="2">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutTipoIntervalo"
-                    android:layout_width="0dp"
+                    android:id="@+id/layoutIntervaloNum"
+                    android:layout_width="@dimen/width_0"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:hint="Intervalo"
+                    android:hint="@string/hint_med_frecuencia"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtIntervaloNum"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutTipoIntervalo"
+                    android:layout_width="@dimen/width_0"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start"
+                    android:hint="@string/hint_med_intervalo"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtTipoIntervalo"
                         android:focusable="false"
                         android:clickable="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutIntervaloNum"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:hint="Cada x intervalo"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edtIntervaloNum"
-                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </com.google.android.material.textfield.TextInputLayout>
@@ -166,7 +170,7 @@
                 android:id="@+id/layoutPauta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pauta"
+                android:hint="@string/hint_med_pauta"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -176,21 +180,25 @@
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- HORAS -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/layoutHorasContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:chipSpacingHorizontal="8dp"
-                app:chipSpacingVertical="8dp"/>
+                android:layout_marginTop="@dimen/margin_top_element"
+                app:chipSpacingHorizontal="@dimen/margin_horizontal"
+                app:chipSpacingVertical="@dimen/margin_vertical"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAgregarHora"
-                android:text="Agregar hora"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:text="@string/btn_med_addhora"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="@dimen/margin_top_element"
+                android:textStyle="bold"
+                app:backgroundTint="@color/md_third"
+                android:textColor="@color/md_blanco"/>
         </LinearLayout>
 
 
@@ -198,23 +206,24 @@
         <!-- Texto detalles -->
         <TextView
             android:id="@+id/tvDetalles"
-            android:text="Detalles"
+            android:text="@string/text_title_med_detalles"
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/md_primary_dark"
-            android:textSize="15dp"/>
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="@dimen/padding_top">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutFechaFin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Fecha fin del tratamiento"
+                android:hint="@string/hint_med_fecha_fintratamiento"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -229,7 +238,7 @@
                 android:id="@+id/layoutFechaCad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Fecha caducidad"
+                android:hint="@string/hint_med_fecha_caducidad"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -244,7 +253,7 @@
                 android:id="@+id/layoutNMedRestantes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Medicamentos restantes en posesión"
+                android:hint="@string/hint_med_restantes"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -260,15 +269,8 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:layout_marginTop="24dp"/>
+            android:text="@string/basic_hint_guardar"
+            android:layout_marginTop="@dimen/margin_top"/>
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>

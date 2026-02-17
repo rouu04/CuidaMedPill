@@ -34,8 +34,8 @@ public class Medicamento implements Persistible {
 
     public Medicamento(){}
 
-    public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad,
-                       String nombreM, Timestamp fechaFin, int nMedRestantes, Horario horario, String idM) {
+    public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad, String nombreM,
+                       Timestamp fechaFin, int nMedRestantes, Horario horario, String idM) {
         this.colorSimb = colorSimb;
         this.tipoMedStr = tipoMedStr;
         this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
