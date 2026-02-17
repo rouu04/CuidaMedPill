@@ -15,6 +15,8 @@
     <!-- Fondo y superficies -->
     <color name="md_background">#EDFDFB</color>
     <color name="md_surface">#B5F6EF</color> <!-- En los menús -->
+    <color name="md_surface_light">#C8F4EF</color> <!-- En los menús -->
+    <color name="md_surface_dark">#89F2E7</color> <!-- En los menús -->
 
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>

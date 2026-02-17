@@ -22,73 +22,67 @@
             android:textColor="@color/md_primary_dark"
             android:textSize="18dp"/>
 
-        <!-- FOTO  -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="16dp">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgMedicamento"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:contentDescription="Símbolo medicamento"/>
+            <!-- Columna izquierda -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-            <!-- CÍRCULO COLOR -->
-            <View
-                android:id="@+id/viewColor"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/bg_circle_color"/>
+                <!-- Card icono -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardTipoMed"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:contentPadding="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/md_surface_dark">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgMedicamento"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Símbolo medicamento"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Color debajo -->
+                <View
+                    android:id="@+id/viewColor"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_circle_color"/>
+            </LinearLayout>
+
+            <!-- Nombre a la derecha -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutNombreMed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:hint="Nombre medicamento"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtNombreMed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
-
-        <!-- NOMBRE -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutNombreMed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre medicamento"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtNombreMed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- TIPO DE MEDICAMENTO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutTipoMed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tipo medicamento"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtTipoMed"
-                android:focusable="false"
-                android:clickable="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- PAUTA -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPauta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Pauta"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtPauta"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Texto Opcionales -->
         <TextView
@@ -101,7 +95,6 @@
             android:textSize="18dp"/>
 
         <!-- HORARIO -->
-        <!-- Texto Opcionales -->
         <TextView
             android:id="@+id/tvHorario"
             android:text="Horario"
@@ -110,17 +103,22 @@
             android:layout_height="wrap_content"
             android:textColor="@color/md_primary_dark"
             android:textSize="15dp"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchHorario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horario activo"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Contenedor que se oculta -->
         <LinearLayout
+            android:id="@+id/layoutHorarioContainer"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
-
-            <TextView
-                android:text="Horario"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            android:visibility="gone"
+            android:paddingTop="8dp">
 
             <!-- Intervalo -->
             <LinearLayout
@@ -131,8 +129,8 @@
                 android:weightSum="2">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
                     android:id="@+id/layoutTipoIntervalo"
+                    android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Intervalo"
@@ -163,6 +161,21 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <!-- PAUTA -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutPauta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pauta"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPauta"
+                    android:inputType="numberDecimal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/layoutHorasContainer"
                 android:layout_width="match_parent"
@@ -171,8 +184,6 @@
                 app:chipSpacingHorizontal="8dp"
                 app:chipSpacingVertical="8dp"/>
 
-
-            <!-- Horas -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAgregarHora"
                 android:text="Agregar hora"
@@ -181,6 +192,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
+
 
         <!-- DETALLES -->
         <!-- Texto detalles -->

@@ -12,13 +12,15 @@ public class Horario {
 
     private TipoIntervalo tipoIntervalo;
     private int intervalo; // número de días/semanas/meses según el tipo (cada 2 días)
+    private float pauta; //cuantas pastillas se toma cada vez
 
     public Horario(){}
 
-    public Horario(TipoIntervalo tipoIntervalo, int intervalo, List<Hora> horas) {
+    public Horario(TipoIntervalo tipoIntervalo, int intervalo, float pauta, List<Hora> horas) {
         this.tipoIntervalo = tipoIntervalo;
         this.intervalo = intervalo;
         this.horas = horas;
+        this.pauta = pauta;
     }
 
     public List<Hora> getHoras() {
@@ -43,6 +45,14 @@ public class Horario {
 
     public void setIntervalo(int intervalo) {
         this.intervalo = intervalo;
+    }
+
+    public float getPauta() {
+        return pauta;
+    }
+
+    public void setPauta(float pauta) {
+        this.pauta = pauta;
     }
 
     /**

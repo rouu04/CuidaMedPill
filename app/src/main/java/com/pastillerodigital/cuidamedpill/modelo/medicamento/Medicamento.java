@@ -17,7 +17,6 @@ public class Medicamento implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreMed;
     private String colorSimb;
-    private float pauta;
     private TipoMed tipoMed;
 
     //Opcionales:
@@ -32,10 +31,9 @@ public class Medicamento implements Persistible {
 
     public Medicamento(){}
 
-    public Medicamento(String colorSimb, float pauta, TipoMed tipoM, Timestamp fechaCad,
+    public Medicamento(String colorSimb, TipoMed tipoM, Timestamp fechaCad,
                        String nombreM, Timestamp fechaFin, int nMedRestantes, Horario horario, String idM) {
         this.colorSimb = colorSimb;
-        this.pauta = pauta;
         this.tipoMed = tipoM;
         this.fechaCad = fechaCad;
         this.nombreMed = nombreM;
@@ -59,14 +57,6 @@ public class Medicamento implements Persistible {
 
     public void setColorSimb(String colorSimb) {
         this.colorSimb = colorSimb;
-    }
-
-    public float getPauta() {
-        return pauta;
-    }
-
-    public void setPauta(float pauta) {
-        this.pauta = pauta;
     }
 
     public TipoMed getTipoMed() {
@@ -126,7 +116,6 @@ public class Medicamento implements Persistible {
 
         med.setNombreMed(doc.getString(Constantes.MED_NOMBREMED));
         med.setColorSimb(doc.getString(Constantes.MED_COLORSIMB));
-        med.setPauta(doc.getDouble(Constantes.MED_PAUTA).floatValue());
         med.setTipoMed(TipoMed.tipoMedFromString(doc.getString(Constantes.MED_TIPOMED)));
 
         med.setId(doc.getId());

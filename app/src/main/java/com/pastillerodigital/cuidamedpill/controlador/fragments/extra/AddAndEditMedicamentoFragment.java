@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -22,10 +21,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -54,8 +55,8 @@ import java.util.Locale;
 
 public class AddAndEditMedicamentoFragment extends Fragment {
 
-    private TextInputLayout layoutNombre, layoutTipoMed, layoutPauta, layoutTipoIntervalo, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes;
-    private TextInputEditText edtNombre, edtTipoMed, edtPauta, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes;
+    private TextInputLayout layoutNombre, layoutPauta, layoutTipoIntervalo, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes;
+    private TextInputEditText edtNombre, edtPauta, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes;
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
     private CircularProgressIndicator progressIndicator;
@@ -63,11 +64,14 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private TextView tvTitulo;
     private List<Hora> listaHoras = new ArrayList<>();
     private ChipGroup layoutHorasContainer; //como un layout pero más profesional
+    private SwitchMaterial switchHorario; //toggle
+    private LinearLayout layoutHorarioContainer;
+    private MaterialCardView cardTipoMed;
 
     //Elementos lógicos
     private MedicamentoDAO medDAO;
     private Medicamento medEdit;
-    private boolean isEdit;
+    private boolean isEdit, horarioActivo;
     private String uid, uidSelf, medId;
     private Modo modo;
     private int selectedColorRes = R.color.md_primary;
@@ -122,17 +126,20 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         imgMedicamento = view.findViewById(R.id.imgMedicamento);
         layoutNombre = view.findViewById(R.id.layoutNombreMed);
         edtNombre = view.findViewById(R.id.edtNombreMed);
-        layoutTipoMed = view.findViewById(R.id.layoutTipoMed);
-        edtTipoMed = view.findViewById(R.id.edtTipoMed);
-        layoutPauta = view.findViewById(R.id.layoutPauta);
-        edtPauta = view.findViewById(R.id.edtPauta);
+        cardTipoMed = view.findViewById(R.id.cardTipoMed);
 
+        //Horario:
         layoutTipoIntervalo = view.findViewById(R.id.layoutTipoIntervalo);
         edtTipoIntervalo = view.findViewById(R.id.edtTipoIntervalo);
         layoutIntervaloNum = view.findViewById(R.id.layoutIntervaloNum);
         edtIntervaloNum = view.findViewById(R.id.edtIntervaloNum);
+        layoutPauta = view.findViewById(R.id.layoutPauta);
+        edtPauta = view.findViewById(R.id.edtPauta);
         layoutHorasContainer = view.findViewById(R.id.layoutHorasContainer);
+        switchHorario = view.findViewById(R.id.switchHorario);
+        layoutHorarioContainer = view.findViewById(R.id.layoutHorarioContainer);
 
+        //detalles:
         layoutFechaCad = view.findViewById(R.id.layoutFechaCad);
         edtFechaCad = view.findViewById(R.id.edtFechaCad);
         layoutFechaFin = view.findViewById(R.id.layoutFechaFin);
@@ -149,20 +156,23 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         progressIndicator = view.findViewById(R.id.progressIndicator);
 
         //Lógica:
-        medDAO = new MedicamentoDAO(uid);
-
-        leerArgumentos();
+        leerArgumentosYConsec();
         setButtonListeners();
-
     }
 
-    private void leerArgumentos(){
+    /**
+     * Lee los argumentos y en consecuencia define atributos y carga datos si es necesario.
+     */
+    private void leerArgumentosYConsec(){
         if(getArguments() != null){
             uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
             uid = getArguments().getString(Constantes.ARG_UID);
             modo = Modo.modoFromString(getArguments().getString(Constantes.ARG_MODO));
             if(uid == null) uid = uidSelf;
+            medDAO = new MedicamentoDAO(uid);
             medId = getArguments().getString(Constantes.ARG_MEDID);
+
+            //Modo edicion o añadir medicamento
             if(medId != null){ //edición
                 tvTitulo.setText("Editar medicamento");
                 isEdit = true;
@@ -170,21 +180,44 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
             else{
                 tvTitulo.setText("Añadir un medicamento");
-                edtTipoMed.setText(TipoMed.CAPSULA.toString());
                 colorMed = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
+                selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
             }
         }
     }
 
     private void setButtonListeners(){
-        edtTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
+        cardTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
+
         edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo());
         edtFechaCad.setOnClickListener(v -> mostrarDatePicker());
         btnGuardar.setOnClickListener(v -> guardarOEditarMedicamento());
         btnAgregarHora.setOnClickListener(v -> mostrarMenuSeleccionHora());
         viewColor.setOnClickListener(v -> mostrarSelectorColor());
+
+        switchHorario.setChecked(false);
+        horarioActivo = false;
+        switchHorario.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            horarioActivo = isChecked;
+
+            if(isChecked){ //si está activo
+                layoutHorarioContainer.setVisibility(View.VISIBLE);
+                // Valores por defecto
+                tipoIntervaloSel = TipoIntervalo.DIARIO;
+                edtTipoIntervalo.setText(TipoIntervalo.DIARIO.toString());
+
+            } else {
+                layoutHorarioContainer.setVisibility(View.GONE);
+                // Se limpian los datos del horario
+                listaHoras.clear();
+                layoutHorasContainer.removeAllViews();
+                edtIntervaloNum.setText("");
+                edtPauta.setText("");
+                edtTipoIntervalo.setText("");
+            }
+        });
 
     }
 
@@ -229,7 +262,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleccionar tipo")
                 .setItems(tipos, (dialog, which) -> {
-                    edtTipoMed.setText(tipos[which]);
                     TipoMed tipoSeleccionado = TipoMed.tipoMedFromString(tipos[which]);
                     actualizarImagenTipo(tipoSeleccionado);
                 })
@@ -322,12 +354,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
 
     private void guardarOEditarMedicamento(){
-        // Validar campos
-        // Crear nuevo Medicamento o actualizar medEdit
-        // Llamar medicamentoDAO.add() o medicamentoDAO.edit()
         UiUtils.limpiarErroresLayouts((ViewGroup) getView().findViewById(R.id.formLayout));
+
         String nombre = edtNombre.getText().toString().trim();
-        String tipoStr = edtTipoMed.getText().toString().trim();
         String pautaStr = edtPauta.getText().toString().trim();
         String intervaloNumStr = edtIntervaloNum.getText().toString().trim();
         String fechaCadStr = edtFechaCad.getText().toString().trim();
@@ -335,40 +364,48 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String nMedRestantesStr = edtNMedRestantes.getText().toString().trim();
         String colorString = getResources().getResourceEntryName(selectedColorRes);
 
-        if(!validaciones(nombre, tipoStr, pautaStr)) return;
-        if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nMedRestantesStr, intervaloNumStr)) return;
+        if(!validaciones(nombre)) return;
+        if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nMedRestantesStr)) return;
+
 
         int nCajas = nMedRestantesStr.isEmpty() ? -1 : Integer.parseInt(nMedRestantesStr);
-        int intervaloNum = intervaloNumStr.isEmpty() ? -1 : Integer.parseInt(intervaloNumStr); //-1 por simplicidad y coherencia
-
+        int intervaloNum = intervaloNumStr.isEmpty() ? -1 : Integer.parseInt(intervaloNumStr); //-1 por simplicidad
         Timestamp fechaCad = fechaCadStr.isEmpty() ? null : Utils.stringToTimestamp(fechaCadStr);
         Timestamp fechaFin = fechaFinStr.isEmpty() ? null : Utils.stringToTimestamp(fechaFinStr);
 
+        Horario horario = null;
+        if(horarioActivo){
+            if(!validacionesHorario(intervaloNumStr, pautaStr)) return;
+            horario = new Horario(
+                    tipoIntervaloSel,
+                    intervaloNum,
+                    Float.parseFloat(pautaStr),
+                    listaHoras
+            );
+        }
 
-        Horario horario = new Horario(
-                tipoIntervaloSel,
-                intervaloNum,
-                listaHoras
-        );
-
-        Medicamento medActual = new Medicamento(colorString, Float.parseFloat(pautaStr), TipoMed.tipoMedFromString(tipoStr),
-                fechaCad , nombre, fechaFin, nCajas, horario, null);
-
+        Medicamento medActual = new Medicamento(colorString, selectedTipo, fechaCad , nombre,
+                fechaFin, nCajas, horario, null);
         if(isEdit) medActual.setId(medEdit.getId());
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:
         medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
+                if(data.isEmpty()){ //si no tiene medicamentos registrados
+                    if(isEdit){ //todo
+
+                    }
+                    else addMedicamento(medActual);
+                }
+
                 for(Medicamento med: data){
                     if(med.getNombreMed().equals(nombre)) return;
 
                     if(isEdit){ //todo
 
                     }
-                    else{
-                        addMedicamento(medActual);
-                    }
+                    else addMedicamento(medActual);
                 }
             }
 
@@ -380,25 +417,17 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     }
 
 
-    private boolean validaciones(String nombre, String tipoStr, String pautaStr){
+    private boolean validaciones(String nombre){
         boolean valid = true;
 
         if(nombre.isEmpty()){
             layoutNombre.setError("Ingrese el nombre del medicamento");
             valid = false;
         }
-        if(tipoStr.isEmpty()){
-            layoutTipoMed.setError("Seleccione un tipo de medicamento");
-            valid = false;
-        }
-        if(pautaStr.isEmpty()){
-            layoutPauta.setError("Ingrese la pauta");
-            valid = false;
-        }
         return valid;
     }
 
-    private boolean validacionesOpcionales(String fechaCadStr, String fechaFinStr, String nMedRestantesStr, String intervaloNumStr){
+    private boolean validacionesOpcionales(String fechaCadStr, String fechaFinStr, String nMedRestantesStr){
         boolean valid = true;
 
         if(!fechaFinStr.isEmpty()){
@@ -422,6 +451,27 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
         }
 
+        if(!fechaCadStr.isEmpty()){
+            try{
+                Timestamp fechaCad = Utils.stringToTimestamp(fechaFinStr);
+
+                if(fechaCad == null){
+                    layoutFechaCad.setError("Fecha inválida");
+                    valid = false;
+                } else {
+                    Timestamp hoy = Timestamp.now();
+
+                    if(fechaCad.toDate().before(hoy.toDate())){
+                        layoutFechaCad.setError("La fecha fin no puede ser anterior a hoy");
+                        valid = false;
+                    }
+                }
+            }catch (Exception e){
+                layoutFechaCad.setError("Formato de fecha incorrecto");
+                valid = false;
+            }
+        }
+
         if(!nMedRestantesStr.isEmpty()){
             try{
                 int nCajas = Integer.parseInt(nMedRestantesStr);
@@ -435,18 +485,45 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
         }
 
-        if(!nMedRestantesStr.isEmpty()){
+
+
+        return valid;
+    }
+
+    private boolean validacionesHorario(String intervaloNumStr, String pautaStr){
+        boolean valid = true;
+
+        if(!intervaloNumStr.isEmpty()){
             try{
                 int intervaloNum = Integer.parseInt(intervaloNumStr);
                 if(intervaloNum <= 0){
-                    layoutNMedRestantes.setError("Debe ser un número más grande que 0");
+                    layoutIntervaloNum.setError("Debe ser un número más grande que 0");
                     valid = false;
                 }
             }catch (NumberFormatException e){
-                layoutNMedRestantes.setError("Número inválido");
+                layoutIntervaloNum.setError("Número inválido");
                 valid = false;
             }
         }
+
+        if(!pautaStr.isEmpty()){
+            try{
+                float pautaF = Float.parseFloat(pautaStr);
+                if(pautaF <= 0.0){
+                    layoutPauta.setError("Debe ser un número más grande que 0.0");
+                    valid = false;
+                }
+            }catch (NumberFormatException e){
+                layoutPauta.setError("Número inválido");
+                valid = false;
+            }
+        }
+
+        if(horarioActivo && listaHoras.isEmpty()){
+            UiUtils.mostrarConfirmacion(requireActivity(), "Si el horario está activo necesita al menos una hora");
+            return false;
+        }
+
 
         return valid;
     }
