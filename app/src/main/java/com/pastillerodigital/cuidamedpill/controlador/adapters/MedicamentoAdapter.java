@@ -1,16 +1,21 @@
 package com.pastillerodigital.cuidamedpill.controlador.adapters;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 
 import java.util.List;
@@ -41,13 +46,32 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
         Medicamento med = lista.get(position);
         holder.tvNombre.setText(med.getNombreMed());
 
-        //todo revisar color simbolo
-        try {
-            int color = Color.parseColor(med.getColorSimb());
-            ((GradientDrawable) holder.viewColor.getBackground()).setColor(color);
-        } catch (Exception e) {
-            holder.viewColor.setBackgroundColor(Color.GRAY);
+        //SIMBOLO MEDICAMENTO
+        TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
+
+        holder.imgTipoMed.setImageResource(tipoMed.getDrawableRes());
+        int colorResId = holder.itemView.getContext().getResources().getIdentifier(med.getColorSimb(), "color", holder.itemView.getContext().getPackageName());
+        int color = ContextCompat.getColor(holder.itemView.getContext(), colorResId);
+
+        // Obtener drawable
+        Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), tipoMed.getDrawableRes());
+        if(drawable == null) return;
+
+        if (drawable instanceof LayerDrawable) { //si es un layout con capa fija y otra con color se cambia solo la capa color
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
+            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
+            if (capaColor != null) {
+                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+            holder.imgTipoMed.setImageDrawable(layerDrawable); //asigna dawable colorado a imageview
+
+        } else { //en caso de tener un icono simple con tod*o coloreable
+            drawable = drawable.mutate(); // importante para no afectar otras instancias
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            holder.imgTipoMed.setImageDrawable(drawable);
         }
+
+
 
         //Al hacer click en un medicamento
         holder.itemView.setOnClickListener(v -> {
@@ -65,11 +89,13 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
     public static class MedViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre;
         View viewColor;
+        ImageView imgTipoMed;
 
         public MedViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombreMed);
             viewColor = itemView.findViewById(R.id.viewColor);
+            imgTipoMed = itemView.findViewById(R.id.imgTipoMed);
         }
     }
 }

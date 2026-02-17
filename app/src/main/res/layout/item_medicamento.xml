@@ -16,13 +16,14 @@
         android:gravity="center_vertical"
         android:padding="16dp">
 
-        <!-- Símbolo circular -->
+        <!-- Símbolo medicamento -->
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/viewColor"
+            android:id="@+id/imgTipoMed"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:backgroundTint="@color/md_secondary"
-            android:contentDescription="Color medicamento"/>
+            android:contentDescription="Icono tipo medicamento"
+            android:layout_marginEnd="8dp"/>
+
 
         <!-- Nombre -->
         <com.google.android.material.textview.MaterialTextView
@@ -32,7 +33,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurface"/>
+            android:textColor="@color/md_primary_dark"/>
 
     </LinearLayout>
 

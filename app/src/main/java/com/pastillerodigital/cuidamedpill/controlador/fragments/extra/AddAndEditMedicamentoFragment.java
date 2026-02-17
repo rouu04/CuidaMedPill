@@ -384,7 +384,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             );
         }
 
-        Medicamento medActual = new Medicamento(colorString, selectedTipo, fechaCad , nombre,
+        Medicamento medActual = new Medicamento(colorString, selectedTipo.toString(), fechaCad , nombre,
                 fechaFin, nCajas, horario, null);
         if(isEdit) medActual.setId(medEdit.getId());
 

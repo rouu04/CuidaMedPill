@@ -14,9 +14,6 @@ public class Constantes {
     public static final String PERSIST_KEYSESIONACTIVA = "SESIONACTIVA";
     public static final String PERSIST_KEYMODO = "MODO";
 
-    //----------STORAGE (fotos)
-    public static final String STOR_FN_USUARIOS = "usuarios/";
-    public static final String STOR_FN_FORMATO = ".jpg";
 
     //-----------TABLA USUARIOS
     public static final String USUARIO_NOMBREUSUARIO = "nombreUsuario";
@@ -31,10 +28,10 @@ public class Constantes {
     public static final String USUARIO_ASIST_IDUSRTUTORESASIG = "idUsrTutoresAsig";
 
     //-------------TABLA MEDICAMENTOS
-    public static final String MED_NOMBREMED = "nombreUsuario";
+    public static final String MED_NOMBREMED = "nombreMed";
     public static final String MED_COLORSIMB = "colorSimb";
-    public static final String MED_PAUTA = "pauta";
     public static final String MED_TIPOMED = "tipoMed";
+    public static final String MED_TIPOMEDSTR = "tipoMedStr";
     public static final String MED_FECHACAD = "fechaCad";
     public static final String MED_FECHAFIN = "fechaFin";
     public static final String MED_NMEDRESTANTES= "nMedRestantes";
@@ -51,14 +48,11 @@ public class Constantes {
         //TIPO MEDICAMENTO
     public static final String TIPOMED_PASTILLA = "Pastilla";
     public static final String TIPOMED_CAPSULA = "Cápsula";
-    public static final String TIPOMED_VACUNA = "Vacuna";
     public static final String TIPOMED_INYECCION = "Inyección";
     public static final String TIPOMED_INHALADOR= "Inhalador";
     public static final String TIPOMED_CREMA= "Crema";
     public static final String TIPOMED_JARABE= "Jarabe";
     public static final String TIPOMED_GOTAS= "Gotas";
-    public static final String TIPOMED_AEROSOL= "Aerosol";
-    public static final String TIPOMED_PARCHE= "Parche";
 
         // MOMENTO DEL DIA
     public static final String TIPOMOM_DESAYUNO = "Desayuno";

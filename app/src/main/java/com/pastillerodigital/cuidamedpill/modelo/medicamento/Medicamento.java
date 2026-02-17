@@ -17,7 +17,8 @@ public class Medicamento implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreMed;
     private String colorSimb;
-    private TipoMed tipoMed;
+
+    private String tipoMedStr;
 
     //Opcionales:
     private Timestamp fechaCad;
@@ -28,13 +29,16 @@ public class Medicamento implements Persistible {
     //Atributos que NO estarán en firebase directamente pero que el objeto almacenará.
     @Exclude
     private String idMed;
+    @Exclude
+    private TipoMed tipoMed;
 
     public Medicamento(){}
 
-    public Medicamento(String colorSimb, TipoMed tipoM, Timestamp fechaCad,
+    public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad,
                        String nombreM, Timestamp fechaFin, int nMedRestantes, Horario horario, String idM) {
         this.colorSimb = colorSimb;
-        this.tipoMed = tipoM;
+        this.tipoMedStr = tipoMedStr;
+        this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
         this.fechaCad = fechaCad;
         this.nombreMed = nombreM;
         this.fechaFin = fechaFin;
@@ -58,15 +62,6 @@ public class Medicamento implements Persistible {
     public void setColorSimb(String colorSimb) {
         this.colorSimb = colorSimb;
     }
-
-    public TipoMed getTipoMed() {
-        return tipoMed;
-    }
-
-    public void setTipoMed(TipoMed tipoMed) {
-        this.tipoMed = tipoMed;
-    }
-
     public Timestamp getFechaCad() {
         return fechaCad;
     }
@@ -99,6 +94,15 @@ public class Medicamento implements Persistible {
         this.horario = horario;
     }
 
+    public String getTipoMedStr() {
+        return tipoMedStr;
+    }
+
+    public void setTipoMedStr(String tipoMedStr) {
+        this.tipoMedStr = tipoMedStr;
+    }
+
+
     @Exclude
     @Override
     public String getId() {
@@ -110,13 +114,22 @@ public class Medicamento implements Persistible {
     public void setId(String idM) {
         this.idMed = idM;
     }
+    @Exclude
+    public TipoMed getTipoMed() {
+        return tipoMed;
+    }
+    @Exclude
+    public void setTipoMed(TipoMed tipoMed) {
+        this.tipoMed = tipoMed;
+    }
 
     public static Medicamento doctoObj(DocumentSnapshot doc){
         Medicamento med = new Medicamento();
 
         med.setNombreMed(doc.getString(Constantes.MED_NOMBREMED));
         med.setColorSimb(doc.getString(Constantes.MED_COLORSIMB));
-        med.setTipoMed(TipoMed.tipoMedFromString(doc.getString(Constantes.MED_TIPOMED)));
+        med.setTipoMedStr(doc.getString(Constantes.MED_TIPOMEDSTR));
+        med.setTipoMed(TipoMed.tipoMedFromString(med.getTipoMedStr()));
 
         med.setId(doc.getId());
 
@@ -127,12 +140,9 @@ public class Medicamento implements Persistible {
         if (nCajasMed != null) med.setnMedRestantes(nCajasMed.intValue());
         else med.setnMedRestantes(-1);
 
-        med.setHorario(doc.get(Constantes.MED_HORARIO, Horario.class)); //todo sino funciona revisar que esto es problematico
-
+        med.setHorario(doc.get(Constantes.MED_HORARIO, Horario.class));
 
         return med;
     }
-
-
 
 }
