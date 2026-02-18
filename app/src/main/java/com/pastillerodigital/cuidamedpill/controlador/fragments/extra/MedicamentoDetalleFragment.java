@@ -25,9 +25,11 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
@@ -42,7 +44,7 @@ public class MedicamentoDetalleFragment extends Fragment {
 
     private MaterialToolbar toolbarSup;
     private ImageView imgMedicamento;
-    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas;
+    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo;
     private ChipGroup chipGroupHoras;
     private LinearLayout layoutNotificaciones, layoutFormMedDetalle;
     private MaterialButton btnEditar, btnEliminar;
@@ -81,16 +83,17 @@ public class MedicamentoDetalleFragment extends Fragment {
         toolbarSup = view.findViewById(R.id.topAppBarMedDetalle);
         progressMedDetalle = view.findViewById(R.id.progressMedDetalle);
         layoutFormMedDetalle = view.findViewById(R.id.layoutFormMedDetalle);
-
         imgMedicamento = view.findViewById(R.id.imgMedicamentoDet);
         tvNombre = view.findViewById(R.id.tvNombreMedDetalle);
+
+        tvIntervalo = view.findViewById(R.id.tvIntervaloDet);
+        chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
+        layoutNotificaciones = view.findViewById(R.id.layoutNotificacionesDetalle);
+
         tvFechaCad = view.findViewById(R.id.tvFechaCad);
         tvFechaFin = view.findViewById(R.id.tvFechaFin);
         tvRestantes = view.findViewById(R.id.tvRestantes);
         tvNotas = view.findViewById(R.id.tvNotas);
-
-        chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
-        layoutNotificaciones = view.findViewById(R.id.layoutNotificacionesDetalle);
 
         btnEditar = view.findViewById(R.id.btnEditar);
         btnEliminar = view.findViewById(R.id.btnEliminar);
@@ -153,7 +156,7 @@ public class MedicamentoDetalleFragment extends Fragment {
                     return;
                 }
                 medicamento = med;
-                llenarVista();
+                fillView();
                 ocultarCarga();
             }
 
@@ -179,7 +182,7 @@ public class MedicamentoDetalleFragment extends Fragment {
         });
     }
 
-    private void llenarVista(){
+    private void fillView(){
         tvNombre.setText(medicamento.getNombreMed() != null ? medicamento.getNombreMed() : "");
         tvFechaCad.setText(medicamento.getFechaCad() != null ? Utils.timestampToString(medicamento.getFechaCad()) : "");
         tvFechaFin.setText(medicamento.getFechaFin() != null ? Utils.timestampToString(medicamento.getFechaFin()) : "");
@@ -197,8 +200,9 @@ public class MedicamentoDetalleFragment extends Fragment {
 
         // Horas
         chipGroupHoras.removeAllViews();
-        if(medicamento.getHorario() != null && medicamento.getHorario().getHoras() != null){
-            List<Hora> horas = medicamento.getHorario().getHoras();
+        Horario horario = medicamento.getHorario();
+        if(horario != null && horario.getHoras() != null){
+            List<Hora> horas = horario.getHoras();
             Collections.sort(horas);
             for(Hora h: horas){
                 Chip chip = new Chip(requireContext());
@@ -210,6 +214,11 @@ public class MedicamentoDetalleFragment extends Fragment {
                 chipGroupHoras.addView(chip);
             }
         }
+
+        if (horario != null) tvIntervalo.setText(TipoIntervalo.tipoToStringVista(horario.getIntervalo(),
+                TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr())));
+        else tvIntervalo.setText("-");
+
 
         // Notificaciones placeholder
         layoutNotificaciones.removeAllViews();

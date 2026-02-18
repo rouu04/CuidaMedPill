@@ -55,6 +55,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class AddAndEditMedicamentoFragment extends Fragment {
 
@@ -433,15 +434,13 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 for(Medicamento med: data){
-                    if(med.getNombreMed().equals(nombre)) {
+                    if(!med.getId().equals(medActual.getId()) && med.getNombreMed().equals(nombre)) {
                         layoutNombre.setError(Mensajes.MED_EDITADD_VAL_NOMBRE);
                         return;
                     }
                 }
 
-                if(isEdit){ //todo
-
-                }
+                if(isEdit) editMedicamento(medActual);
                 else addMedicamento(medActual);
             }
 
@@ -605,8 +604,23 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private void addMedicamento(Medicamento med){
         medDAO.add(med, new OnOperationCallback() {
             @Override
-            public void onSuccess() {
-                //medicamento añadido, volvemos a la lista
+            public void onSuccess() {//medicamento añadido, volvemos a la lista
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .popBackStack();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void editMedicamento(Medicamento med){
+        medDAO.edit(med, new OnOperationCallback() {
+            @Override
+            public void onSuccess() { // Medicamento actualizado, volvemos atrás
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
@@ -631,8 +645,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         );
         actualizarImagenColor(tipo, selectedColorRes);
     }
-
-
 
     private void mostrarSelectorColor(){
 

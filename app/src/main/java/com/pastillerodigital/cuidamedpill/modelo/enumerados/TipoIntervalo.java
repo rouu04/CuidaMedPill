@@ -48,5 +48,35 @@ public enum TipoIntervalo {
         return null;
     }
 
+    public static String tipoToStringVista(int intervalo, TipoIntervalo tipo){
+        if (tipo == null || intervalo <= 0) return "";
+
+        String unidad;
+        switch (tipo){
+            case DIARIO:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_DIA : Constantes.INTERVALO_DIAS;
+                break;
+            case SEMANAL:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_SEMANA : Constantes.INTERVALO_SEMANAS;
+                break;
+            case QUINCENAL:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_QUINCENA : Constantes.INTERVALO_QUINCENAS;
+                break;
+            case MENSUAL:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_MES : Constantes.INTERVALO_MESES;
+                break;
+            case TRIMESTRAL:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_TRIMESTRE : Constantes.INTERVALO_TRIMESTRES;
+                break;
+            case ANUAL:
+                unidad = (intervalo == 1) ? Constantes.INTERVALO_ANIO : Constantes.INTERVALO_ANIOS;
+                break;
+            default:
+                unidad = "";
+        }
+
+        return "Cada " + intervalo + " " + unidad;
+    }
+
 
 }

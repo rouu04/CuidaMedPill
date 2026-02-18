@@ -79,6 +79,23 @@ public class Constantes {
     public static final String TIPOINTERVALO_TRIMESTRAL = "Trimestral";
     public static final String TIPOINTERVALO_ANUAL = "Anual";
 
+            // unidades singular
+    public static final String INTERVALO_DIA = "día";
+    public static final String INTERVALO_SEMANA = "semana";
+    public static final String INTERVALO_QUINCENA = "quincena";
+    public static final String INTERVALO_MES = "mes";
+    public static final String INTERVALO_TRIMESTRE = "trimestre";
+    public static final String INTERVALO_ANIO = "año";
+
+            //unidades plural
+    public static final String INTERVALO_DIAS = "días";
+    public static final String INTERVALO_SEMANAS = "semanas";
+    public static final String INTERVALO_QUINCENAS = "quincenas";
+    public static final String INTERVALO_MESES = "meses";
+    public static final String INTERVALO_TRIMESTRES = "trimestres";
+    public static final String INTERVALO_ANIOS = "años";
+
+
 
     //ARGUMENTOS
     public static final String ARG_UID = "uid";
