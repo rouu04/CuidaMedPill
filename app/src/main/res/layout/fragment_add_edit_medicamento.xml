@@ -1,24 +1,42 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/progressMedEdit"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
     <LinearLayout
-        android:id="@+id/formLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:titleTextColor="@color/md_primary_dark"
+        android:textStyle="bold"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        app:navigationIcon="@drawable/ic_flecha_atras"
+        app:titleCentered="false"/>
+
+
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/layoutFormMedEditAdd"
         android:orientation="vertical"
         android:padding="@dimen/padding_general_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <!-- Texto titulo -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_marginTop="@dimen/margin_elements_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-            android:textStyle="bold"
-            android:textColor="@color/md_primary_dark"/>
 
         <!-- Texto Opcionales -->
         <TextView
@@ -101,7 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hint_med_horariotoggle"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_marginTop="@dimen/margin_top"
             android:textColor="@color/md_primary_dark"/>
 
@@ -165,21 +183,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- PAUTA -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutPauta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_med_pauta"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPauta"
-                    android:inputType="numberDecimal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
             <!-- HORAS -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/layoutHorasContainer"
@@ -211,7 +214,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/md_primary_dark"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
         <LinearLayout
             android:orientation="vertical"
@@ -262,6 +265,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- NOTAS -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutNotasMed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_med_notasMed"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtNotasMed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -273,4 +290,6 @@
             android:layout_marginTop="@dimen/margin_top"/>
 
     </LinearLayout>
-</ScrollView>
+    </ScrollView>
+    </LinearLayout>
+</FrameLayout>

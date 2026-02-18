@@ -1,10 +1,15 @@
 package com.pastillerodigital.cuidamedpill.modelo.medicamento.horario;
 
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
+
+import java.util.Calendar;
+import java.util.Map;
+
 public class Hora implements Comparable<Hora>{
 
     //En firebase:
-    private int hora;
-    private int min;
+    protected int hora;
+    protected int min;
 
     public Hora(){}
 
@@ -41,6 +46,20 @@ public class Hora implements Comparable<Hora>{
         }
 
         return this.min - otra.min;
+    }
+
+
+    public static Hora mapToObj(Map<String, Object> data) {
+        if (data == null) return null;
+
+        if (data.containsKey(Constantes.HORA_MOMENTODIASTR)) { //es un momento, delegamos
+            return HoraMomentoDia.mapToObj(data);
+        }
+
+        Hora h = new Hora();
+        h.setHora(((Long) data.get(Constantes.HORA_HORA)).intValue());
+        h.setMin(((Long) data.get(Constantes.HORA_MIN)).intValue());
+        return h;
     }
 
 }

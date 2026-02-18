@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,10 +20,12 @@ import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapte
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditMedicamentoFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -33,11 +37,14 @@ public class MedicamentosFragment extends Fragment {
     private View progressMed;
     private RecyclerView rvMed;
     private FloatingActionButton fab;
+    private TextView tvTitleMeds;
+    private LinearLayout layoutFormMeds;
 
     //Elementos lógicos
     String uid, uidSelf;
     private MedicamentoAdapter medAdapter;
     private MedicamentoDAO medDAO;
+    private UsuarioDAO uDAO;
     private List<Medicamento> lMed = new ArrayList<>();
     private Modo modo;
     private boolean updateNeeded = false;
@@ -75,25 +82,35 @@ public class MedicamentosFragment extends Fragment {
         progressMed = view.findViewById(R.id.progressMed);
         rvMed = view.findViewById(R.id.rvMedicamentos);
         fab = view.findViewById(R.id.fabAddMedicamento);
+        tvTitleMeds = view.findViewById(R.id.tvTitleMeds);
+        layoutFormMeds = view.findViewById(R.id.formLayoutMeds);
 
         //Lógica:
-        lecturaArgumentos();
-        ocultaVistaModo();
-        setButtonListeners();
         mostrarCarga();
 
-        medDAO = new MedicamentoDAO(uid); //uid (sea el supervisado o no) será del que se obtengan los datos
+        lecturaArgumentosYConsec();
+        setButtonListeners();
 
         cargarMeds();
     }
 
-    private void lecturaArgumentos(){
+    private void lecturaArgumentosYConsec(){
         if(getArguments() != null){
             uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
             uid = getArguments().getString(Constantes.ARG_UID);
             modo = Modo.modoFromString(getArguments().getString(Constantes.ARG_MODO));
             if(uid == null){
                 uid = uidSelf;
+            }
+
+            medDAO = new MedicamentoDAO(uid); //uid (sea el supervisado o no) será del que se obtengan los datos
+            uDAO = new UsuarioDAO();
+
+            if(modo != Modo.SUPERVISOR){
+                tvTitleMeds.setText(Mensajes.MEDS_TITLE);
+            }
+            else{
+                cargaUsr();
             }
         }
     }
@@ -121,14 +138,15 @@ public class MedicamentosFragment extends Fragment {
 
     private void mostrarCarga(){
         progressMed.setVisibility(View.VISIBLE);
-        rvMed.setVisibility(View.GONE);
         fab.setVisibility(View.GONE);
+        layoutFormMeds.setVisibility(View.GONE);
     }
 
     private void ocultarCarga(){
         progressMed.setVisibility(View.GONE);
-        rvMed.setVisibility(View.VISIBLE);
         fab.setVisibility(View.VISIBLE);
+        layoutFormMeds.setVisibility(View.VISIBLE);
+        ocultaVistaModo();
     }
 
     //---------FUNCIONES CON GRAN FUNCIONALIDAD
@@ -140,6 +158,20 @@ public class MedicamentosFragment extends Fragment {
 
                 setUpRecyclerView();
                 ocultarCarga();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void cargaUsr(){
+        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario data) {
+                tvTitleMeds.setText(String.format(Mensajes.MEDS_TITULO_SUPERV, data.getAliasU()));
             }
 
             @Override
@@ -180,7 +212,6 @@ public class MedicamentosFragment extends Fragment {
         }
 
         //Si está supervisando a alguien se actualiza la vista correspondiente.
-        //todo revisar
         MainActivity ma = (MainActivity) requireActivity();
         modo = ma.getModo();
         uidSelf = ma.getUidSelf();

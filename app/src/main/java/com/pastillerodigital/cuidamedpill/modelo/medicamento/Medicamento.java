@@ -8,6 +8,9 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Medicamentos
  * Numerosos atributos son opcionales
@@ -24,7 +27,8 @@ public class Medicamento implements Persistible {
     private Timestamp fechaCad;
     private Timestamp fechaFin;
     private int nMedRestantes; //medicinas restantes que le quedan al usuario
-    private Horario horario; //todo revisar como se ve en firebase
+    private Horario horario;
+    private String notasMed;
 
     //Atributos que NO estarán en firebase directamente pero que el objeto almacenará.
     @Exclude
@@ -35,7 +39,7 @@ public class Medicamento implements Persistible {
     public Medicamento(){}
 
     public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad, String nombreM,
-                       Timestamp fechaFin, int nMedRestantes, Horario horario, String idM) {
+                       Timestamp fechaFin, int nMedRestantes, Horario horario, String idM, String notasMed) {
         this.colorSimb = colorSimb;
         this.tipoMedStr = tipoMedStr;
         this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
@@ -45,6 +49,7 @@ public class Medicamento implements Persistible {
         this.nMedRestantes = nMedRestantes;
         this.horario = horario;
         this.idMed = idM;
+        this.notasMed = notasMed;
     }
 
     public String getNombreMed() {
@@ -102,6 +107,13 @@ public class Medicamento implements Persistible {
         this.tipoMedStr = tipoMedStr;
     }
 
+    public String getNotasMed() {
+        return notasMed;
+    }
+
+    public void setNotasMed(String notasMed) {
+        this.notasMed = notasMed;
+    }
 
     @Exclude
     @Override
@@ -134,15 +146,37 @@ public class Medicamento implements Persistible {
         med.setId(doc.getId());
 
         //Atributos opcionales:
+        med.setNotasMed(doc.getString(Constantes.MED_NOTASMED));
         med.setFechaCad(doc.getTimestamp(Constantes.MED_FECHACAD));
         med.setFechaFin(doc.getTimestamp(Constantes.MED_FECHAFIN));
         Long nCajasMed = doc.getLong(Constantes.MED_NMEDRESTANTES);
         if (nCajasMed != null) med.setnMedRestantes(nCajasMed.intValue());
         else med.setnMedRestantes(-1);
 
-        med.setHorario(doc.get(Constantes.MED_HORARIO, Horario.class));
+        Map<String, Object> horarioMap = doc.getData().containsKey(Constantes.MED_HORARIO) ?
+                (Map<String, Object>) doc.get(Constantes.MED_HORARIO) : null;
+        Horario horarioObj = Horario.mapToObj(horarioMap);
+        med.setHorario(horarioObj);
 
         return med;
+    }
+
+    public static Map<String, Object> toMap(Medicamento med) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put(Constantes.MED_NOMBREMED, med.getNombreMed());
+        map.put(Constantes.MED_COLORSIMB, med.getColorSimb());
+        map.put(Constantes.MED_TIPOMEDSTR, med.getTipoMedStr());
+        map.put(Constantes.MED_FECHACAD, med.getFechaCad());
+        map.put(Constantes.MED_FECHAFIN, med.getFechaFin());
+        map.put(Constantes.MED_NMEDRESTANTES, med.getnMedRestantes());
+        map.put(Constantes.MED_NOTASMED, med.getNotasMed());
+
+        if(med.getHorario() != null) {
+            map.put(Constantes.MED_HORARIO, med.getHorario().toMap());
+        }
+
+        return map;
     }
 
 }

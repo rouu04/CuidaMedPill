@@ -49,6 +49,7 @@ public class Mensajes {
     public static final String PERF_BORRARCUENTA = "Borrar cuenta";
     public static final String PERF_PREG_BORRARCUENTA = "¿Deseas borrar la cuenta?";
     public static final String PERF_PREG_ASIST_BORRARCUENTA = "¿Deseas borrar la cuenta de %s ?";
+    public static final String PERF_EDIT_ASIST = "Editar perfil de %s";
 
     public static final String PERF_CONF_BORRARCUENTA = "El perfil ha sido eliminado correctamente";
     public static final String PERF_NEG_BORRARCUENTA_TUTOR = "El perfil no puede eliminarse si tiene usuarios asistidos que cuentan solo con su ayuda";
@@ -57,6 +58,36 @@ public class Mensajes {
     public static final String PERF_ERROR_UNOUA = "El usuario tiene que ser un usuario asistido";
     public static final String PERF_CONF_DESVINCULAR = "Usuarios desvinculados correctamente";
     public static final String PERF_CONF_EDITAR = "Perfil editado correctamente";
+
+    //-MEDICAMENTOS-----
+    public static final String MEDS_TITULO_SUPERV = "Medicamentos de %s";
+    public static final String MED_ADD_SUPERV = "Añadir medicamento para %s";
+    public static final String MED_EDIT_SUPERV = "Editar medicamento de %s";
+
+        //LISTA
+    public static final String MEDS_TITLE = "Tus medicamentos";
+
+        //EDITAR Y AÑADIR
+    public static final String MED_EDITADD_SEL_INTERVALO = "Selecciona un intervalo";
+    public static final String MED_EDITADD_SEL_TIPO = "Selecciona un tipo de medicamento";
+    public static final String MED_EDITADD_SEL_HORA_ESPEC = "Seleccionar hora específica";
+    public static final String MED_EDITADD_SEL_HORA_TITLE = "Selecciona una hora";
+    public static final String MED_EDITADD_SEL_HORA_MOMENT = "Seleccionar momento del día";
+    public static final String MED_EDITADD_SEL_HORA_MOMENT_TITLE = "Selecciona un momento del día";
+    public static final String MED_EDITADD_SEL_COLOR = "Selecciona un color";
+    public static final String MED_EDITADD_ADD_HORA = "Añadir hora";
+
+    public static final String MED_EDITADD_VAL_NOMBRE = "No puedes tener dos medicamentos con el mismo nombre";
+    public static final String MED_EDITADD_ERR_NOMBRE = "El medicamento necesita tener un nombre";
+    public static final String MED_EDITADD_ERR_FECHA_INVALIDA= "Fecha inválida";
+    public static final String MED_EDITADD_ERR_FECHA_MALFORMATO= "Formato de fecha inválido";
+    public static final String MED_EDITADD_ERR_FECHA_ANTHOY= "Esta fecha no puede ser anterior o igual a hoy";
+    public static final String MED_EDITADD_ERR_NUM_MAYORO0= "Tiene que ser mayor o igual a 0";
+    public static final String MED_EDITADD_ERR_NUM_MAYOR0= "Tiene que ser mayor que 0";
+    public static final String MED_EDITADD_ERR_NUM_INVALIDO= "Número inválido";
+    public static final String MED_EDITADD_ERR_HORARIO_INTERVALO= "Con el horario activo se necesita saber la frecuencia del intervalo";
+    public static final String MED_EDITADD_ERR_HORARIO_HORA= "Con el horario activo se necesita al menos una hora";
+
 
 
     //------------EXCEPCIONES

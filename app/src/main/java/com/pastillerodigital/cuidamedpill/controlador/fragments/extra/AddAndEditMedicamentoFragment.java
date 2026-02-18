@@ -20,12 +20,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -36,14 +36,18 @@ import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
@@ -55,20 +59,21 @@ import java.util.Locale;
 
 public class AddAndEditMedicamentoFragment extends Fragment {
 
-    private TextInputLayout layoutNombre, layoutPauta, layoutTipoIntervalo, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes;
-    private TextInputEditText edtNombre, edtPauta, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes;
+    private TextInputLayout layoutNombre, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes, layoutNotasMed;
+    private TextInputEditText edtNombre, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes, edtNotasMed;
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
-    private View viewColor;
-    private TextView tvTitulo;
+    private View viewColor, progressMedEdit;
     private List<Hora> listaHoras = new ArrayList<>();
-    private ChipGroup layoutHorasContainer; //como un layout pero más profesional
+    private ChipGroup layoutHorasContainer; //layout profesional de las horas
     private SwitchMaterial switchHorario; //toggle
-    private LinearLayout layoutHorarioContainer;
+    private LinearLayout layoutHorarioContainer, layoutFormMedEditAdd;
     private MaterialCardView cardTipoMed;
+    private MaterialToolbar toolbarSup;
 
     //Elementos lógicos
     private MedicamentoDAO medDAO;
+    private UsuarioDAO uDAO;
     private Medicamento medEdit;
     private boolean isEdit, horarioActivo;
     private String uid, uidSelf, medId;
@@ -122,18 +127,19 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Elementos del layout
+        progressMedEdit = view.findViewById(R.id.progressMedEdit);
+        layoutFormMedEditAdd = view.findViewById(R.id.layoutFormMedEditAdd);
+        toolbarSup = view.findViewById(R.id.topAppBar);
+
         imgMedicamento = view.findViewById(R.id.imgMedicamento);
         layoutNombre = view.findViewById(R.id.layoutNombreMed);
         edtNombre = view.findViewById(R.id.edtNombreMed);
         cardTipoMed = view.findViewById(R.id.cardTipoMed);
 
         //Horario:
-        layoutTipoIntervalo = view.findViewById(R.id.layoutTipoIntervalo);
         edtTipoIntervalo = view.findViewById(R.id.edtTipoIntervalo);
         layoutIntervaloNum = view.findViewById(R.id.layoutIntervaloNum);
         edtIntervaloNum = view.findViewById(R.id.edtIntervaloNum);
-        layoutPauta = view.findViewById(R.id.layoutPauta);
-        edtPauta = view.findViewById(R.id.edtPauta);
         layoutHorasContainer = view.findViewById(R.id.layoutHorasContainer);
         switchHorario = view.findViewById(R.id.switchHorario);
         layoutHorarioContainer = view.findViewById(R.id.layoutHorarioContainer);
@@ -145,8 +151,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtFechaFin = view.findViewById(R.id.edtFechaFin);
         layoutNMedRestantes = view.findViewById(R.id.layoutNMedRestantes);
         edtNMedRestantes = view.findViewById(R.id.edtNMedRestantes);
-
-        tvTitulo = view.findViewById(R.id.tvTitle);
+        layoutNotasMed = view.findViewById(R.id.layoutNotasMed);
+        edtNotasMed = view.findViewById(R.id.edtNotasMed);
 
         viewColor = view.findViewById(R.id.viewColor);
 
@@ -154,6 +160,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         btnAgregarHora = view.findViewById(R.id.btnAgregarHora);
 
         //Lógica:
+        mostrarCarga();
         leerArgumentosYConsec();
         setButtonListeners();
     }
@@ -166,22 +173,28 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
             uid = getArguments().getString(Constantes.ARG_UID);
             modo = Modo.modoFromString(getArguments().getString(Constantes.ARG_MODO));
+
             if(uid == null) uid = uidSelf;
             medDAO = new MedicamentoDAO(uid);
+            uDAO = new UsuarioDAO();
             medId = getArguments().getString(Constantes.ARG_MEDID);
 
             //Modo edicion o añadir medicamento
             if(medId != null){ //edición
-                tvTitulo.setText(R.string.text_title_edit_med);
+                toolbarSup.setTitle(R.string.text_title_edit_med);
                 isEdit = true;
+                if(modo == Modo.SUPERVISOR) cargaUsr();
+                else toolbarSup.setTitle(R.string.text_title_edit_med);
                 cargarDatos(medId);
             }
             else{
-                tvTitulo.setText(R.string.text_title_add_med);
                 colorMed = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
                 selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
+                if(modo == Modo.SUPERVISOR) cargaUsr();
+                else toolbarSup.setTitle(R.string.text_title_add_med);
+                ocultarCarga();
             }
         }
     }
@@ -213,16 +226,51 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 listaHoras.clear();
                 layoutHorasContainer.removeAllViews();
                 edtIntervaloNum.setText("");
-                edtPauta.setText("");
                 edtTipoIntervalo.setText("");
             }
         });
 
+        // Acción botón atrás
+        toolbarSup.setNavigationOnClickListener(v ->
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .popBackStack()
+        );
+
     }
+
+    private void mostrarCarga(){
+        progressMedEdit.setVisibility(View.VISIBLE);
+        layoutFormMedEditAdd.setVisibility(View.GONE);
+    }
+
+    private void ocultarCarga(){
+        progressMedEdit.setVisibility(View.GONE);
+        layoutFormMedEditAdd.setVisibility(View.VISIBLE);
+    }
+
+
 
     private void cargarDatos(String medId){
         // todo
-        //todo poner color atrib y tipo intervalo (sacalo del horario) como el del medicamento
+        //todo poner color atrib y tipo intervalo (sacalo del horario) como el del medicamento, ocultar carga
+
+        ocultarCarga();
+    }
+
+    private void cargaUsr(){
+        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario data) {
+                if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
+                else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
     }
 
     /**
@@ -246,7 +294,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String[] tipos = TipoIntervalo.getAllTipos();
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar intervalo")
+                .setTitle(Mensajes.MED_EDITADD_SEL_INTERVALO)
                 .setItems(tipos, (dialog, which) -> {
                     edtTipoIntervalo.setText(tipos[which]);
                 })
@@ -257,10 +305,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String[] tipos = TipoMed.getAllTipos();
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar tipo")
+                .setTitle(Mensajes.MED_EDITADD_SEL_TIPO)
                 .setItems(tipos, (dialog, which) -> {
-                    TipoMed tipoSeleccionado = TipoMed.tipoMedFromString(tipos[which]);
-                    actualizarImagenTipo(tipoSeleccionado);
+                    actualizarImagenTipo(TipoMed.tipoMedFromString(tipos[which]));
                 })
                 .show();
     }
@@ -268,20 +315,15 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private void mostrarMenuSeleccionHora() {
 
         String[] opciones = {
-                "Seleccionar hora manualmente",
-                "Seleccionar por momentos del día"
+                Mensajes.MED_EDITADD_SEL_HORA_ESPEC,
+                Mensajes.MED_EDITADD_SEL_HORA_MOMENT
         };
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Añadir hora")
+                .setTitle(Mensajes.MED_EDITADD_ADD_HORA)
                 .setItems(opciones, (dialog, which) -> {
-
-                    if (which == 0) {
-                        mostrarSelectorHora();
-                    } else {
-                        mostrarSelectorMomentos();
-                    }
-
+                    if (which == 0) mostrarSelectorHora();
+                    else mostrarSelectorMomentos();
                 })
                 .show();
     }
@@ -294,30 +336,28 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                         .setTimeFormat(TimeFormat.CLOCK_24H)
                         .setHour(8)
                         .setMinute(0)
-                        .setTitleText("Seleccionar hora")
+                        .setTitleText(Mensajes.MED_EDITADD_SEL_HORA_TITLE)
+                        .setPositiveButtonText(Mensajes.BASIC_ACEPTAR)
+                        .setNegativeButtonText(Mensajes.BASIC_CANCELAR)
                         .build();
 
         picker.addOnPositiveButtonClickListener(view -> {
-
             int hour = picker.getHour();
             int minute = picker.getMinute();
-
             Hora nuevaHora = new Hora(hour, minute);
-
             if(!existeHora(nuevaHora)){
                 listaHoras.add(nuevaHora);
                 ordenarYRepintarHoras();
             }
         });
 
-        picker.show(getParentFragmentManager(), "TIME_PICKER");
+        picker.show(getParentFragmentManager(), Constantes.PICKER_TIME);
     }
 
 
     private void mostrarSelectorMomentos() {
 
         EMomentoDia[] momentos = EMomentoDia.values();
-
         String[] textos = new String[momentos.length];
 
         for(int i = 0; i < momentos.length; i++){
@@ -329,18 +369,13 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         }
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar momento del día")
+                .setTitle(Mensajes.MED_EDITADD_SEL_HORA_MOMENT_TITLE)
                 .setItems(textos, (dialog, which) -> {
 
                     EMomentoDia momento = momentos[which];
-
-                    Hora nuevaHora = new Hora(
-                            momento.getHoraDefault(),
-                            momento.getMinDefault()
-                    );
-
-                    if(!existeHora(nuevaHora)){
-                        listaHoras.add(nuevaHora);
+                    HoraMomentoDia nuevaHoraMom = new HoraMomentoDia(momento.toString());
+                    if(!existeHora(nuevaHoraMom)){
+                        listaHoras.add(nuevaHoraMom);
                         ordenarYRepintarHoras();
                     }
 
@@ -351,15 +386,15 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
 
     private void guardarOEditarMedicamento(){
-        UiUtils.limpiarErroresLayouts((ViewGroup) getView().findViewById(R.id.formLayout));
+        UiUtils.limpiarErroresLayouts((ViewGroup) getView().findViewById(R.id.layoutFormMedEditAdd));
 
         String nombre = edtNombre.getText().toString().trim().toUpperCase();
-        String pautaStr = edtPauta.getText().toString().trim();
         String intervaloNumStr = edtIntervaloNum.getText().toString().trim();
         String fechaCadStr = edtFechaCad.getText().toString().trim();
         String fechaFinStr = edtFechaFin.getText().toString().trim();
         String nMedRestantesStr = edtNMedRestantes.getText().toString().trim();
         String colorString = getResources().getResourceEntryName(selectedColorRes);
+        String notasMed = edtNotasMed.getText().toString().trim();
 
         if(!validaciones(nombre)) return;
         if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nMedRestantesStr)) return;
@@ -372,17 +407,16 @@ public class AddAndEditMedicamentoFragment extends Fragment {
 
         Horario horario = null;
         if(horarioActivo){
-            if(!validacionesHorario(intervaloNumStr, pautaStr)) return;
+            if(!validacionesHorario(intervaloNumStr)) return;
             horario = new Horario(
-                    tipoIntervaloSel,
+                    tipoIntervaloSel.toString(),
                     intervaloNum,
-                    Float.parseFloat(pautaStr),
                     listaHoras
             );
         }
 
         Medicamento medActual = new Medicamento(colorString, selectedTipo.toString(), fechaCad , nombre,
-                fechaFin, nCajas, horario, null);
+                fechaFin, nCajas, horario, null, notasMed);
         if(isEdit) medActual.setId(medEdit.getId());
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:
@@ -391,7 +425,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             public void onSuccess(List<Medicamento> data) {
                 for(Medicamento med: data){
                     if(med.getNombreMed().equals(nombre)) {
-                        layoutNombre.setError("No puedes tener dos medicamentos con el mismo nombre");
+                        layoutNombre.setError(Mensajes.MED_EDITADD_VAL_NOMBRE);
                         return;
                     }
                 }
@@ -414,7 +448,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         boolean valid = true;
 
         if(nombre.isEmpty()){
-            layoutNombre.setError("Ingrese el nombre del medicamento");
+            layoutNombre.setError(Mensajes.MED_EDITADD_ERR_NOMBRE);
             valid = false;
         }
         return valid;
@@ -428,18 +462,18 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 Timestamp fechaFin = Utils.stringToTimestamp(fechaFinStr);
 
                 if(fechaFin == null){
-                    layoutFechaFin.setError("Fecha inválida");
+                    layoutFechaFin.setError(Mensajes.MED_EDITADD_ERR_FECHA_INVALIDA);
                     valid = false;
                 } else {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaFin.toDate().before(hoy.toDate())){
-                        layoutFechaFin.setError("La fecha fin no puede ser anterior o igual a hoy");
+                        layoutFechaFin.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTHOY);
                         valid = false;
                     }
                 }
             }catch (Exception e){
-                layoutFechaFin.setError("Formato de fecha incorrecto");
+                layoutFechaFin.setError(Mensajes.MED_EDITADD_ERR_FECHA_MALFORMATO);
                 valid = false;
             }
         }
@@ -449,18 +483,18 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 Timestamp fechaCad = Utils.stringToTimestamp(fechaCadStr);
 
                 if(fechaCad == null){
-                    layoutFechaCad.setError("Fecha inválida");
+                    layoutFechaCad.setError(Mensajes.MED_EDITADD_ERR_FECHA_INVALIDA);
                     valid = false;
                 } else {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaCad.toDate().before(hoy.toDate())){
-                        layoutFechaCad.setError("La fecha fin no puede ser anterior o igual a hoy");
+                        layoutFechaCad.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTHOY);
                         valid = false;
                     }
                 }
             }catch (Exception e){
-                layoutFechaCad.setError("Formato de fecha incorrecto");
+                layoutFechaCad.setError(Mensajes.MED_EDITADD_ERR_FECHA_MALFORMATO);
                 valid = false;
             }
         }
@@ -469,11 +503,11 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             try{
                 int nCajas = Integer.parseInt(nMedRestantesStr);
                 if(nCajas < 0){
-                    layoutNMedRestantes.setError("Debe ser un número más grande o igual que 0");
+                    layoutNMedRestantes.setError(Mensajes.MED_EDITADD_ERR_NUM_MAYORO0);
                     valid = false;
                 }
             }catch (NumberFormatException e){
-                layoutNMedRestantes.setError("Número inválido");
+                layoutNMedRestantes.setError(Mensajes.MED_EDITADD_ERR_NUM_INVALIDO);
                 valid = false;
             }
         }
@@ -482,44 +516,28 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         return valid;
     }
 
-    private boolean validacionesHorario(String intervaloNumStr, String pautaStr){
+    private boolean validacionesHorario(String intervaloNumStr){
         boolean valid = true;
 
         if(!intervaloNumStr.isEmpty()){
             try{
                 int intervaloNum = Integer.parseInt(intervaloNumStr);
                 if(intervaloNum <= 0){
-                    layoutIntervaloNum.setError("Debe ser un número más grande que 0");
+                    layoutIntervaloNum.setError(Mensajes.MED_EDITADD_ERR_NUM_MAYOR0);
                     valid = false;
                 }
             }catch (NumberFormatException e){
-                layoutIntervaloNum.setError("Número inválido");
+                layoutIntervaloNum.setError(Mensajes.MED_EDITADD_ERR_NUM_INVALIDO);
                 valid = false;
             }
         }
         else{
-            layoutIntervaloNum.setError("Con el horario activo se necesita saber el periodo del intervalo");
+            layoutIntervaloNum.setError(Mensajes.MED_EDITADD_ERR_HORARIO_INTERVALO);
             valid = false;
         }
 
-        if(!pautaStr.isEmpty()){
-            try{
-                float pautaF = Float.parseFloat(pautaStr);
-                if(pautaF <= 0.0){
-                    layoutPauta.setError("Debe ser un número más grande que 0.0");
-                    valid = false;
-                }
-            }catch (NumberFormatException e){
-                layoutPauta.setError("Número inválido");
-                valid = false;
-            }
-        }
-        else{
-            layoutPauta.setError("Con el horario activo se necesita saber cuantos medicamentos se toman cada vez");
-        }
-
         if(horarioActivo && listaHoras.isEmpty()){
-            UiUtils.mostrarNegConfirmacion(requireActivity(), "Si el horario está activo necesita al menos una hora");
+            UiUtils.mostrarNegConfirmacion(requireActivity(), Mensajes.MED_EDITADD_ERR_HORARIO_HORA);
             return false;
         }
 
@@ -599,7 +617,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         });
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Seleccionar color")
+                .setTitle(Mensajes.MED_EDITADD_SEL_COLOR)
                 .setView(gridView)
                 .create();
 
@@ -639,41 +657,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     }
 
     //--------FUNCIONES DE LAS HORAS
-    private void pintarHora(Hora hora){
-
-        LinearLayout fila = new LinearLayout(requireContext());
-        fila.setOrientation(LinearLayout.HORIZONTAL);
-        fila.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        fila.setPadding(0,16,0,16);
-
-        TextView tvHora = new TextView(requireContext());
-        tvHora.setText(String.format(Locale.getDefault(),
-                "%02d:%02d",
-                hora.getHora(),
-                hora.getMin()));
-        tvHora.setTextSize(16f);
-        tvHora.setLayoutParams(new LinearLayout.LayoutParams(
-                0,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1
-        ));
-
-        ImageView btnDelete = new ImageView(requireContext());
-        btnDelete.setImageResource(R.drawable.ic_basura);
-
-        btnDelete.setOnClickListener(v -> {
-            listaHoras.remove(hora);
-            layoutHorasContainer.removeView(fila);
-        });
-
-        fila.addView(tvHora);
-        fila.addView(btnDelete);
-
-        layoutHorasContainer.addView(fila);
-    }
 
     private boolean existeHora(Hora nueva){
 
@@ -694,16 +677,16 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 hora.getHora(),
                 hora.getMin()));
 
+        if (hora instanceof HoraMomentoDia) {
+            chip.setText(hora.toString());
+        } else {
+            chip.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                    hora.getHora(), hora.getMin()));
+        }
+
         chip.setCloseIconVisible(true);
         chip.setClickable(false);
         chip.setCheckable(false);
-
-        /*
-        Más bonito
-        chip.setChipIconResource(R.drawable.ic_clock);
-        chip.setChipIconVisible(true);
-
-         */
 
         chip.setOnCloseIconClickListener(v -> {
             listaHoras.remove(hora);
@@ -714,17 +697,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     }
 
     private void ordenarYRepintarHoras(){
-
         Collections.sort(listaHoras);
-
         layoutHorasContainer.removeAllViews();
-
         for(Hora h : listaHoras){
             pintarChipHora(h);
         }
     }
-
-
 
 
 }

@@ -11,6 +11,7 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
 
@@ -112,4 +113,23 @@ public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
                     callback.onFailure(new Exception(Mensajes.EX_EXISTE));
                 });
     }
+
+    //-----------ADD
+    /*
+    @Override
+    public void add(Medicamento obj, OnOperationCallback callback) {
+        Map<String,Object> mapObj = Medicamento.toMap(obj);
+
+        db.collection(this.collectionName)
+                .document(this.idCollection)
+                .collection(this.subColName)
+                .add(mapObj)
+                .addOnSuccessListener(documentReference -> {
+                    obj.setId(documentReference.getId());
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+     */
 }

@@ -47,6 +47,7 @@
 
     <string name="text_title_notisgen">Notificaciones generales</string>
     <string name="text_title_opciones">Opciones</string>
+    <string name="text_title_edit">Editar perfil</string>
     <string name="text_hint_add_asist">Vincula un usuario asistido existente. Si el asistido no tiene cuenta, puedes registrarlo</string>
 
     <!-- MEDICAMENTOS -->
@@ -63,7 +64,7 @@
     <string name="hint_med_horariotoggle">Horario </string>
     <string name="hint_med_intervalo">Intervalo</string>
     <string name="hint_med_frecuencia">Cada cuantos intervalos</string>
-    <string name="hint_med_pauta">Cuantos medicamentos cada vez</string>
+    <string name="hint_med_notasMed">Notas adicionales</string>
     <string name="hint_med_fecha_fintratamiento">Fecha fin del tratamiento</string>
     <string name="hint_med_fecha_caducidad">Fecha de caducidad</string>
     <string name="hint_med_restantes">Medicamentos restates en posesión</string>
@@ -71,4 +72,10 @@
     <string name="btn_med_addhora">Añadir hora</string>
 
 
+    //---------------OTROS
+    <string name="material_timepicker_hour">Hora</string>
+    <string name="material_timepicker_minute">Minuto</string>
+
+
 </resources>
+

@@ -39,6 +39,8 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -257,7 +259,10 @@ public class PerfilFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        AsistidosAdapter adapter = new AsistidosAdapter(usrSelf.getUsrAsistidoAsig(),uid, new AsistidosAdapter.OnClickListener() {
+        List<UsuarioAsistido> listaOrdenada = new ArrayList<>(usrSelf.getUsrAsistidoAsig());
+        listaOrdenada.sort((u1, u2) -> u1.getAliasU().compareToIgnoreCase(u2.getAliasU()));
+
+        AsistidosAdapter adapter = new AsistidosAdapter(listaOrdenada,uid, new AsistidosAdapter.OnClickListener() {
             @Override
             public void onSupervisar(UsuarioAsistido asistido) {
                 modo = Modo.SUPERVISOR;

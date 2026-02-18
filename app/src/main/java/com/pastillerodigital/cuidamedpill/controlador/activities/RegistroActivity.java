@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -44,6 +45,7 @@ public class RegistroActivity extends AppCompatActivity {
     private android.widget.ImageView imgUserPhoto;
     private MaterialButton btnRegister, btnTipoUsuario;
     private CircularProgressIndicator progressIndicator;
+    private MaterialToolbar toolbarSup;
 
     //Elementos lógica
     private UsuarioDAO usuarioDAO;
@@ -59,6 +61,8 @@ public class RegistroActivity extends AppCompatActivity {
 
         //Inicialización de componentes de diseño
         formLayout = findViewById(R.id.formLayout);
+        toolbarSup = findViewById(R.id.topAppBarReg);
+
         layoutAlias = findViewById(R.id.layoutAlias);
         layoutUsername = findViewById(R.id.layoutUsername);
         layoutPassword = findViewById(R.id.layoutPassword);
@@ -128,6 +132,9 @@ public class RegistroActivity extends AppCompatActivity {
 
         imgUserPhoto.setOnClickListener(v -> mostrarSelectorAvatares());
         btnRegister.setOnClickListener(v -> registrarUsuario());
+        toolbarSup.setNavigationOnClickListener(v -> {
+            onBackPressed();
+        });
     }
 
 

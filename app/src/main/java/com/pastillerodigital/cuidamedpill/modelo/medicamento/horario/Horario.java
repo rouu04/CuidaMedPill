@@ -1,26 +1,34 @@
 package com.pastillerodigital.cuidamedpill.modelo.medicamento.horario;
 
+import com.google.firebase.firestore.Exclude;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Horario {
 
     private  List<Hora> horas; // varias horas del día (todos los días 9am y 8pm por ejemplo)
 
+    private String tipoIntervaloStr;
+    @Exclude
     private TipoIntervalo tipoIntervalo;
     private int intervalo; // número de días/semanas/meses según el tipo (cada 2 días)
-    private float pauta; //cuantas pastillas se toma cada vez
 
     public Horario(){}
 
-    public Horario(TipoIntervalo tipoIntervalo, int intervalo, float pauta, List<Hora> horas) {
-        this.tipoIntervalo = tipoIntervalo;
+    public Horario(String tipoIntervaloStr, int intervalo, List<Hora> horas) {
+        this.tipoIntervaloStr = tipoIntervaloStr;
+        this.tipoIntervalo = TipoIntervalo.tipoIntervaloFromString(tipoIntervaloStr);
         this.intervalo = intervalo;
         this.horas = horas;
-        this.pauta = pauta;
     }
 
     public List<Hora> getHoras() {
@@ -31,13 +39,15 @@ public class Horario {
         this.horas = horas;
     }
 
+    @Exclude
     public TipoIntervalo getTipoIntervalo() {
         return tipoIntervalo;
     }
-
+    @Exclude
     public void setTipoIntervalo(TipoIntervalo tipoIntervalo) {
         this.tipoIntervalo = tipoIntervalo;
     }
+
 
     public int getIntervalo() {
         return intervalo;
@@ -47,13 +57,58 @@ public class Horario {
         this.intervalo = intervalo;
     }
 
-    public float getPauta() {
-        return pauta;
+    public String getTipoIntervaloStr() {
+        return tipoIntervaloStr;
     }
 
-    public void setPauta(float pauta) {
-        this.pauta = pauta;
+    public void setTipoIntervaloStr(String tipoIntervaloStr) {
+        this.tipoIntervaloStr = tipoIntervaloStr;
     }
+
+    public static Horario mapToObj(Map<String, Object> map) {
+        if (map == null) return null;
+
+        Horario horario = new Horario();
+        horario.setTipoIntervaloStr(map.get(Constantes.HORARIO_TIPOINTERVALOSTR).toString());
+        horario.setTipoIntervalo(TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr()));
+        horario.setIntervalo(((Long) map.get(Constantes.HORARIO_INTERVALO)).intValue());
+
+        List<Map<String, Object>> listaMaps = (List<Map<String, Object>>) map.get(Constantes.HORARIO_HORAS);
+        List<Hora> listaProcesada = new ArrayList<>();
+
+        if (listaMaps != null) {
+            for (Map<String, Object> horaMap : listaMaps) {
+                listaProcesada.add(Hora.mapToObj(horaMap)); //delega en los hijos
+            }
+        }
+
+        horario.setHoras(listaProcesada);
+        return horario;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Constantes.HORARIO_TIPOINTERVALOSTR, tipoIntervaloStr);
+        map.put(Constantes.HORARIO_INTERVALO, intervalo);
+
+        List<Map<String,Object>> horasList = new ArrayList<>();
+        if(horas != null) {
+            for(Hora h : horas) {
+                Map<String,Object> horaMap = new HashMap<>();
+                if(h instanceof HoraMomentoDia) {
+                    horaMap.put(Constantes.HORA_MOMENTODIASTR, ((HoraMomentoDia) h).getMomentoDiaStr());
+                } else {
+                    horaMap.put(Constantes.HORA_HORA, h.getHora());
+                    horaMap.put(Constantes.HORA_MIN, h.getMin());
+                }
+                horasList.add(horaMap);
+            }
+        }
+        map.put(Constantes.HORARIO_HORAS, horasList);
+
+        return map;
+    }
+
 
     /**
      * Métod*o que devuelve las próximas fechas de la toma.

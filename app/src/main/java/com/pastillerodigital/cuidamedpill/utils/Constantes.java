@@ -36,6 +36,15 @@ public class Constantes {
     public static final String MED_FECHAFIN = "fechaFin";
     public static final String MED_NMEDRESTANTES= "nMedRestantes";
     public static final String MED_HORARIO= "horario";
+    public static final String MED_NOTASMED= "notasMed";
+
+        //HORARIOS
+    public static final String HORARIO_HORAS= "horas";
+    public static final String HORARIO_TIPOINTERVALOSTR= "tipoIntervaloStr";
+    public static final String HORARIO_INTERVALO= "intervalo";
+    public static final String HORA_HORA= "hora";
+    public static final String HORA_MIN= "min";
+    public static final String HORA_MOMENTODIASTR= "momentoDiaStr";
 
 
     //-------------ENUMERADOS
@@ -103,4 +112,5 @@ public class Constantes {
 
     //OTROS
     public static final String RES_TIPO = "drawable";
+    public static final String PICKER_TIME = "TIME_PICKER";
 }

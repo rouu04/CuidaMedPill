@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
@@ -43,6 +44,7 @@ public class AddAndEditUsuarioFragment extends Fragment {
     private ImageView imgUserPhoto;
     private MaterialButton btnGuardar;
     private CircularProgressIndicator progressIndicator;
+    private MaterialToolbar toolbarSup;
 
     // Lógica
     private UsuarioDAO usuarioDAO;
@@ -88,6 +90,7 @@ public class AddAndEditUsuarioFragment extends Fragment {
 
         // Inicializamos elementos de la interfaz
         formLayout = view.findViewById(R.id.formLayout);
+        toolbarSup = view.findViewById(R.id.topAppBarEditAddAsist);
         layoutAlias = view.findViewById(R.id.layoutAlias);
         layoutUsername = view.findViewById(R.id.layoutUsername);
         layoutPassword = view.findViewById(R.id.layoutPassword);
@@ -119,6 +122,11 @@ public class AddAndEditUsuarioFragment extends Fragment {
             if(uidAsist == null && modo.equals(Modo.SUPERVISOR)) registrarAsistido();
             else actualizar();
         });
+        toolbarSup.setNavigationOnClickListener(v ->
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .popBackStack()
+        );
     }
 
 
@@ -145,6 +153,8 @@ public class AddAndEditUsuarioFragment extends Fragment {
                 }
 
                 layoutPassword.setHint(Mensajes.PERF_EDITPASSWD);
+                if(modo == Modo.SUPERVISOR) toolbarSup.setTitle(String.format(Mensajes.PERF_EDIT_ASIST, usuario.getAliasU()));
+                else toolbarSup.setTitle(R.string.text_title_edit);
 
                 btnGuardar.setText(Mensajes.BASIC_GUARDAR);
                 progressIndicator.setVisibility(View.GONE);
