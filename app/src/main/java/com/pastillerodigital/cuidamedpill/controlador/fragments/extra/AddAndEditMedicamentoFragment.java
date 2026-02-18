@@ -187,7 +187,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 cargarMed(medId);
             }
             else{
-                colorMed = R.color.md_primary;
+                selectedColorRes = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
                 selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
@@ -626,7 +626,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         selectedTipo = tipo;
         imgMedicamento.setImageResource(tipo.getDrawableRes());
         //cambio también el selector de colores al default para mantener el mismo color que el icono
-        selectedColorRes = colorMed; //default si es añadir
         viewColor.getBackground().setTint(
                 ContextCompat.getColor(requireContext(), selectedColorRes)
         );

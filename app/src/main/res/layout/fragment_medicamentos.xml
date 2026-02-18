@@ -25,7 +25,7 @@
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textStyle="bold"
             android:textColor="@color/md_primary_dark"/>
 
