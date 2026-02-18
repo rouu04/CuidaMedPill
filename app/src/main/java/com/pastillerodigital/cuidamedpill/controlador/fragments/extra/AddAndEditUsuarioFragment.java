@@ -133,7 +133,6 @@ public class AddAndEditUsuarioFragment extends Fragment {
 
     private void cargarUsr(String uid){
         progressIndicator.setVisibility(View.VISIBLE);
-        progressIndicator.setVisibility(View.VISIBLE);
 
         usuarioDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override

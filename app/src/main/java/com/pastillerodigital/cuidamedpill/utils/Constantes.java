@@ -113,4 +113,5 @@ public class Constantes {
     //OTROS
     public static final String RES_TIPO = "drawable";
     public static final String PICKER_TIME = "TIME_PICKER";
+    public static final String COLOR = "color";
 }

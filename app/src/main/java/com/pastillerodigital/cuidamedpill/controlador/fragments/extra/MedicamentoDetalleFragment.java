@@ -1,6 +1,257 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments.extra;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
+import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 public class MedicamentoDetalleFragment extends Fragment {
+
+    private MaterialToolbar toolbarSup;
+    private ImageView imgMedicamento;
+    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas;
+    private ChipGroup chipGroupHoras;
+    private LinearLayout layoutNotificaciones, layoutFormMedDetalle;
+    private MaterialButton btnEditar, btnEliminar;
+    private View progressMedDetalle;
+
+    //LOGICA
+    private MedicamentoDAO medDAO;
+    private UsuarioDAO uDAO;
+    private String medId, uid, uidSelf;
+    private Medicamento medicamento;
+    private Modo modo;
+
+    public static MedicamentoDetalleFragment newInstance(String medId, String uid, String uidSelf, Modo modo){
+        MedicamentoDetalleFragment fragment = new MedicamentoDetalleFragment();
+        Bundle args = new Bundle();
+        args.putString(Constantes.ARG_MEDID, medId);
+        args.putString(Constantes.ARG_UID, uid);
+        args.putString(Constantes.ARG_UIDSELF, uidSelf);
+        args.putString(Constantes.ARG_MODO, modo.toString());
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_medicamento_detalle, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        //Vistas
+        toolbarSup = view.findViewById(R.id.topAppBarMedDetalle);
+        progressMedDetalle = view.findViewById(R.id.progressMedDetalle);
+        layoutFormMedDetalle = view.findViewById(R.id.layoutFormMedDetalle);
+
+        imgMedicamento = view.findViewById(R.id.imgMedicamentoDet);
+        tvNombre = view.findViewById(R.id.tvNombreMedDetalle);
+        tvFechaCad = view.findViewById(R.id.tvFechaCad);
+        tvFechaFin = view.findViewById(R.id.tvFechaFin);
+        tvRestantes = view.findViewById(R.id.tvRestantes);
+        tvNotas = view.findViewById(R.id.tvNotas);
+
+        chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
+        layoutNotificaciones = view.findViewById(R.id.layoutNotificacionesDetalle);
+
+        btnEditar = view.findViewById(R.id.btnEditar);
+        btnEliminar = view.findViewById(R.id.btnEliminar);
+
+        //Lógica
+        mostrarCarga();
+        leerArgumentosYConsec();
+        cargarMed();
+        setButtonListeners();
+
+    }
+
+    private void leerArgumentosYConsec(){
+        if(getArguments() != null){
+            uidSelf = getArguments().getString(Constantes.ARG_UIDSELF);
+            uid = getArguments().getString(Constantes.ARG_UID);
+            modo = Modo.modoFromString(getArguments().getString(Constantes.ARG_MODO));
+            medId = getArguments().getString(Constantes.ARG_MEDID);
+
+            if(uid == null) uid = uidSelf;
+            medDAO = new MedicamentoDAO(uid);
+            uDAO = new UsuarioDAO();
+
+            if(modo == Modo.SUPERVISOR){
+                cargarUsr();
+            }
+            else if(modo == Modo.ASISTIDO){
+                ocultarVistasAsistido();
+            }
+
+        }
+    }
+
+    private void setButtonListeners(){
+        toolbarSup.setNavigationOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().popBackStack()
+        );
+
+        btnEditar.setOnClickListener(v -> {
+            AddAndEditMedicamentoFragment addEditMedFragment = AddAndEditMedicamentoFragment.newInstance(medId,uid, uidSelf, modo);
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentApp, addEditMedFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        btnEliminar.setOnClickListener(v -> {
+            //todo
+        });
+    }
+
+    private void cargarMed() {
+        medDAO.getBasic(medId, new OnDataLoadedCallback<Medicamento>() {
+            @Override
+            public void onSuccess(Medicamento med) {
+                if(med == null){
+                    UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    return;
+                }
+                medicamento = med;
+                llenarVista();
+                ocultarCarga();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void cargarUsr(){
+        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario data) {
+                if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
+                else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void llenarVista(){
+        tvNombre.setText(medicamento.getNombreMed() != null ? medicamento.getNombreMed() : "");
+        tvFechaCad.setText(medicamento.getFechaCad() != null ? Utils.timestampToString(medicamento.getFechaCad()) : "");
+        tvFechaFin.setText(medicamento.getFechaFin() != null ? Utils.timestampToString(medicamento.getFechaFin()) : "");
+        tvRestantes.setText(medicamento.getnMedRestantes() >= 0 ? String.valueOf(medicamento.getnMedRestantes()) : "");
+        tvNotas.setText(medicamento.getNotasMed() != null ? medicamento.getNotasMed() : "");
+
+        // Tipo y color
+        TipoMed tipo = medicamento.getTipoMed() != null ? medicamento.getTipoMed() : TipoMed.CAPSULA;
+        imgMedicamento.setImageResource(tipo.getDrawableRes());
+
+        if(medicamento.getColorSimb() != null){
+            int resColor = getResources().getIdentifier(medicamento.getColorSimb(), Constantes.COLOR, requireContext().getPackageName());
+            actualizarImagenColor(tipo, resColor);
+        }
+
+        // Horas
+        chipGroupHoras.removeAllViews();
+        if(medicamento.getHorario() != null && medicamento.getHorario().getHoras() != null){
+            List<Hora> horas = medicamento.getHorario().getHoras();
+            Collections.sort(horas);
+            for(Hora h: horas){
+                Chip chip = new Chip(requireContext());
+                chip.setText(h instanceof com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia
+                        ? h.toString()
+                        : String.format(Locale.getDefault(), "%02d:%02d", h.getHora(), h.getMin()));
+                chip.setClickable(false);
+                chip.setCheckable(false);
+                chipGroupHoras.addView(chip);
+            }
+        }
+
+        // Notificaciones placeholder
+        layoutNotificaciones.removeAllViews();
+        TextView tvNotif = new TextView(requireContext());
+        tvNotif.setText("Aquí se mostrarían las notificaciones del medicamento.");
+        layoutNotificaciones.addView(tvNotif);
+    }
+
+    private void actualizarImagenColor(TipoMed tipo, int colorRes) {
+        // Carga drawable correspondiente al tipo de medicamento
+        Drawable drawable = ContextCompat.getDrawable(requireContext(), tipo.getDrawableRes());
+        if(drawable == null) return;
+
+        int color = ContextCompat.getColor(requireContext(), colorRes);
+
+        if (drawable instanceof LayerDrawable) { //si es un layout con capa fija y otra con color se cambia solo la capa color
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
+            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipo.getDrawableResColoreable());
+
+            if (capaColor != null) {
+                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+            imgMedicamento.setImageDrawable(layerDrawable); //asigna dawable colorado a imageview
+
+        } else { //en caso de tener un icono simple con tod*o coloreable
+            drawable = drawable.mutate(); // importante para no afectar otras instancias
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            imgMedicamento.setImageDrawable(drawable);
+        }
+    }
+
+    private void ocultarVistasAsistido(){
+        //todo
+    }
+
+    private void mostrarCarga(){
+        progressMedDetalle.setVisibility(View.VISIBLE);
+        layoutFormMedDetalle.setVisibility(View.GONE);
+    }
+
+    private void ocultarCarga(){
+        progressMedDetalle.setVisibility(View.GONE);
+        layoutFormMedDetalle.setVisibility(View.VISIBLE);
+    }
 }

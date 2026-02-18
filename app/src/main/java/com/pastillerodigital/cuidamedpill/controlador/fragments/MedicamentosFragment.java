@@ -18,6 +18,7 @@ import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditMedicamentoFragment;
+import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
@@ -183,18 +184,13 @@ public class MedicamentosFragment extends Fragment {
 
     private void setUpRecyclerView(){
         medAdapter = new MedicamentoAdapter(lMed, medicamento -> {
-            /*
-            todo pulir lógica con lo que necesite en el futuro
-            MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(medicamento.getId());
+            MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(medicamento.getId(),uid, uidSelf, modo);
 
-            // Navegación usando FragmentManager
             getParentFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, detalleFragment)
+                    .replace(R.id.fragmentApp, detalleFragment)
                     .addToBackStack(null)
                     .commit();
-
-             */
         });
         rvMed.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMed.setAdapter(medAdapter);

@@ -12,7 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -96,10 +95,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             R.color.md_blanco
     };
 
-    public static AddAndEditMedicamentoFragment newInstance(Medicamento med, String uid, String uidSelf, Modo modo){
+    public static AddAndEditMedicamentoFragment newInstance(String medId, String uid, String uidSelf, Modo modo){
         AddAndEditMedicamentoFragment fragment = new AddAndEditMedicamentoFragment();
         Bundle args = new Bundle();
-        args.putString(Constantes.ARG_MEDID, med.getId());
+        args.putString(Constantes.ARG_MEDID, medId);
         args.putString(Constantes.ARG_UID, uid);
         args.putString(Constantes.ARG_UIDSELF, uidSelf);
         args.putString(Constantes.ARG_MODO, modo.toString());
@@ -183,16 +182,16 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             if(medId != null){ //edición
                 toolbarSup.setTitle(R.string.text_title_edit_med);
                 isEdit = true;
-                if(modo == Modo.SUPERVISOR) cargaUsr();
+                if(modo == Modo.SUPERVISOR) cargarUsr();
                 else toolbarSup.setTitle(R.string.text_title_edit_med);
-                cargarDatos(medId);
+                cargarMed(medId);
             }
             else{
                 colorMed = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
                 selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
-                if(modo == Modo.SUPERVISOR) cargaUsr();
+                if(modo == Modo.SUPERVISOR) cargarUsr();
                 else toolbarSup.setTitle(R.string.text_title_add_med);
                 ocultarCarga();
             }
@@ -249,16 +248,27 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         layoutFormMedEditAdd.setVisibility(View.VISIBLE);
     }
 
+    private void cargarMed(String medId){
+        medDAO.getBasic(medId, new OnDataLoadedCallback<Medicamento>() {
+            @Override
+            public void onSuccess(Medicamento med) {
+                if (med == null) {
+                    UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    return;
+                }
+                medEdit = med;
+                fillViewMed(med);
+                ocultarCarga();
+            }
 
-
-    private void cargarDatos(String medId){
-        // todo
-        //todo poner color atrib y tipo intervalo (sacalo del horario) como el del medicamento, ocultar carga
-
-        ocultarCarga();
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
     }
 
-    private void cargaUsr(){
+    private void cargarUsr(){
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
@@ -382,7 +392,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 })
                 .show();
     }
-
 
 
     private void guardarOEditarMedicamento(){
@@ -541,8 +550,56 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             return false;
         }
 
-
         return valid;
+    }
+
+    private void fillViewMed(Medicamento med){
+        edtNombre.setText(med.getNombreMed());
+
+        // Color
+        String colorString = med.getColorSimb();
+        int resColor = getResources().getIdentifier(colorString, Constantes.COLOR, requireContext().getPackageName());
+        if (resColor != 0) {
+            selectedColorRes = resColor;
+            viewColor.getBackground().setTint(getResources().getColor(selectedColorRes));
+        } else {
+            selectedColorRes = R.color.md_primary;
+        }
+
+        if (med.getTipoMed() != null) {
+            selectedTipo = med.getTipoMed();
+            actualizarImagenTipo(selectedTipo);
+        } else selectedTipo = TipoMed.CAPSULA;
+
+        // Fechas
+        if (med.getFechaCad() != null) edtFechaCad.setText(Utils.timestampToString(med.getFechaCad()));
+        if (med.getFechaFin() != null) edtFechaFin.setText(Utils.timestampToString(med.getFechaFin()));
+
+        if (med.getnMedRestantes() >= 0) edtNMedRestantes.setText(String.valueOf(med.getnMedRestantes()));
+
+        // Notas
+        if (med.getNotasMed() != null) edtNotasMed.setText(med.getNotasMed());
+
+        // Horario
+        if (med.getHorario() != null) {
+            horarioActivo = true;
+            switchHorario.setChecked(true);
+            layoutHorarioContainer.setVisibility(View.VISIBLE);
+
+            listaHoras.clear();
+            if (med.getHorario().getHoras() != null) {
+                listaHoras.addAll(med.getHorario().getHoras());
+            }
+            ordenarYRepintarHoras();
+
+            tipoIntervaloSel = med.getHorario().getTipoIntervalo();
+            edtTipoIntervalo.setText(tipoIntervaloSel.toString());
+            edtIntervaloNum.setText(String.valueOf(med.getHorario().getIntervalo()));
+        } else {
+            horarioActivo = false;
+            switchHorario.setChecked(false);
+            layoutHorarioContainer.setVisibility(View.GONE);
+        }
     }
 
     private void addMedicamento(Medicamento med){
@@ -703,6 +760,4 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             pintarChipHora(h);
         }
     }
-
-
 }

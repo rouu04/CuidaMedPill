@@ -1,0 +1,184 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progressMedDetalle"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarMedDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="@color/md_primary_dark"
+            android:textStyle="bold"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            app:navigationIcon="@drawable/ic_flecha_atras"
+            app:titleCentered="false"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/layoutFormMedDetalle"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Icono y nombre -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imgMedicamentoDet"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:contentDescription="@string/contdesc_med_simb"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:id="@+id/tvNombreMedDetalle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/md_on_background"/>
+                </LinearLayout>
+
+                <!-- Detalles del medicamento -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha de caducidad:"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_background"/>
+                    <TextView
+                        android:id="@+id/tvFechaCad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_on_background"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha fin tratamiento:"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_background"/>
+                    <TextView
+                        android:id="@+id/tvFechaFin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_on_background"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Restantes:"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_background"/>
+                    <TextView
+                        android:id="@+id/tvRestantes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_on_background"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notas:"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_background"/>
+                    <TextView
+                        android:id="@+id/tvNotas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_on_background"
+                        android:layout_marginBottom="8dp"/>
+                </LinearLayout>
+
+                <!-- Horario -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Horas programadas:"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_on_background"
+                    android:layout_marginTop="16dp"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupHoras"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="4dp"/>
+
+                <!-- Notificaciones -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notificaciones:"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_on_background"
+                    android:layout_marginTop="16dp"/>
+                <LinearLayout
+                    android:id="@+id/layoutNotificacionesDetalle"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:background="@color/md_primary_dark"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Botones acciones -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditar"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Editar"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEliminar"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Eliminar"
+                        android:layout_marginStart="8dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

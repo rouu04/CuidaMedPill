@@ -56,5 +56,12 @@ public class Utils {
         }
     }
 
+    public static String timestampToString(Timestamp timestamp) {
+        if (timestamp == null) return "";
+        Date date = timestamp.toDate(); // convierte Timestamp a Date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()); // formato día/mes/año
+        return sdf.format(date);
+    }
+
 
 }
