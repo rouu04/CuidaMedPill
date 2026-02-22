@@ -22,7 +22,7 @@
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>
 
-    <color name="md_on_background">#7E8E8C</color>
+    <color name="md_on_background">#56615F</color>
     <color name="md_on_surface">#515152</color>
 
     <!-- Errores -->

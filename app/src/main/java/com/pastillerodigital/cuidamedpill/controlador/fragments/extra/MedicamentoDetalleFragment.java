@@ -23,6 +23,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
@@ -44,11 +45,12 @@ public class MedicamentoDetalleFragment extends Fragment {
 
     private MaterialToolbar toolbarSup;
     private ImageView imgMedicamento;
-    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo;
+    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo, tvSigToma;
     private ChipGroup chipGroupHoras;
     private LinearLayout layoutNotificaciones, layoutFormMedDetalle;
     private MaterialButton btnEditar, btnEliminar;
     private View progressMedDetalle;
+    private LinearLayout layoutFormNotificaciones, layoutFormOpciones;
 
     //LOGICA
     private MedicamentoDAO medDAO;
@@ -83,10 +85,14 @@ public class MedicamentoDetalleFragment extends Fragment {
         toolbarSup = view.findViewById(R.id.topAppBarMedDetalle);
         progressMedDetalle = view.findViewById(R.id.progressMedDetalle);
         layoutFormMedDetalle = view.findViewById(R.id.layoutFormMedDetalle);
+        layoutFormNotificaciones = view.findViewById(R.id.layoutFormNotificacionesDetalle);
+        layoutFormOpciones = view.findViewById(R.id.layoutFormOpcionesDetalle);
+
         imgMedicamento = view.findViewById(R.id.imgMedicamentoDet);
         tvNombre = view.findViewById(R.id.tvNombreMedDetalle);
 
         tvIntervalo = view.findViewById(R.id.tvIntervaloDet);
+        tvSigToma = view.findViewById(R.id.tvSigTomaDet);
         chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
         layoutNotificaciones = view.findViewById(R.id.layoutNotificacionesDetalle);
 
@@ -143,7 +149,7 @@ public class MedicamentoDetalleFragment extends Fragment {
         });
 
         btnEliminar.setOnClickListener(v -> {
-            //todo
+            eliminarMed(medId);
         });
     }
 
@@ -173,6 +179,21 @@ public class MedicamentoDetalleFragment extends Fragment {
             public void onSuccess(Usuario data) {
                 if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
                 else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void eliminarMed(String medId){
+        medDAO.delete(medId, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.MED_DET_CONF_ELIMINADO);
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
 
             @Override
@@ -219,11 +240,14 @@ public class MedicamentoDetalleFragment extends Fragment {
                 TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr())));
         else tvIntervalo.setText("-");
 
+        if (horario != null && horario.getSigIngesta() != null)tvSigToma.setText(Utils.timestampToTextoSigToma(horario.getSigIngesta()));
+        else tvSigToma.setText("-");
+
 
         // Notificaciones placeholder
         layoutNotificaciones.removeAllViews();
         TextView tvNotif = new TextView(requireContext());
-        tvNotif.setText("Aquí se mostrarían las notificaciones del medicamento.");
+        tvNotif.setText(Mensajes.MED_DET_NOTISLIKEGEN);
         layoutNotificaciones.addView(tvNotif);
     }
 
@@ -251,7 +275,8 @@ public class MedicamentoDetalleFragment extends Fragment {
     }
 
     private void ocultarVistasAsistido(){
-        //todo
+        layoutFormNotificaciones.setVisibility(View.GONE);
+        layoutFormOpciones.setVisibility(View.GONE);
     }
 
     private void mostrarCarga(){

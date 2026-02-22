@@ -1,9 +1,9 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Progress Bar centrado -->
     <ProgressBar
         android:id="@+id/progressMedDetalle"
         style="?android:attr/progressBarStyleLarge"
@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Toolbar -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBarMedDetalle"
             android:layout_width="match_parent"
@@ -31,18 +32,17 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/layoutFormMedDetalle"
-                android:padding="16dp"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_general">
 
                 <!-- Icono y nombre -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:gravity="center_vertical">
 
                     <com.google.android.material.card.MaterialCardView
@@ -70,188 +70,276 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="20sp"
+                        android:layout_marginStart="@dimen/margin_start"
                         android:textStyle="bold"
-                        android:layout_marginStart="16dp"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                        android:textColor="@color/md_primary_dark"/>
+                        android:textColor="@color/md_primary_dark"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
                 </LinearLayout>
 
                 <!-- Horario -->
                 <TextView
+                    android:id="@+id/tvHorarioGrande"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Horario: "
+                    android:text="@string/hint_med_horariotoggle"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:textStyle="bold"
-                    android:textColor="@color/md_on_background"
-                    android:layout_marginTop="16dp"/>
+                    android:textColor="@color/md_primary_dark"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
 
                 <!-- Intervalo -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
+                    android:layout_marginTop="@dimen/margin_top_element">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Intervalo: "
+                        android:text="@string/hint_med_intervalo"
                         android:textStyle="bold"
-                        android:textColor="@color/md_on_background"/>
+                        android:textSize="@dimen/text_value_size"
+                        android:textColor="@color/md_primary_dark"/>
 
                     <TextView
                         android:id="@+id/tvIntervaloDet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_value_size"
+                        android:layout_marginStart="@dimen/margin_start_element"
                         android:textColor="@color/md_on_background"/>
                 </LinearLayout>
 
+                <!-- Sig toma -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_top_element">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_med_det_sigIngesta"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_value_size"
+                        android:textColor="@color/md_primary_dark"/>
+
+                    <TextView
+                        android:id="@+id/tvSigTomaDet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_element"
+                        android:textSize="@dimen/text_value_size"
+                        android:textColor="@color/md_on_background"/>
+                </LinearLayout>
+
+                <!-- Horas programadas -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Horas programadas: "
-                    android:textColor="@color/md_on_background"
-                    android:layout_marginTop="8dp"/>
+                    android:text="@string/hint_med_det_horasProgramadas"
+                    android:textColor="@color/md_primary_dark"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupHoras"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:chipSpacingHorizontal="8dp"
-                    app:chipSpacingVertical="4dp"/>
+                    app:chipSpacingHorizontal="@dimen/margin_horizontal"
+                    app:chipSpacingVertical="@dimen/margin_mini"/>
 
-                <!-- Detalles del medicamento -->
-                <LinearLayout
-                    android:orientation="vertical"
+                <!-- Título sección: Detalles del medicamento -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_title_med_detalles"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_primary_dark"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:layout_marginTop="@dimen/margin_top"/>
+
+                <!-- Fechas, restantes y notas -->
+                <LinearLayout android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="@dimen/margin_top_element">
 
-                    <!-- Fecha caducidad -->
                     <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Fecha de caducidad: "
+                            android:text="@string/hint_med_fecha_caducidad"
                             android:textStyle="bold"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
 
                         <TextView
                             android:id="@+id/tvFechaCad"
+                            android:layout_marginStart="@dimen/margin_start_element"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
+
                     </LinearLayout>
 
-                    <!-- Fecha fin -->
                     <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="6dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Fecha fin tratamiento: "
+                            android:text="@string/hint_med_fecha_fintratamiento"
                             android:textStyle="bold"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
 
                         <TextView
                             android:id="@+id/tvFechaFin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_start_element"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
+
                     </LinearLayout>
 
-                    <!-- Restantes -->
                     <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="6dp">
+                        android:layout_marginTop="@dimen/margin_top_element">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Restantes: "
+                            android:text="@string/hint_med_restantes"
                             android:textStyle="bold"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
 
                         <TextView
                             android:id="@+id/tvRestantes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_start_element"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
                     </LinearLayout>
 
-                    <!-- Notas -->
                     <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="6dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Notas: "
+                            android:text="@string/hint_med_notasMed"
                             android:textStyle="bold"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
 
                         <TextView
                             android:id="@+id/tvNotas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_start_element"
+                            android:textSize="@dimen/text_value_size"
                             android:textColor="@color/md_on_background"/>
-                    </LinearLayout>
 
+                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- Notificaciones -->
+            <!-- Contenedor Notificaciones -->
+            <LinearLayout
+                android:id="@+id/layoutFormNotificacionesDetalle"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top">
+
+                <!-- Título sección: Notificaciones -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notificaciones:"
+                    android:text="@string/hint_med_det_NotisMed"
                     android:textStyle="bold"
-                    android:textColor="@color/md_on_background"
-                    android:layout_marginTop="16dp"/>
+                    android:textColor="@color/md_primary_dark"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:layout_marginTop="@dimen/margin_top"/>
 
                 <LinearLayout
                     android:id="@+id/layoutNotificacionesDetalle"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginTop="@dimen/margin_top_element"/>
+            </LinearLayout>
+
+            <!-- Contenedor Opciones -->
+            <LinearLayout
+                android:id="@+id/layoutFormOpcionesDetalle"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top">
+
+                <!-- Título sección: Opciones -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_title_opciones"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_primary_dark"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:layout_marginTop="@dimen/margin_top"/>
 
                 <!-- Botones -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="2">
+                    android:weightSum="2"
+                    android:layout_marginTop="@dimen/margin_top_element">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEditar"
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        style="@style/Widget.MaterialComponents.Button"
                         android:layout_height="wrap_content"
-                        android:text="Editar"/>
+                        android:textAllCaps="false"
+                        android:text="@string/text_title_edit"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEliminar"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Eliminar"
-                        android:layout_marginStart="8dp"/>
+                        android:text="@string/button_eliminar"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:textAllCaps="false"
+                        android:layout_marginStart="@dimen/margin_start"
+                        android:textColor="@color/md_error_on_primary"
+                        app:icon="@drawable/ic_basura"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/padding_icon"
+                        app:iconTint="@color/md_error_on_primary"
+                        app:strokeColor="@color/md_error"/>
                 </LinearLayout>
+            </LinearLayout>
 
             </LinearLayout>
         </ScrollView>

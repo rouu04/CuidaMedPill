@@ -63,5 +63,63 @@ public class Utils {
         return sdf.format(date);
     }
 
+    public static String timestampToTextoSigToma(Timestamp timestamp){
+        if(timestamp == null) return "";
 
+        Calendar ahora = Calendar.getInstance();
+        Calendar fecha = Calendar.getInstance();
+        fecha.setTime(timestamp.toDate());
+
+        // Hora
+        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String horaStr = sdfHora.format(fecha.getTime());
+
+        // Normalizar fechas
+        Calendar hoy = (Calendar) ahora.clone();
+        limpiarHora(hoy);
+        Calendar fechaSoloDia = (Calendar) fecha.clone();
+        limpiarHora(fechaSoloDia);
+
+        long diffMillis = fechaSoloDia.getTimeInMillis() - hoy.getTimeInMillis();
+        int diffDays = (int)(diffMillis / (1000 * 60 * 60 * 24));
+
+        // SWITCH
+        switch (diffDays){
+            case 0:
+                return horaStr + " " + Constantes.HORARIO_SIGINGESTA_TEXT_HOY;
+
+            case 1:
+                return horaStr + " " + Constantes.HORARIO_SIGINGESTA_TEXT_MANANA;
+
+            case 7:
+                return horaStr + " " + Constantes.HORARIO_SIGINGESTA_TEXT_UNA_SEMANA;
+
+            case 14:
+                return horaStr + " " + Constantes.HORARIO_SIGINGESTA_TEXT_DOS_SEMANAS;
+        }
+
+        // Rango días
+        if(diffDays > 1 && diffDays <= 21){
+            return horaStr + " " +
+                    String.format(Locale.getDefault(),
+                            Constantes.HORARIO_SIGINGESTA_TEXT_DIAS,
+                            diffDays);
+        }
+
+        // Mes siguiente aproximado
+        if(diffDays >= 28 && diffDays <= 60){
+            return horaStr + " " + Constantes.HORARIO_SIGINGESTA_TEXT_MES_SIGUIENTE;
+        }
+
+        // Fallback fecha normal
+        SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return horaStr + " " + sdfFecha.format(fecha.getTime());
+    }
+
+    public static void limpiarHora(Calendar cal){
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+    }
 }

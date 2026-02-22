@@ -71,8 +71,13 @@
 
     <string name="btn_med_addhora">Añadir hora</string>
 
+    <!-- MEDICAMENTO DETALLE -->
+    <string name="hint_med_det_sigIngesta">Siguiente toma</string>
+    <string name="hint_med_det_horasProgramadas">Horas programadas</string>
+    <string name="hint_med_det_NotisMed">Notificaciones de este medicamento</string>
+    <string name="button_eliminar">Eliminar</string>
 
-    //---------------OTROS
+    <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>
     <string name="material_timepicker_minute">Minuto</string>
 

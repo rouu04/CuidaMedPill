@@ -55,12 +55,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class AddAndEditMedicamentoFragment extends Fragment {
 
-    private TextInputLayout layoutNombre, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes, layoutNotasMed;
-    private TextInputEditText edtNombre, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes, edtNotasMed;
+    private TextInputLayout layoutNombre, layoutIntervaloNum, layoutFechaCad, layoutFechaFin, layoutNMedRestantes, layoutNotasMed, layoutSigToma;
+    private TextInputEditText edtNombre, edtTipoIntervalo, edtIntervaloNum, edtFechaCad, edtFechaFin, edtNMedRestantes, edtNotasMed, edtSigToma;
     private ImageView imgMedicamento;
     private MaterialButton btnGuardar, btnAgregarHora;
     private View viewColor, progressMedEdit;
@@ -140,6 +139,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtTipoIntervalo = view.findViewById(R.id.edtTipoIntervalo);
         layoutIntervaloNum = view.findViewById(R.id.layoutIntervaloNum);
         edtIntervaloNum = view.findViewById(R.id.edtIntervaloNum);
+        layoutSigToma = view.findViewById(R.id.layoutSigToma);
+        edtSigToma = view.findViewById(R.id.edtSigToma);
         layoutHorasContainer = view.findViewById(R.id.layoutHorasContainer);
         switchHorario = view.findViewById(R.id.switchHorario);
         layoutHorarioContainer = view.findViewById(R.id.layoutHorarioContainer);
@@ -190,6 +191,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             else{
                 selectedColorRes = R.color.md_primary;
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
+                Calendar hoy = Calendar.getInstance();
+                edtSigToma.setText(Utils.calendarToString(hoy));
                 selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
                 if(modo == Modo.SUPERVISOR) cargarUsr();
@@ -205,6 +208,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo());
         edtFechaCad.setOnClickListener(v -> mostrarDatePicker(edtFechaCad));
         edtFechaFin.setOnClickListener(v -> mostrarDatePicker(edtFechaFin));
+        edtSigToma.setOnClickListener(v -> mostrarDatePicker(edtSigToma));
         btnGuardar.setOnClickListener(v -> guardarOEditarMedicamento());
         btnAgregarHora.setOnClickListener(v -> mostrarMenuSeleccionHora());
         viewColor.setOnClickListener(v -> mostrarSelectorColor());
@@ -219,6 +223,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 // Valores por defecto
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
                 edtTipoIntervalo.setText(TipoIntervalo.DIARIO.toString());
+                Calendar hoy = Calendar.getInstance();
+                edtSigToma.setText(Utils.calendarToString(hoy));
 
             } else {
                 layoutHorarioContainer.setVisibility(View.GONE);
@@ -405,23 +411,27 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         String nMedRestantesStr = edtNMedRestantes.getText().toString().trim();
         String colorString = getResources().getResourceEntryName(selectedColorRes);
         String notasMed = edtNotasMed.getText().toString().trim();
+        String sigTomaStr = edtSigToma.getText().toString().trim();
 
         if(!validaciones(nombre)) return;
         if(!validacionesOpcionales(fechaCadStr, fechaFinStr, nMedRestantesStr)) return;
-
 
         int nCajas = nMedRestantesStr.isEmpty() ? -1 : Integer.parseInt(nMedRestantesStr);
         int intervaloNum = intervaloNumStr.isEmpty() ? -1 : Integer.parseInt(intervaloNumStr); //-1 por simplicidad
         Timestamp fechaCad = fechaCadStr.isEmpty() ? null : Utils.stringToTimestamp(fechaCadStr);
         Timestamp fechaFin = fechaFinStr.isEmpty() ? null : Utils.stringToTimestamp(fechaFinStr);
+        Timestamp sigToma = sigTomaStr.isEmpty() ? null : Utils.stringToTimestamp(sigTomaStr);
+
 
         Horario horario = null;
         if(horarioActivo){
-            if(!validacionesHorario(intervaloNumStr)) return;
+            if(!validacionesHorario(intervaloNumStr, sigTomaStr)) return;
+            sigToma = aplicarPrimeraHora(sigToma, listaHoras); //guarda la hora de la sig toma
             horario = new Horario(
                     tipoIntervaloSel.toString(),
                     intervaloNum,
-                    listaHoras
+                    listaHoras,
+                    sigToma
             );
         }
 
@@ -476,7 +486,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaFin.toDate().before(hoy.toDate())){
-                        layoutFechaFin.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTHOY);
+                        layoutFechaFin.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTIGUALHOY);
                         valid = false;
                     }
                 }
@@ -497,7 +507,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     Timestamp hoy = Timestamp.now();
 
                     if(fechaCad.toDate().before(hoy.toDate())){
-                        layoutFechaCad.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTHOY);
+                        layoutFechaCad.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTIGUALHOY);
                         valid = false;
                     }
                 }
@@ -524,7 +534,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         return valid;
     }
 
-    private boolean validacionesHorario(String intervaloNumStr){
+    private boolean validacionesHorario(String intervaloNumStr, String sigTomaStr){
         boolean valid = true;
 
         if(!intervaloNumStr.isEmpty()){
@@ -542,6 +552,23 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         else{
             layoutIntervaloNum.setError(Mensajes.MED_EDITADD_ERR_HORARIO_INTERVALO);
             valid = false;
+        }
+
+        if(!sigTomaStr.isEmpty()){
+            try{
+                Timestamp sigToma = Utils.stringToTimestamp(sigTomaStr);
+
+                if(sigToma == null){
+                    layoutSigToma.setError(Mensajes.MED_EDITADD_ERR_FECHA_INVALIDA);
+                    valid = false;
+                } else if(esFechaAnteriorAHoy(sigToma)){
+                    layoutSigToma.setError(Mensajes.MED_EDITADD_ERR_FECHA_ANTHOY);
+                    valid = false;
+                }
+            }catch (Exception e){
+                layoutSigToma.setError(Mensajes.MED_EDITADD_ERR_FECHA_MALFORMATO);
+                valid = false;
+            }
         }
 
         if(horarioActivo && listaHoras.isEmpty()){
@@ -594,6 +621,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             tipoIntervaloSel = med.getHorario().getTipoIntervalo();
             edtTipoIntervalo.setText(tipoIntervaloSel.toString());
             edtIntervaloNum.setText(String.valueOf(med.getHorario().getIntervalo()));
+            edtSigToma.setText(Utils.timestampToString(med.getHorario().getSigIngesta()));
         } else {
             horarioActivo = false;
             switchHorario.setChecked(false);
@@ -771,4 +799,33 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             pintarChipHora(h);
         }
     }
+
+    private Timestamp aplicarPrimeraHora(Timestamp fecha, List<Hora> horas){
+        if(fecha == null || horas == null || horas.isEmpty()) return fecha;
+
+        Hora primera = horas.get(0); //están ordenadas
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha.toDate());
+        cal.set(Calendar.HOUR_OF_DAY, primera.getHora());
+        cal.set(Calendar.MINUTE, primera.getMin());
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return new Timestamp(cal.getTime());
+    }
+
+    private boolean esFechaAnteriorAHoy(Timestamp ts){
+        if(ts == null) return false;
+
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy);
+
+        Calendar fecha = Calendar.getInstance();
+        fecha.setTime(ts.toDate());
+        Utils.limpiarHora(fecha);
+
+        return fecha.before(hoy);
+    }
+
 }

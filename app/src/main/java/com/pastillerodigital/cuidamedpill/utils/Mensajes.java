@@ -81,12 +81,17 @@ public class Mensajes {
     public static final String MED_EDITADD_ERR_NOMBRE = "El medicamento necesita tener un nombre";
     public static final String MED_EDITADD_ERR_FECHA_INVALIDA= "Fecha inválida";
     public static final String MED_EDITADD_ERR_FECHA_MALFORMATO= "Formato de fecha inválido";
-    public static final String MED_EDITADD_ERR_FECHA_ANTHOY= "Esta fecha no puede ser anterior o igual a hoy";
+    public static final String MED_EDITADD_ERR_FECHA_ANTIGUALHOY = "Esta fecha no puede ser anterior o igual a hoy";
+    public static final String MED_EDITADD_ERR_FECHA_ANTHOY= "Esta fecha no puede ser anterior a hoy";
     public static final String MED_EDITADD_ERR_NUM_MAYORO0= "Tiene que ser mayor o igual a 0";
     public static final String MED_EDITADD_ERR_NUM_MAYOR0= "Tiene que ser mayor que 0";
     public static final String MED_EDITADD_ERR_NUM_INVALIDO= "Número inválido";
     public static final String MED_EDITADD_ERR_HORARIO_INTERVALO= "Con el horario activo se necesita saber la frecuencia del intervalo";
     public static final String MED_EDITADD_ERR_HORARIO_HORA= "Con el horario activo se necesita al menos una hora";
+
+    //DETALLES MED
+    public static final String MED_DET_CONF_ELIMINADO= "Medicamento eliminado con éxito";
+    public static final String MED_DET_NOTISLIKEGEN= "Se aplican las notificaciones por defecto del perfil";
 
 
 

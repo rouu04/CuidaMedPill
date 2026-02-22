@@ -1,11 +1,13 @@
 package com.pastillerodigital.cuidamedpill.modelo.medicamento.horario;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
@@ -18,17 +20,19 @@ public class Horario {
     private  List<Hora> horas; // varias horas del día (todos los días 9am y 8pm por ejemplo)
 
     private String tipoIntervaloStr;
+    private Timestamp sigIngesta;
     @Exclude
     private TipoIntervalo tipoIntervalo;
     private int intervalo; // número de días/semanas/meses según el tipo (cada 2 días)
 
     public Horario(){}
 
-    public Horario(String tipoIntervaloStr, int intervalo, List<Hora> horas) {
+    public Horario(String tipoIntervaloStr, int intervalo, List<Hora> horas, Timestamp sigIngesta) {
         this.tipoIntervaloStr = tipoIntervaloStr;
         this.tipoIntervalo = TipoIntervalo.tipoIntervaloFromString(tipoIntervaloStr);
         this.intervalo = intervalo;
         this.horas = horas;
+        this.sigIngesta = sigIngesta;
     }
 
     public List<Hora> getHoras() {
@@ -65,6 +69,14 @@ public class Horario {
         this.tipoIntervaloStr = tipoIntervaloStr;
     }
 
+    public Timestamp getSigIngesta() {
+        return sigIngesta;
+    }
+
+    public void setSigIngesta(Timestamp sigIngesta) {
+        this.sigIngesta = sigIngesta;
+    }
+
     public static Horario mapToObj(Map<String, Object> map) {
         if (map == null) return null;
 
@@ -72,6 +84,7 @@ public class Horario {
         horario.setTipoIntervaloStr(map.get(Constantes.HORARIO_TIPOINTERVALOSTR).toString());
         horario.setTipoIntervalo(TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr()));
         horario.setIntervalo(((Long) map.get(Constantes.HORARIO_INTERVALO)).intValue());
+        horario.setSigIngesta((Timestamp) map.get(Constantes.HORARIO_SIGINGESTA));
 
         List<Map<String, Object>> listaMaps = (List<Map<String, Object>>) map.get(Constantes.HORARIO_HORAS);
         List<Hora> listaProcesada = new ArrayList<>();

@@ -42,9 +42,17 @@ public class Constantes {
     public static final String HORARIO_HORAS= "horas";
     public static final String HORARIO_TIPOINTERVALOSTR= "tipoIntervaloStr";
     public static final String HORARIO_INTERVALO= "intervalo";
+    public static final String HORARIO_SIGINGESTA= "sigIngesta";
     public static final String HORA_HORA= "hora";
     public static final String HORA_MIN= "min";
     public static final String HORA_MOMENTODIASTR= "momentoDiaStr";
+
+    public static final String HORARIO_SIGINGESTA_TEXT_HOY = "hoy";
+    public static final String HORARIO_SIGINGESTA_TEXT_MANANA = "mañana";
+    public static final String HORARIO_SIGINGESTA_TEXT_UNA_SEMANA = "en una semana";
+    public static final String HORARIO_SIGINGESTA_TEXT_DOS_SEMANAS = "en dos semanas";
+    public static final String HORARIO_SIGINGESTA_TEXT_DIAS = "en %d días";
+    public static final String HORARIO_SIGINGESTA_TEXT_MES_SIGUIENTE = "el mes que viene";
 
 
     //-------------ENUMERADOS
