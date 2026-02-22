@@ -435,8 +435,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             );
         }
 
+        Timestamp fechaInicio;
+        if(medEdit != null && medEdit.getFechaInicio() != null) fechaInicio = medEdit.getFechaInicio();
+        else fechaInicio = sigToma;
+
         Medicamento medActual = new Medicamento(colorString, selectedTipo.toString(), fechaCad , nombre,
-                fechaFin, nCajas, horario, null, notasMed);
+                fechaFin, fechaInicio, nCajas, horario, null, notasMed);
         if(isEdit) medActual.setId(medEdit.getId());
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:

@@ -149,7 +149,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:chipSpacingHorizontal="@dimen/margin_horizontal"
-                    app:chipSpacingVertical="@dimen/margin_mini"/>
+                    app:chipSpacingVertical="@dimen/margin_mini"
+                    android:textSize="@dimen/text_value_size"/>
 
                 <!-- Título sección: Detalles del medicamento -->
                 <TextView
@@ -321,7 +322,7 @@
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_height="wrap_content"
                         android:textAllCaps="false"
-                        android:text="@string/text_title_edit"/>
+                        android:text="@string/basic_hint_editar"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEliminar"

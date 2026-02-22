@@ -2,15 +2,12 @@ package com.pastillerodigital.cuidamedpill.modelo.medicamento.horario;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
-import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
-import com.pastillerodigital.cuidamedpill.utils.Mensajes;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,5 +163,87 @@ public class Horario {
         }
 
         return proximas;
+    }
+
+    public boolean hayIngestaDia(Calendar fechaSeleccionada){
+        if(sigIngesta == null) return false;
+        Calendar sigIngestaCal = Calendar.getInstance();
+        sigIngestaCal.setTime(sigIngesta.toDate());
+        Utils.limpiarHora(sigIngestaCal);
+
+        //Para evitar ciclos infinitos
+        Calendar limite = (Calendar) fechaSeleccionada.clone();
+        limite.add(Calendar.YEAR, 2);
+
+        while(!sigIngestaCal.after(fechaSeleccionada) && sigIngestaCal.before(limite)){
+            if(mismoDia(sigIngestaCal, fechaSeleccionada)) return true;
+            avanzarIntervalo(sigIngestaCal);
+        }
+
+        return mismoDia(sigIngestaCal, fechaSeleccionada);
+    }
+
+    private void avanzarIntervalo(Calendar cal){
+        switch (tipoIntervalo) {
+            case DIARIO:
+                cal.add(Calendar.DAY_OF_YEAR, intervalo);
+                break;
+            case SEMANAL:
+                cal.add(Calendar.WEEK_OF_YEAR, intervalo);
+                break;
+            case QUINCENAL:
+                cal.add(Calendar.WEEK_OF_YEAR, 2 * intervalo);
+                break;
+            case MENSUAL:
+                cal.add(Calendar.MONTH, intervalo);
+                break;
+            case TRIMESTRAL:
+                cal.add(Calendar.MONTH, 3 * intervalo);
+                break;
+            case ANUAL:
+                cal.add(Calendar.YEAR, intervalo);
+                break;
+        }
+    }
+
+    private boolean mismoDia(Calendar c1, Calendar c2){
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    /**
+     * Devuelve una lista de Strings con las horas programadas para un día específico.
+     * Formato HH:mm
+     * @param fechaSeleccionada El día a consultar
+     * @return Lista de horas en formato HH:mm
+     */
+    public List<String> getHorasDia(Calendar fechaSeleccionada){
+        List<String> horasDelDia = new ArrayList<>();
+        if(horas == null || horas.isEmpty() || sigIngesta == null) return horasDelDia;
+
+        // Clonamos la fecha para no modificarla
+        Calendar fecha = (Calendar) fechaSeleccionada.clone();
+        Utils.limpiarHora(fecha);
+
+        Calendar sigCal = Calendar.getInstance();
+        sigCal.setTime(sigIngesta.toDate());
+        Utils.limpiarHora(sigCal);
+
+        // Evitamos bubles infinitos
+        Calendar limite = (Calendar) fecha.clone();
+        limite.add(Calendar.YEAR, 2);
+
+        while(!sigCal.after(fecha) && sigCal.before(limite)){
+            if(mismoDia(sigCal, fecha)){
+                for(Hora h : horas){ // Añadimos las horas de ese día
+                    String horaStr = String.format("%02d:%02d", h.getHora(), h.getMin());
+                    horasDelDia.add(horaStr);
+                }
+                break;
+            }
+            avanzarIntervalo(sigCal);
+        }
+
+        return horasDelDia;
     }
 }

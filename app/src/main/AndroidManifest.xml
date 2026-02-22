@@ -23,13 +23,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Activity para test  -->
-        <activity
-            android:name=".controlador.TestsActivity"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:exported="true">
-
-        </activity>
 
         <!-- WelcomeActivity, registro o inicio de sesion  -->
         <activity

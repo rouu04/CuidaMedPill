@@ -26,6 +26,7 @@ public class Medicamento implements Persistible {
     //Opcionales:
     private Timestamp fechaCad;
     private Timestamp fechaFin;
+    private Timestamp fechaInicio;
     private int nMedRestantes; //medicinas restantes que le quedan al usuario
     private Horario horario;
     private String notasMed;
@@ -39,7 +40,7 @@ public class Medicamento implements Persistible {
     public Medicamento(){}
 
     public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad, String nombreM,
-                       Timestamp fechaFin, int nMedRestantes, Horario horario, String idM, String notasMed) {
+                       Timestamp fechaFin, Timestamp fechaInicio, int nMedRestantes, Horario horario, String idM, String notasMed) {
         this.colorSimb = colorSimb;
         this.tipoMedStr = tipoMedStr;
         this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
@@ -50,6 +51,7 @@ public class Medicamento implements Persistible {
         this.horario = horario;
         this.idMed = idM;
         this.notasMed = notasMed;
+        this.fechaInicio = fechaInicio;
     }
 
     public String getNombreMed() {
@@ -115,6 +117,14 @@ public class Medicamento implements Persistible {
         this.notasMed = notasMed;
     }
 
+    public Timestamp getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Timestamp fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
     @Exclude
     @Override
     public String getId() {
@@ -149,6 +159,7 @@ public class Medicamento implements Persistible {
         med.setNotasMed(doc.getString(Constantes.MED_NOTASMED));
         med.setFechaCad(doc.getTimestamp(Constantes.MED_FECHACAD));
         med.setFechaFin(doc.getTimestamp(Constantes.MED_FECHAFIN));
+        med.setFechaInicio(doc.getTimestamp(Constantes.MED_FECHAINICIO));
         Long nCajasMed = doc.getLong(Constantes.MED_NMEDRESTANTES);
         if (nCajasMed != null) med.setnMedRestantes(nCajasMed.intValue());
         else med.setnMedRestantes(-1);

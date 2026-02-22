@@ -34,6 +34,7 @@ public class Constantes {
     public static final String MED_TIPOMEDSTR = "tipoMedStr";
     public static final String MED_FECHACAD = "fechaCad";
     public static final String MED_FECHAFIN = "fechaFin";
+    public static final String MED_FECHAINICIO= "fechaInicio";
     public static final String MED_NMEDRESTANTES= "nMedRestantes";
     public static final String MED_HORARIO= "horario";
     public static final String MED_NOTASMED= "notasMed";
