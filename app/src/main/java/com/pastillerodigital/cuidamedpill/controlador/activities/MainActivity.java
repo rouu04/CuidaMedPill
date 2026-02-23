@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.CalendarioFragment;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.HomeFragment;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        AndroidThreeTen.init(this);
         setContentView(R.layout.activity_main);
         //borrarSesion();//todo borrar cuando esté log out
 

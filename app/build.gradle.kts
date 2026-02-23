@@ -51,4 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage") //para subir archivos (fotos)
 
+    implementation(libs.material.calendarview)
+    implementation(libs.threetenabp)
+
 }

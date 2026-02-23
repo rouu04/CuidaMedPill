@@ -9,10 +9,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoCalendarioAdapter;
@@ -22,10 +24,13 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoCalendarioDecorador;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,9 +38,10 @@ import java.util.List;
 
 public class CalendarioFragment extends Fragment {
 
-    private CalendarView calendarView;
+    private MaterialCalendarView calendarView;
     private RecyclerView rvMedicamentos;
     private TextView tvFecha, tvTtitle;
+    private Chip chipVistaSemanal;
 
     //Elementos lógica
     private MedicamentoDAO medDAO;
@@ -48,6 +54,7 @@ public class CalendarioFragment extends Fragment {
     private String uid;
     private String uidSelf;
     private Modo modo;
+    private boolean vistaSemanal = false;
 
     public static CalendarioFragment newInstance(String userIdSelf, Modo modo) {
         CalendarioFragment fragment = new CalendarioFragment();
@@ -81,11 +88,37 @@ public class CalendarioFragment extends Fragment {
         rvMedicamentos = view.findViewById(R.id.rvMedicamentosDia);
         tvFecha = view.findViewById(R.id.tvFechaSeleccionada);
         tvTtitle = view.findViewById(R.id.tvTitleCal);
+        chipVistaSemanal = view.findViewById(R.id.chipVistaSemanal);
 
+        configCalDefault();
         lecturaArgumentosYConsec();
         setButtonListeners();
         setAdapterMeds();
         cargarMedicamentos();
+    }
+
+    private void configCalDefault() {
+        chipVistaSemanal.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            vistaSemanal = isChecked;
+
+            calendarView.state().edit()
+                    .setCalendarDisplayMode(isChecked ? CalendarMode.WEEKS : CalendarMode.MONTHS)
+                    .commit();
+
+            if (isChecked) {
+                chipVistaSemanal.setText("Vista semanal");
+                chipVistaSemanal.setChipIconVisible(true);
+            } else {
+                chipVistaSemanal.setText("Vista mensual");
+                chipVistaSemanal.setChipIconVisible(false);
+            }
+        });
+    }
+    private void toggleVistaCalendario() {
+        vistaSemanal = !vistaSemanal;
+        calendarView.state().edit()
+                .setCalendarDisplayMode(vistaSemanal ? CalendarMode.WEEKS : CalendarMode.MONTHS)
+                .commit();
     }
 
     private void lecturaArgumentosYConsec(){
@@ -111,11 +144,15 @@ public class CalendarioFragment extends Fragment {
     }
 
     private void setButtonListeners(){
-        calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
-            Calendar selected = Calendar.getInstance();
-            selected.set(year, month, dayOfMonth);
-            filtrarPorFecha(selected);
-            tvFecha.setText("Medicamentos a tomar el día: " + dayOfMonth + "/" + (month+1) + "/" + year);
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            Calendar selectedCalendar = Calendar.getInstance();
+            selectedCalendar.set(date.getYear(), date.getMonth() - 1, date.getDay());
+
+            filtrarPorFecha(selectedCalendar);
+
+            // (date.getMonth() en esta librería es 1-12, no 0-11)
+            tvFecha.setText("Medicamentos a tomar el día: " +
+                    date.getDay() + "/" + date.getMonth() + "/" + date.getYear());
         });
     }
 
@@ -141,9 +178,14 @@ public class CalendarioFragment extends Fragment {
         medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
+                listaCompleta.clear();
                 for(Medicamento med: data){
                     if(med.getHorario() != null) listaCompleta.add(med);
                 }
+
+                //Coloreamos el calendario
+                actualizarPuntosCalendario();
+
                 tvFecha.setText("Medicamentos a tomar hoy");
                 filtrarPorFecha(Calendar.getInstance()); //para que salgan las pastillas de hoy
                 //sin tener que darle
@@ -187,6 +229,14 @@ public class CalendarioFragment extends Fragment {
         }
 
         adapter.notifyDataSetChanged();
+    }
+
+    private void actualizarPuntosCalendario() {
+        if (getContext() == null) return;
+        calendarView.removeDecorators();
+
+        int color = ContextCompat.getColor(getContext(), R.color.md_primary_dark);
+        calendarView.addDecorator(new MedicamentoCalendarioDecorador(color, listaCompleta));
     }
 
 
