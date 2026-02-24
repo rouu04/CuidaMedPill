@@ -1,9 +1,11 @@
 package com.pastillerodigital.cuidamedpill.modelo.medicamento;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class Ingesta implements Persistible {
 
@@ -66,5 +68,18 @@ public class Ingesta implements Persistible {
     @Exclude
     public String getId() {
         return this.idIng;
+    }
+
+    public static Ingesta doctoObj(DocumentSnapshot doc){
+        Ingesta ingesta = new Ingesta();
+        ingesta.setId(doc.getId());
+
+        ingesta.setEstadoIngestaStr(doc.getString(Constantes.ING_ESTADOINGESTASTR));
+        ingesta.setEstadoIngesta(EstadoIngesta.estadoIngestaFromString(ingesta.getEstadoIngestaStr()));
+
+        ingesta.setFechaProgramada(doc.getTimestamp(Constantes.ING_FECHAPROGRAMADA));
+        ingesta.setFechaIngesta(doc.getTimestamp(Constantes.ING_FECHAINGESTA));
+
+        return ingesta;
     }
 }

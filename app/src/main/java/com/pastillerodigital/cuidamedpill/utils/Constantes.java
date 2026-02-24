@@ -7,6 +7,7 @@ public class Constantes {
     //FIREBASE
     public static final String COLLECTION_USUARIOS = "usuarios";
     public static final String COLLECTION_MEDICAMENTOS = "medicamentos";
+    public static final String COLLECTION_INGESTAS = "ingestas";
         //PERSISTENCIA SESIÓN
     public static final String PERSIST_NOMBREARCHIVOPREF = "CUIDAMEDPILL_PREFS";
     public static final String PERSIST_KEYUSERID = "USERID";
@@ -38,6 +39,11 @@ public class Constantes {
     public static final String MED_NMEDRESTANTES= "nMedRestantes";
     public static final String MED_HORARIO= "horario";
     public static final String MED_NOTASMED= "notasMed";
+
+    //---------------TABLA INGESTAS
+    public static final String ING_ESTADOINGESTASTR = "estadoIngestaStr";
+    public static final String ING_FECHAPROGRAMADA = "fechaProgramada";
+    public static final String ING_FECHAINGESTA = "fechaIngesta";
 
         //HORARIOS
     public static final String HORARIO_HORAS= "horas";

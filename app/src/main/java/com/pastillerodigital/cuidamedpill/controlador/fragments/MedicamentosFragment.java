@@ -152,7 +152,7 @@ public class MedicamentosFragment extends Fragment {
 
     //---------FUNCIONES CON GRAN FUNCIONALIDAD
     private void cargarMeds(){
-        medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 lMed = data;

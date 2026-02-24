@@ -444,7 +444,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         if(isEdit) medActual.setId(medEdit.getId());
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:
-        medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 for(Medicamento med: data){

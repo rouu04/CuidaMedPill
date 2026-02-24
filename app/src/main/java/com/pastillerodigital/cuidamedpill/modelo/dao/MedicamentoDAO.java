@@ -40,14 +40,11 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
 
                     callback.onSuccess(med);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {callback.onFailure(e);}
-                });
+                .addOnFailureListener(callback::onFailure);
     }
 
 
-    public void getListBasic(String idCollection, OnDataLoadedCallback<List<Medicamento>> callback) {
+    public void getListBasic(OnDataLoadedCallback<List<Medicamento>> callback) {
         getCollection()
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {

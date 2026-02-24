@@ -175,7 +175,7 @@ public class CalendarioFragment extends Fragment {
 
 
     private void cargarMedicamentos(){
-        medDAO.getListBasic(uid, new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
