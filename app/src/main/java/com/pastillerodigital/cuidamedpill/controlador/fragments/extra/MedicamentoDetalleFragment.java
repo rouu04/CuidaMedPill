@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -32,6 +33,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
@@ -189,18 +191,25 @@ public class MedicamentoDetalleFragment extends Fragment {
     }
 
     private void eliminarMed(String medId){
-        medDAO.delete(medId, new OnOperationCallback() {
-            @Override
-            public void onSuccess() {
-                UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.MED_DET_CONF_ELIMINADO);
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
+        new AlertDialog.Builder(requireContext())
+                .setTitle(Mensajes.MED_DET_ELIM)
+                .setMessage(Mensajes.MED_DET_PREG_ELIM)
+                .setPositiveButton(Mensajes.BASIC_ELIMINAR, (d, w) -> {
+                    medDAO.delete(medId, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.MED_DET_CONF_ELIMINADO);
+                            requireActivity().getSupportFragmentManager().popBackStack();
+                        }
 
-            @Override
-            public void onFailure(Exception e) {
-                UiUtils.mostrarErrorYReiniciar(requireActivity());
-            }
-        });
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+                })
+                .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
+                .show();
     }
 
     private void fillView(){

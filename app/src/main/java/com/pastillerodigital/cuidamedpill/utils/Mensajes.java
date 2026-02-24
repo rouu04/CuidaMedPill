@@ -92,6 +92,8 @@ public class Mensajes {
     //DETALLES MED
     public static final String MED_DET_CONF_ELIMINADO= "Medicamento eliminado con éxito";
     public static final String MED_DET_NOTISLIKEGEN= "Se aplican las notificaciones por defecto del perfil";
+    public static final String MED_DET_ELIM= "Eliminar medicamento";
+    public static final String MED_DET_PREG_ELIM= "¿Deseas borrar este medicamento?";
 
 
 

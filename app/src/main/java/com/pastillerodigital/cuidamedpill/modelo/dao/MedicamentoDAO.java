@@ -13,27 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
+public class MedicamentoDAO extends AbstractDAO<Medicamento> {
 
     public MedicamentoDAO(String id){
         super();
-        setSubColName();
-        setIdCollection(id);
-        setCollectionName();
-    }
-    @Override
-    protected void setSubColName() {
-        this.subColName = Constantes.COLLECTION_MEDICAMENTOS;
-    }
-
-    @Override
-    protected void setIdCollection(String id) {
-        this.idCollection = id;
-    }
-
-    @Override
-    protected void setCollectionName() {
-        this.collectionName = Constantes.COLLECTION_USUARIOS;
+        this.path = new String[]{Constantes.COLLECTION_USUARIOS, id, Constantes.COLLECTION_MEDICAMENTOS};
     }
 
     @Override
@@ -48,9 +32,7 @@ public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
 
     @Override
     public void getBasic(String id, OnDataLoadedCallback<Medicamento> callback) {
-        db.collection(this.collectionName)
-                .document(this.idCollection)
-                .collection(this.subColName)
+        getCollection()
                 .document(id)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -64,16 +46,9 @@ public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
                 });
     }
 
-    @Override
-    public void getList(String idCollection, OnDataLoadedCallback<List<Medicamento>> callback) {
 
-    }
-
-    @Override
     public void getListBasic(String idCollection, OnDataLoadedCallback<List<Medicamento>> callback) {
-        db.collection(this.collectionName)
-                .document(idCollection)
-                .collection(this.subColName)
+        getCollection()
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<Medicamento> listaMedicamentos = new ArrayList<>();
@@ -88,31 +63,6 @@ public class MedicamentoDAO extends AbstractDAOSubcol<Medicamento> {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void getBasicWithParameter(String paramBD, Object param, OnDataLoadedCallback<Medicamento> callback){
-        if (param == null) {
-            callback.onSuccess(null);
-            return;
-        }
-
-        db.collection(collectionName)
-                .document(idCollection)
-                .collection(this.subColName)
-                .whereEqualTo(paramBD, param)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0); //primer y único documento de la consulta
-                        callback.onSuccess(Medicamento.doctoObj(doc));
-                    } else {
-                        callback.onSuccess(null); // Tiene éxito en la consulta (no da error)
-                        //pero no existe
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                    callback.onFailure(new Exception(Mensajes.EX_EXISTE));
-                });
-    }
 
     //-----------ADD
     /*

@@ -22,14 +22,10 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
 
     public UsuarioDAO(){
         super();
-        setCollectionName();
+        this.path = new String[] {Constantes.COLLECTION_USUARIOS};
     }
 
     //MÉTODOS SOBREESCRITOS DE LA CLASE ABSTRACTA
-    @Override
-    protected void setCollectionName() {
-        this.collectionName = Constantes.COLLECTION_USUARIOS;
-    }
 
     @Override
     public Usuario docToObj(DocumentSnapshot doc) {
@@ -39,7 +35,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     //-------------FUNCIONES GET
     @Override
     public void get(String id, OnDataLoadedCallback<Usuario> callback) {
-        db.collection(collectionName)
+        getCollection()
                 .document(id)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -68,7 +64,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      */
     @Override
     public void getBasic(String id, OnDataLoadedCallback<Usuario> callback){
-        db.collection(collectionName)
+        getCollection()
                 .document(id)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -105,7 +101,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
             return;
         }
 
-        db.collection(collectionName)
+        getCollection()
                 .whereEqualTo(paramBD, param)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -133,7 +129,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
             return;
         }
 
-        db.collection(collectionName)
+        getCollection()
                 .whereEqualTo(paramBD, param)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -173,7 +169,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         //firebase es asíncrono
 
         for (String id : ids) {
-            db.collection(collectionName)
+            getCollection()
                     .document(id)
                     .get()
                     .addOnSuccessListener(doc -> {
@@ -196,7 +192,6 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * @param callback recibe usuario porque es una función auxiliar para dar claridad al código.
      *                 se llamará al obtener un usuario
      */
-    //todo reescribir para sacar los medicamentos y más cosas
     private void getySetUsrsAsist(UsuarioEstandar ue, OnDataLoadedCallback<Usuario> callback){
         getListAsistAsig(ue.getIdUsrAsistAsig(), new OnDataLoadedCallback<List<UsuarioAsistido>>() {
             @Override
@@ -221,7 +216,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      */
     public void add(UsuarioAsistido ua, String idue, OnOperationCallback callback){
         ua.addTutorAAsistido(idue);
-        db.collection(collectionName)
+        getCollection()
                 .add(ua)
                 .addOnSuccessListener(documentReference -> {
                     ua.setId(documentReference.getId());
@@ -240,7 +235,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      */
     public void addAsistidoATutor(String idua, String idue, OnOperationCallback callback){
         //Actualiza el campo añadiendo el id (sin duplicados)
-        db.collection(collectionName)
+        getCollection()
                 .document(idue)
                 .update( Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayUnion(idua))
                 .addOnSuccessListener(v -> callback.onSuccess())
@@ -256,11 +251,11 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * @param callback
      */
     public void vincularAsistATutor(String idua, String idue, OnOperationCallback callback){
-        db.collection(collectionName)
+        getCollection()
                 .document(idua)
                 .update( Constantes.USUARIO_ASIST_IDUSRTUTORESASIG, FieldValue.arrayUnion(idue))
                 .addOnSuccessListener(v ->{
-                    db.collection(collectionName)
+                    getCollection()
                             .document(idue)
                             .update( Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayUnion(idua))
                             .addOnSuccessListener(vo -> callback.onSuccess())
@@ -276,11 +271,11 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      * @param callback
      */
     public void desvincular(String idua, String idue, OnOperationCallback callback){
-        db.collection(collectionName)
+        getCollection()
                 .document(idua)
                 .update(Constantes.USUARIO_ASIST_IDUSRTUTORESASIG, FieldValue.arrayRemove(idue))
                 .addOnSuccessListener(v -> {
-                    db.collection(collectionName)
+                    getCollection()
                             .document(idue)
                             .update(Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayRemove(idua))
                             .addOnSuccessListener(vo -> callback.onSuccess())
@@ -350,7 +345,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
         AtomicBoolean fallo = new AtomicBoolean(false);
 
         for (String idTutor : idsTutores) {
-            db.collection(collectionName)
+            getCollection()
                     .document(idTutor)
                     .update(Constantes.USUARIO_ESTANDAR_IDUSRASIST, FieldValue.arrayRemove(ua.getId()))
                     .addOnSuccessListener(v -> {
