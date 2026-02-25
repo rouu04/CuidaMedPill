@@ -246,4 +246,15 @@ public class Horario {
 
         return horasDelDia;
     }
+
+    //todo llamar cuando usuario indique que se ha tomado x pastilla
+    public void actualizarSigIngesta() {
+        if (sigIngesta == null) return;
+
+        Calendar cal = Calendar.getInstance(); //instanciamos calendario
+        cal.setTime(sigIngesta.toDate());
+        avanzarIntervalo(cal); //avanzamos en el intervalo
+
+        sigIngesta = new Timestamp(cal.getTime());
+    }
 }
