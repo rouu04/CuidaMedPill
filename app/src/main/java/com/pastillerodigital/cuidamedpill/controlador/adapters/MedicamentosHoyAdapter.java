@@ -85,15 +85,7 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
             holder.imgTipoMed.setImageDrawable(drawable);
         }
 
-        holder.btnCheck.setOnClickListener(v -> {
-
-            /*
-             AQUÍ irá:
-             - crear Ingesta
-             - actualizar estado
-             - animación check
-             */
-        });
+        holder.btnCheck.setOnClickListener(v -> listener.onCheckClick(item));
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
 

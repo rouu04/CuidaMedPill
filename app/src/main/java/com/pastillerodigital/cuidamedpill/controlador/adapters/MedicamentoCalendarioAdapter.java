@@ -19,11 +19,9 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<MedicamentoCalendarioAdapter.MedCalViewHolder> {
 
@@ -86,7 +84,7 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
         holder.llHoras.removeAllViews(); // Limpiar antes de reutilizar la vista
 
         if (horario != null) {
-            List<String> horas = horario.getHorasDia(fecha); // Lista HH:mm
+            List<String> horas = horario.getHorasDiaStr(fecha); // Lista HH:mm
 
             for (String hora : horas) {
                 String estado = "<estado>"; // todo poner bien cuando haya ingestas

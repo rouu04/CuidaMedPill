@@ -7,7 +7,7 @@ public enum EstadoIngesta {
     OK(Constantes.ESTADO_INGESTA_OK),
     RETRASO(Constantes.ESTADO_INGESTA_RETRASO),
     OLVIDO(Constantes.ESTADO_INGESTA_OLVIDO),
-    MARGEN(Constantes.ESTADO_INGESTA_MARGEN),
+    PENDIENTE(Constantes.ESTADO_INGESTA_PENDIENTE),
     NO_PROGRAMADA(Constantes.ESTADO_INGESTA_NO_PROGRAMADA);
 
     private final String descripcion;

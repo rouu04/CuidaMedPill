@@ -217,7 +217,7 @@ public class Horario {
      * @param fechaSeleccionada El día a consultar
      * @return Lista de horas en formato HH:mm
      */
-    public List<String> getHorasDia(Calendar fechaSeleccionada){
+    public List<String> getHorasDiaStr(Calendar fechaSeleccionada){
         List<String> horasDelDia = new ArrayList<>();
         if(horas == null || horas.isEmpty() || sigIngesta == null) return horasDelDia;
 
@@ -246,6 +246,73 @@ public class Horario {
 
         return horasDelDia;
     }
+
+    public List<Hora> getHorasDia(Calendar fechaSeleccionada){
+        List<Hora> horasDelDia = new ArrayList<>();
+        if(horas == null || horas.isEmpty() || sigIngesta == null) return horasDelDia;
+
+        // Clonamos la fecha para no modificarla
+        Calendar fecha = (Calendar) fechaSeleccionada.clone();
+        Utils.limpiarHora(fecha);
+
+        Calendar sigCal = Calendar.getInstance();
+        sigCal.setTime(sigIngesta.toDate());
+        Utils.limpiarHora(sigCal);
+
+        // Evitamos bubles infinitos
+        Calendar limite = (Calendar) fecha.clone();
+        limite.add(Calendar.YEAR, 2);
+
+        while(!sigCal.after(fecha) && sigCal.before(limite)){
+            if(mismoDia(sigCal, fecha)) horasDelDia.addAll(horas);
+            avanzarIntervalo(sigCal);
+        }
+
+        return horasDelDia;
+    }
+
+    public List<Timestamp> getFechaHorasDia(Calendar fechaSeleccionada){
+        List<Timestamp> fechas = new ArrayList<>();
+
+        if (horas == null || horas.isEmpty() || sigIngesta == null || fechaSeleccionada == null) {
+            return fechas;
+        }
+
+        // Clonamos la fecha para no modificarla
+        Calendar fecha = (Calendar) fechaSeleccionada.clone();
+        Utils.limpiarHora(fecha);
+
+        // Creamos un calendario con la fecha de la próxima ingesta
+        Calendar sigCal = Calendar.getInstance();
+        sigCal.setTime(sigIngesta.toDate());
+        Utils.limpiarHora(sigCal);
+
+        // Evitamos bucles infinitos
+        Calendar limite = (Calendar) fecha.clone();
+        limite.add(Calendar.YEAR, 2);
+
+        while (!sigCal.after(fecha) && sigCal.before(limite)) {
+            if (mismoDia(sigCal, fecha)) {
+                for (Hora h : horas) { //ponemos las fechas
+                    Calendar calHora = (Calendar) fecha.clone();
+                    calHora.set(Calendar.HOUR_OF_DAY, h.getHora());
+                    calHora.set(Calendar.MINUTE, h.getMin());
+                    calHora.set(Calendar.SECOND, 0);
+                    calHora.set(Calendar.MILLISECOND, 0);
+
+                    fechas.add(new Timestamp(calHora.getTime()));
+                }
+                break;
+            }
+            avanzarIntervalo(sigCal);
+        }
+
+        return fechas;
+    }
+
+
+
+
 
     //todo llamar cuando usuario indique que se ha tomado x pastilla
     public void actualizarSigIngesta() {

@@ -114,7 +114,7 @@ public class Constantes {
     public static final String ESTADO_INGESTA_OK = "Tomada";
     public static final String ESTADO_INGESTA_RETRASO = "Retraso";
     public static final String ESTADO_INGESTA_OLVIDO = "Olvido";
-    public static final String ESTADO_INGESTA_MARGEN = "Margen";
+    public static final String ESTADO_INGESTA_PENDIENTE = "Pendiente";
     public static final String ESTADO_INGESTA_NO_PROGRAMADA = "No programada";
 
 

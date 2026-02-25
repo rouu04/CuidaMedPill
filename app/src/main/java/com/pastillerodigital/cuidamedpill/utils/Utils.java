@@ -122,4 +122,46 @@ public class Utils {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
     }
+
+    public static Timestamp construirTimestamp(Calendar base, String hora){
+        String[] partes = hora.split(":");
+
+        Calendar c = (Calendar) base.clone();
+        c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(partes[0]));
+        c.set(Calendar.MINUTE, Integer.parseInt(partes[1]));
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        return new Timestamp(c.getTime());
+    }
+
+    public static String timestampAHoraHome(Timestamp timestamp) {
+        if (timestamp == null) return "";
+
+        Calendar ahora = Calendar.getInstance();
+        Calendar fecha = Calendar.getInstance();
+        fecha.setTime(timestamp.toDate());
+
+        // Formateo de hora
+        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String horaStr = sdfHora.format(fecha.getTime());
+
+        // Solo comparo fechas
+        Calendar hoy = (Calendar) ahora.clone();
+        limpiarHora(hoy);
+        Calendar fechaSoloDia = (Calendar) fecha.clone();
+        limpiarHora(fechaSoloDia);
+
+        long diffMillis = fechaSoloDia.getTimeInMillis() - hoy.getTimeInMillis();
+        int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
+
+        if (diffDays == 0) {
+            return "Hoy " + horaStr;
+        } else if (diffDays == -1) {
+            return "Ayer " + horaStr;
+        } else {// Si no es hoy ni ayer, muestro fecha completa
+            SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return sdfFecha.format(fecha.getTime()) + " " + horaStr;
+        }
+    }
 }

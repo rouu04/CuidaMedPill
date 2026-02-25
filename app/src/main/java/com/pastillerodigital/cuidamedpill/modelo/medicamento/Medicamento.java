@@ -8,7 +8,9 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +38,8 @@ public class Medicamento implements Persistible {
     private String idMed;
     @Exclude
     private TipoMed tipoMed;
+    @Exclude
+    private List<Ingesta> lIngestas =  new ArrayList<>();
 
     public Medicamento(){}
 
@@ -143,6 +147,14 @@ public class Medicamento implements Persistible {
     @Exclude
     public void setTipoMed(TipoMed tipoMed) {
         this.tipoMed = tipoMed;
+    }
+    @Exclude
+    public List<Ingesta> getlIngestas() {
+        return lIngestas;
+    }
+    @Exclude
+    public void setlIngestas(List<Ingesta> lIngestas) {
+        this.lIngestas = lIngestas;
     }
 
     public static Medicamento doctoObj(DocumentSnapshot doc){
