@@ -16,13 +16,12 @@ import com.google.android.material.button.MaterialButton;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedIngDisplay;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 
 import java.util.Calendar;
 import java.util.List;
 
-public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoyAdapter.ViewHolder> {
+public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHolder> {
 
     /**
      * Clase interna auxiliar para simplificar la ui
@@ -36,12 +35,10 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
     private List<Ingesta> lista;
     private OnClickListener listener;
 
-    public MedicamentosHoyAdapter(List<Ingesta> lista, OnClickListener listener) {
+    public IngestasAdapter(List<Ingesta> lista, OnClickListener listener) {
         this.lista = lista;
         this.listener = listener;
     }
-
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,7 +63,6 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
             ));
         }
 
-        //todo cambios en funcion estado
 
         //SIMBOLO MEDICAMENTO
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());

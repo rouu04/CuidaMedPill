@@ -58,7 +58,7 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void getConIngestas(OnDataLoadedCallback<List<Medicamento>> callback){
+    public void getListConIngestas(OnDataLoadedCallback<List<Medicamento>> callback){
         getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {// Primero get todos los medicamentos
             @Override
             public void onSuccess(List<Medicamento> medicamentos) {

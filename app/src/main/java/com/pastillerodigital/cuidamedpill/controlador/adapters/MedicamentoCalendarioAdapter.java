@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 
@@ -28,9 +29,6 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
     private List<Medicamento> lista;
     private Calendar fecha;
     private OnItemClickListener listener;
-
-    private List<Medicamento> medsExpandida = new ArrayList<>();
-    private List<String> horasExpandida = new ArrayList<>();
 
     public interface OnItemClickListener {
         void onItemClick(Medicamento medicamento);
@@ -80,19 +78,25 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
         }
 
         // Horarios del día
-        Horario horario = med.getHorario();
-        holder.llHoras.removeAllViews(); // Limpiar antes de reutilizar la vista
+        holder.llHoras.removeAllViews();
+        List<Ingesta> ingestasDia = med.getIngestasPorDia(fecha);
 
-        if (horario != null) {
-            List<String> horas = horario.getHorasDiaStr(fecha); // Lista HH:mm
+        for (Ingesta ing : ingestasDia) {
+            //if (ing.getFechaProgramada() == null) continue; puede haber no programados
 
-            for (String hora : horas) {
-                String estado = "<estado>"; // todo poner bien cuando haya ingestas
-                //todo mostrar momento si coincide la hora con algun momento
-                TextView tvHoraEstado = new TextView(holder.itemView.getContext());
-                tvHoraEstado.setText(hora + " - " + estado);
-                holder.llHoras.addView(tvHoraEstado);
-            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(ing.getFechaProgramada().toDate());
+
+            String horaStr = String.format("%02d:%02d",
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE));
+
+            String estado = ing.getEstadoIngestaStr();
+
+            TextView tvHoraEstado = new TextView(holder.itemView.getContext());
+            tvHoraEstado.setText(horaStr + " - " + estado);
+
+            holder.llHoras.addView(tvHoraEstado);
         }
 
         holder.itemView.setOnClickListener(v -> {

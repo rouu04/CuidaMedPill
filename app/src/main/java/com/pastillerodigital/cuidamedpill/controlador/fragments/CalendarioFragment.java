@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,19 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.pastillerodigital.cuidamedpill.R;
-import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoCalendarioAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoCalendarioDecorador;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -55,6 +54,12 @@ public class CalendarioFragment extends Fragment {
     private String uidSelf;
     private Modo modo;
     private boolean vistaSemanal = false;
+
+    private enum TipoDia {
+        PASADO,
+        PRESENTE,
+        FUTURO;
+    }
 
     public static CalendarioFragment newInstance(String userIdSelf, Modo modo) {
         CalendarioFragment fragment = new CalendarioFragment();
@@ -114,12 +119,6 @@ public class CalendarioFragment extends Fragment {
             }
         });
     }
-    private void toggleVistaCalendario() {
-        vistaSemanal = !vistaSemanal;
-        calendarView.state().edit()
-                .setCalendarDisplayMode(vistaSemanal ? CalendarMode.WEEKS : CalendarMode.MONTHS)
-                .commit();
-    }
 
     private void lecturaArgumentosYConsec(){
         if(getArguments() != null){
@@ -175,13 +174,11 @@ public class CalendarioFragment extends Fragment {
 
 
     private void cargarMedicamentos(){
-        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getListConIngestas(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
-                for(Medicamento med: data){
-                    if(med.getHorario() != null) listaCompleta.add(med);
-                }
+                listaCompleta.addAll(data);
 
                 //Coloreamos el calendario
                 actualizarPuntosCalendario();
@@ -213,19 +210,15 @@ public class CalendarioFragment extends Fragment {
     }
 
 
-
-    /**
-     * Filtra los medicamentos que tienen alguna ingesta ese día
-     */
     private void filtrarPorFecha(Calendar fecha){
         listaFiltrada.clear();
+        TipoDia tipoDia = clasificarDia(fecha);
 
         for(Medicamento med : listaCompleta){
-            if(med.getHorario() == null) continue;
+            //if(med.getHorario() == null) continue;
+            List<Ingesta> resultado = med.generarIngestasFecha(fecha, tipoDia);
 
-            if(med.getHorario().hayIngestaDia(fecha)){
-                listaFiltrada.add(med);
-            }
+            if(!resultado.isEmpty())listaFiltrada.add(med);
         }
 
         adapter.notifyDataSetChanged();
@@ -238,6 +231,23 @@ public class CalendarioFragment extends Fragment {
         int color = ContextCompat.getColor(getContext(), R.color.md_primary_dark);
         calendarView.addDecorator(new MedicamentoCalendarioDecorador(color, listaCompleta));
     }
+
+    private TipoDia clasificarDia(Calendar seleccionado){
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy);
+        Calendar sel = (Calendar) seleccionado.clone();
+        Utils.limpiarHora(sel);
+        Calendar ayer = (Calendar) hoy.clone();
+        ayer.add(Calendar.DAY_OF_YEAR, -1);
+
+        if(sel.after(hoy)) return TipoDia.FUTURO;
+
+        if(sel.equals(hoy) || sel.equals(ayer))
+            return TipoDia.PRESENTE;
+
+        return TipoDia.PASADO;
+    }
+
 
 
 }

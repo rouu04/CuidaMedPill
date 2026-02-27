@@ -165,6 +165,7 @@ public class Horario {
         return proximas;
     }
 
+    /*
     public boolean hayIngestaDia(Calendar fechaSeleccionada){
         if(sigIngesta == null) return false;
         Calendar sigIngestaCal = Calendar.getInstance();
@@ -182,6 +183,8 @@ public class Horario {
 
         return mismoDia(sigIngestaCal, fechaSeleccionada);
     }
+
+     */
 
     private void avanzarIntervalo(Calendar cal){
         switch (tipoIntervalo) {
@@ -210,6 +213,8 @@ public class Horario {
         return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
                 c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
     }
+
+
 
     /**
      * Devuelve una lista de Strings con las horas programadas para un día específico.

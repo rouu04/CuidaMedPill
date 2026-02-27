@@ -24,7 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
-import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentosHoyAdapter;
+import com.pastillerodigital.cuidamedpill.controlador.adapters.IngestasAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
@@ -35,7 +35,6 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedIngDisplay;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -59,7 +58,7 @@ public class HomeFragment extends Fragment {
     private Modo modo;
     private MedicamentoDAO medDAO;
     private UsuarioDAO uDAO;
-    private MedicamentosHoyAdapter medHoyAdapter;
+    private IngestasAdapter medHoyAdapter;
     private List<Medicamento> lMed = new ArrayList<>();
     private List<Ingesta> ingPendientes = new ArrayList<>();
 
@@ -146,7 +145,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void cargarMedsConIngestas() {
-        medDAO.getConIngestas(new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getListConIngestas(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> medicamentos) {
                 lMed.clear();
@@ -180,8 +179,6 @@ public class HomeFragment extends Fragment {
             ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getHorario().getFechaHorasDia(ayer)));
         }
 
-        //todo fix representacion
-
         ordenarFechaHora(ingPendientes);
         medHoyAdapter.update(ingPendientes);
         ocultarCarga();
@@ -203,7 +200,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpRecyclerView(){
-        medHoyAdapter = new MedicamentosHoyAdapter(ingPendientes, new MedicamentosHoyAdapter.OnClickListener() {
+        medHoyAdapter = new IngestasAdapter(ingPendientes, new IngestasAdapter.OnClickListener() {
             @Override
             public void onItemClick(Ingesta item) {
                 MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(item.getMed().getId(),uid, uidSelf, modo);
