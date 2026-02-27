@@ -121,4 +121,9 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
             llHoras = itemView.findViewById(R.id.llHoras);
         }
     }
+
+    public void setFechaSeleccionada(Calendar nuevaFecha) {
+        this.fecha = (Calendar) nuevaFecha.clone(); // clon para evitar mutaciones externas
+        notifyDataSetChanged();
+    }
 }

@@ -175,8 +175,8 @@ public class HomeFragment extends Fragment {
         for(Medicamento med: lMed){
             if (med.getHorario() == null) continue;
 
-            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getHorario().getFechaHorasDia(hoy)));
-            ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getHorario().getFechaHorasDia(ayer)));
+            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
+            ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
         }
 
         ordenarFechaHora(ingPendientes);
@@ -294,6 +294,21 @@ public class HomeFragment extends Fragment {
                     medHoyAdapter.notifyDataSetChanged();
                     mostrarCarga();
                     cargarMedsConIngestas();
+                    item.getMed().actualizarSigIngesta(ingesta);
+                    //Guardamos en medicamento la nueva sigtoma del horario
+                    medDAO.edit(item.getMed(), new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // Recargar ingestas pendientes
+                            mostrarCarga();
+                            cargarMedsConIngestas();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
                 }
 
                 @Override

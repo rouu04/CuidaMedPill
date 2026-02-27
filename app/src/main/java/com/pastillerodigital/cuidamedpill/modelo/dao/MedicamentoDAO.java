@@ -41,7 +41,6 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                 .addOnFailureListener(callback::onFailure);
     }
 
-
     public void getListBasic(OnDataLoadedCallback<List<Medicamento>> callback) {
         getCollection()
                 .get()

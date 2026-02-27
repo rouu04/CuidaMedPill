@@ -6,8 +6,10 @@ import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -186,127 +188,59 @@ public class Medicamento implements Persistible {
         return med;
     }
 
-    public static Map<String, Object> toMap(Medicamento med) {
-        Map<String, Object> map = new HashMap<>();
 
-        map.put(Constantes.MED_NOMBREMED, med.getNombreMed());
-        map.put(Constantes.MED_COLORSIMB, med.getColorSimb());
-        map.put(Constantes.MED_TIPOMEDSTR, med.getTipoMedStr());
-        map.put(Constantes.MED_FECHACAD, med.getFechaCad());
-        map.put(Constantes.MED_FECHAFIN, med.getFechaFin());
-        map.put(Constantes.MED_NMEDRESTANTES, med.getnMedRestantes());
-        map.put(Constantes.MED_NOTASMED, med.getNotasMed());
-
-        if(med.getHorario() != null) {
-            map.put(Constantes.MED_HORARIO, med.getHorario().toMap());
-        }
-
-        return map;
-    }
-
+    /**
+     *Devuelve true si hay alguna ingesta programada o registrada para el dia dado
+     * @param fechaSeleccionada
+     * @return
+     */
     public boolean hayIngestaDia(Calendar fechaSeleccionada) {
         if (fechaSeleccionada == null) return false;
 
-        Calendar fecha = (Calendar) fechaSeleccionada.clone();
-        limpiarHora(fecha);
-
-        // 1Si hay horario, comprobarlo
-        if (horario != null && horario.getSigIngesta() != null) {
-            if (hayIngestaPorHorario(fecha)) {
-                return true;
+        for (Ingesta ing : lIngestas) {//Revisar ingestas registradas
+            if (ing.getFechaProgramada() != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(ing.getFechaProgramada().toDate());
+                Utils.limpiarHora(cal);
+                if (Utils.mismoDia(cal, fechaSeleccionada)) return true;
             }
         }
 
-        // Comprobar ingestas registradas manualmente
-        if (lIngestas != null) {
-            Calendar calIng = Calendar.getInstance();
-
-            for (Ingesta ing : lIngestas) {
-                if (ing.getFechaProgramada() == null) continue;
-
-                calIng.setTime(ing.getFechaProgramada().toDate());
-                limpiarHora(calIng);
-
-                if (mismoDia(calIng, fecha)) {
-                    return true;
-                }
-            }
+        if (horario != null) {//Revisar horario
+            List<Timestamp> horas = horario.getFechaHorasDia(fechaSeleccionada,
+                    (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio): null);
+            return !horas.isEmpty();
         }
 
         return false;
     }
 
-    private boolean hayIngestaPorHorario(Calendar fechaSeleccionada) {
 
-        Calendar sigIngestaCal = Calendar.getInstance();
-        sigIngestaCal.setTime(horario.getSigIngesta().toDate());
-        limpiarHora(sigIngestaCal);
-
-        // Evitar loops infinitos
-        Calendar limite = (Calendar) fechaSeleccionada.clone();
-        limite.add(Calendar.YEAR, 2);
-
-        while (!sigIngestaCal.after(fechaSeleccionada) && sigIngestaCal.before(limite)) {
-            if (mismoDia(sigIngestaCal, fechaSeleccionada)) return true;
-            avanzarIntervaloHorario(sigIngestaCal);
-        }
-
-        return mismoDia(sigIngestaCal, fechaSeleccionada);
-    }
-
-    private void avanzarIntervaloHorario(Calendar cal) {
-        switch (horario.getTipoIntervalo()) {
-            case DIARIO:
-                cal.add(Calendar.DAY_OF_YEAR, horario.getIntervalo());
-                break;
-            case SEMANAL:
-                cal.add(Calendar.WEEK_OF_YEAR, horario.getIntervalo());
-                break;
-            case QUINCENAL:
-                cal.add(Calendar.WEEK_OF_YEAR, 2 * horario.getIntervalo());
-                break;
-            case MENSUAL:
-                cal.add(Calendar.MONTH, horario.getIntervalo());
-                break;
-            case TRIMESTRAL:
-                cal.add(Calendar.MONTH, 3 * horario.getIntervalo());
-                break;
-            case ANUAL:
-                cal.add(Calendar.YEAR, horario.getIntervalo());
-                break;
-        }
-    }
-
-    private boolean mismoDia(Calendar c1, Calendar c2) {
-        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
-                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
-    }
-
-    private void limpiarHora(Calendar cal) {
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-    }
-
-    public List<Ingesta> getIngestasPorDia(Calendar diaObjetivo) {
+    /**
+     * Devuelve ingestas del medicamento de un día seleccionado
+     * @param dia
+     * @return
+     */
+    public List<Ingesta> getIngestasPorDia(Calendar dia) {
         List<Ingesta> resultado = new ArrayList<>();
-        if (lIngestas == null || diaObjetivo == null) return resultado;
+        if (lIngestas == null || dia == null) return resultado;
 
-        Calendar calIng = Calendar.getInstance();
         for (Ingesta ing : lIngestas) {
-            if (ing.getFechaProgramada() == null) continue;
-            calIng.setTime(ing.getFechaProgramada().toDate());
-
-            boolean mismoDia = calIng.get(Calendar.YEAR) == diaObjetivo.get(Calendar.YEAR) &&
-                            calIng.get(Calendar.DAY_OF_YEAR) == diaObjetivo.get(Calendar.DAY_OF_YEAR);
-
-            if (mismoDia)resultado.add(ing);
+            if (ing.getFechaProgramada() != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(ing.getFechaProgramada().toDate());
+                if (Utils.mismoDia(cal, dia)) resultado.add(ing);
+            }
         }
-
         return resultado;
     }
 
+    /**
+     * Calcula las ingestas con estado pendiente en un día
+     * @param dia
+     * @param horasProgramadas
+     * @return
+     */
     public List<Ingesta> getIngestasPendientesDia(Calendar dia, List<Timestamp> horasProgramadas) {
         List<Ingesta> ingestasExistentes = getIngestasPorDia(dia);
 
@@ -320,7 +254,7 @@ public class Medicamento implements Persistible {
 
             for (Ingesta ing : ingestasExistentes) {// Buscar si ya existe ingesta para esa hora
                 if (ing.getFechaProgramada() == null) continue;
-                if (mismaFechaHoraMinuto(ing.getFechaProgramada(), horaProgramada)) {
+                if (Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), horaProgramada)) {
                     ingEncontrada = ing;
                     break;
                 }
@@ -343,19 +277,12 @@ public class Medicamento implements Persistible {
         return pendientes;
     }
 
-    private boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2) {
-
-        Calendar c1 = Calendar.getInstance();
-        c1.setTime(t1.toDate());
-        Calendar c2 = Calendar.getInstance();
-        c2.setTime(t2.toDate());
-
-        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
-                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR) &&
-                c1.get(Calendar.HOUR_OF_DAY) == c2.get(Calendar.HOUR_OF_DAY) &&
-                c1.get(Calendar.MINUTE) == c2.get(Calendar.MINUTE);
-    }
-
+    /**
+     * Devuelve ingestas de un día, creando más si es necesario
+     * @param fecha
+     * @param tipoDiaObj
+     * @return
+     */
 
     public List<Ingesta> generarIngestasFecha(Calendar fecha, Object tipoDiaObj){
         List<Ingesta> existentes = getIngestasPorDia(fecha);
@@ -363,7 +290,7 @@ public class Medicamento implements Persistible {
         if(existentes != null) resultado.addAll(existentes);
 
         if(horario == null) return resultado;
-        List<Timestamp> horasProgramadas = horario.getFechaHorasDia(fecha);
+        List<Timestamp> horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(fechaInicio));
         if(horasProgramadas == null || horasProgramadas.isEmpty()) return resultado;
 
         for(Timestamp horaProg : horasProgramadas){
@@ -393,15 +320,64 @@ public class Medicamento implements Persistible {
         return resultado;
     }
 
+    /**
+     * Busca ingesta que coincida con la hora
+     * @param lista
+     * @param hora
+     * @return
+     */
     private Ingesta buscarIngesta(List<Ingesta> lista, Timestamp hora){
         if(lista == null) return null;
-
         for(Ingesta ing : lista){
             if(ing.getFechaProgramada() == null) continue;
-            if(mismaFechaHoraMinuto(ing.getFechaProgramada(), hora)) return ing;
+            if(Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), hora)) return ing;
         }
-
         return null;
     }
+
+    public List<Timestamp> getFechaHorasDia(Calendar fechaSeleccionada){
+        if (horario == null) return new ArrayList<>();
+        return horario.getFechaHorasDia(fechaSeleccionada,
+                (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio): null);
+    }
+
+    public void actualizarSigIngesta(Ingesta ingTomada) {
+        if (horario == null) return;
+
+        // Obtener todas las horas del día de la ingesta tomada
+        Calendar fechaIngesta = Calendar.getInstance();
+        fechaIngesta.setTime(ingTomada.getFechaProgramada().toDate());
+        List<Timestamp> horasHoy = horario.getFechaHorasDia(fechaIngesta, (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio) : null);
+
+        // Buscar la próxima ingesta en la lista de horas de hoy
+        Timestamp proxima = null;
+        for (Timestamp t : horasHoy) {
+            if (t.toDate().after(ingTomada.getFechaProgramada().toDate())) {
+                proxima = t;
+                break;
+            }
+        }
+
+        // Si no queda ninguna hoy, avanzar al siguiente día según el intervalo
+        if (proxima == null) {
+            Calendar sig = (fechaIngesta != null) ? (Calendar) fechaIngesta.clone() : Calendar.getInstance();
+
+            // Avanzar hasta la próxima fecha según el horario
+            Calendar limite = (Calendar) sig.clone();
+            limite.add(Calendar.YEAR, 2); // prevenir loop infinito
+            do {
+                horario.avanzarIntervalo(sig);
+                List<Timestamp> horasSig = horario.getFechaHorasDia(sig,
+                        (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio) : null);
+                if (!horasSig.isEmpty()) {
+                    proxima = horasSig.get(0);
+                    break;
+                }
+            } while (sig.before(limite));
+        }
+
+        if (proxima != null) horario.setSigIngesta(proxima);
+    }
+
 
 }

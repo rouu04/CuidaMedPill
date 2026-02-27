@@ -63,6 +63,14 @@ public class Utils {
         return sdf.format(date);
     }
 
+    public static Calendar timestampToCalendar(Timestamp timestamp) {
+        if (timestamp == null) return null;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp.toDate());
+        return cal;
+    }
+
+
     public static String timestampToTextoSigToma(Timestamp timestamp){
         if(timestamp == null) return "";
 
@@ -163,5 +171,22 @@ public class Utils {
             SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             return sdfFecha.format(fecha.getTime()) + " " + horaStr;
         }
+    }
+
+    public static boolean mismoDia(Calendar c1, Calendar c2) {
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    public static boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(t1.toDate());
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(t2.toDate());
+
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR) &&
+                c1.get(Calendar.HOUR_OF_DAY) == c2.get(Calendar.HOUR_OF_DAY) &&
+                c1.get(Calendar.MINUTE) == c2.get(Calendar.MINUTE);
     }
 }

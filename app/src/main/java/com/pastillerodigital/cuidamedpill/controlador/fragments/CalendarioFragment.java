@@ -149,6 +149,8 @@ public class CalendarioFragment extends Fragment {
 
             filtrarPorFecha(selectedCalendar);
 
+            adapter.setFechaSeleccionada(selectedCalendar);
+
             // (date.getMonth() en esta librería es 1-12, no 0-11)
             tvFecha.setText("Medicamentos a tomar el día: " +
                     date.getDay() + "/" + date.getMonth() + "/" + date.getYear());
@@ -186,6 +188,7 @@ public class CalendarioFragment extends Fragment {
                 tvFecha.setText("Medicamentos a tomar hoy");
                 filtrarPorFecha(Calendar.getInstance()); //para que salgan las pastillas de hoy
                 //sin tener que darle
+                //todo ordenar alfabeticamente
             }
 
             @Override
@@ -215,7 +218,6 @@ public class CalendarioFragment extends Fragment {
         TipoDia tipoDia = clasificarDia(fecha);
 
         for(Medicamento med : listaCompleta){
-            //if(med.getHorario() == null) continue;
             List<Ingesta> resultado = med.generarIngestasFecha(fecha, tipoDia);
 
             if(!resultado.isEmpty())listaFiltrada.add(med);
@@ -247,7 +249,5 @@ public class CalendarioFragment extends Fragment {
 
         return TipoDia.PASADO;
     }
-
-
 
 }
