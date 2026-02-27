@@ -35,12 +35,11 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedHorasDisplay;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedIngDisplay;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
-import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,8 +60,8 @@ public class HomeFragment extends Fragment {
     private MedicamentoDAO medDAO;
     private UsuarioDAO uDAO;
     private MedicamentosHoyAdapter medHoyAdapter;
-    private List<Medicamento> lMedHoras = new ArrayList<>();
-    private List<MedHorasDisplay> medsHoyDisplay = new ArrayList<>();
+    private List<Medicamento> lMed = new ArrayList<>();
+    private List<Ingesta> ingPendientes = new ArrayList<>();
 
     public static HomeFragment newInstance(String userIdSelf, Modo modo) {
         HomeFragment fragment = new HomeFragment();
@@ -146,86 +145,18 @@ public class HomeFragment extends Fragment {
         //ocultar algo si fuese necesario
     }
 
-    /*
-    private void cargarMeds(){
-        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
-            @Override
-            public void onSuccess(List<Medicamento> data) {
-                lMedHoras.clear();
-                for(Medicamento med : data){
-                    if(med.getHorario() != null) lMedHoras.add(med);
-                }
-                cargarIngestas();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                UiUtils.mostrarErrorYReiniciar(requireActivity());
-            }
-        });
-    }
-
-
-    private void cargarIngestas(){
-        List<Ingesta> todasIngestas = new ArrayList<>();
-        if (lMedHoras.isEmpty()) {
-            cargarIngPendientes(todasIngestas);
-            return;
-        }
-
-        int[] cont = {0};
-        for (Medicamento med : lMedHoras) { //por cada med carga sus ingestas de las ultimas 48h
-            IngestaDAO ingDAO = new IngestaDAO(uid, med.getId());
-
-            ingDAO.getListBasicUltimosDosDias(new OnDataLoadedCallback<List<Ingesta>>() {
-                @Override
-                public void onSuccess(List<Ingesta> data) {
-                    todasIngestas.addAll(data);
-                    cont[0]++;
-                    if (cont[0] == lMedHoras.size()) { // Todas las llamadas terminaron
-                        cargarIngPendientes(todasIngestas);
-                    }
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    UiUtils.mostrarErrorYReiniciar(requireActivity());
-                }
-            });
-        }
-    }
-
-
-    private void cargarIngPendientes(List<Ingesta> ingestas) { //Selecciona de entre unas ingestas cuales no se han tomado
-        medsHoyDisplay.clear();
-
-        Calendar hoy = Calendar.getInstance();
-        Calendar ayer = (Calendar) hoy.clone();
-        ayer.add(Calendar.DAY_OF_MONTH, -1);
-
-        for (Medicamento med : lMedHoras){
-            if(med.getHorario() == null) continue;
-            procesarHorasDia(med, ayer, ingestas);
-            procesarHorasDia(med, hoy, ingestas);
-        }
-
-        ordenarFechaHora(medsHoyDisplay);
-        medHoyAdapter.update(medsHoyDisplay);
-        ocultarCarga();
-    }ç
-
-     */
-
     private void cargarMedsConIngestas() {
-        medDAO.getConIngestasHome(new OnDataLoadedCallback<List<Medicamento>>() {
+        medDAO.getConIngestas(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> medicamentos) {
-                lMedHoras.clear();
+                lMed.clear();
                 for (Medicamento med : medicamentos) {
                     if (med.getHorario() == null) continue;
-                    lMedHoras.add(med);
+                    lMed.add(med);
                 }
-                cargarIngPendientes();
+                //Tenemos la lista de medicamentos con ingestas.
+                //Necesitamos ver las ingestas pendientes de ayer y hoy
+                getIngPendientes();
             }
 
             @Override
@@ -235,67 +166,27 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void cargarIngPendientes() {
-        medsHoyDisplay.clear();
+    private void getIngPendientes(){
+        ingPendientes.clear();
+
         Calendar hoy = Calendar.getInstance();
         Calendar ayer = (Calendar) hoy.clone();
         ayer.add(Calendar.DAY_OF_MONTH, -1);
 
-        for (Medicamento med : lMedHoras) { //por cada medicamento
+        for(Medicamento med: lMed){
             if (med.getHorario() == null) continue;
 
-            List<Ingesta> ingestas = med.getlIngestas() != null ? med.getlIngestas() : new ArrayList<>();
-            List<Calendar> dias = List.of(ayer, hoy);
-
-            for (Calendar dia : dias) {
-                List<Timestamp> fechasProgramadas = med.getHorario().getFechaHorasDia(dia);
-
-                for (Timestamp fechaProgramada : fechasProgramadas) {
-                    boolean yaTomada = ingestas.stream().anyMatch(ing -> ing.getIdMed().equals(med.getId())
-                                    && mismaFechaHoraMinuto(ing.getFechaProgramada(), fechaProgramada)
-                                    && ing.getEstadoIngesta() != EstadoIngesta.PENDIENTE);
-
-                    if (!yaTomada) {
-                        Timestamp ahora = new Timestamp(Calendar.getInstance().getTime());
-                        Ingesta ingNoTomada = new Ingesta(fechaProgramada, ahora,
-                                EstadoIngesta.PENDIENTE.toString(), med.getId());
-                        medsHoyDisplay.add(new MedHorasDisplay(med, Utils.timestampAHoraHome(fechaProgramada), ingNoTomada));
-                    }
-                }
-            }
+            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getHorario().getFechaHorasDia(hoy)));
+            ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getHorario().getFechaHorasDia(ayer)));
         }
 
-        ordenarFechaHora(medsHoyDisplay);
-        medHoyAdapter.update(medsHoyDisplay);
+        //todo fix representacion
+
+        ordenarFechaHora(ingPendientes);
+        medHoyAdapter.update(ingPendientes);
         ocultarCarga();
     }
 
-    /**
-     * usamos las ingestas que vienen del DAO.
-     */
-    private void procesarHorasDiaConIngestas(Medicamento med, Calendar dia, List<Ingesta> ingestas) {
-        List<String> horas = med.getHorario().getHorasDiaStr(dia);
-        Calendar ahora = Calendar.getInstance();
-
-        for (String hora : horas) {
-            Timestamp fechaProgramada = Utils.construirTimestamp(dia, hora);
-            boolean yaTomada = false;
-
-            for (Ingesta ing : ingestas) {
-                if (ing.getIdMed().equals(med.getId()) && mismaFechaHoraMinuto(ing.getFechaProgramada(), fechaProgramada)
-                        && ing.getEstadoIngesta() != EstadoIngesta.PENDIENTE) {
-                    yaTomada = true;
-                    break;
-                }
-            }
-
-            if (!yaTomada) {
-                Ingesta ingNoTomada = new Ingesta(fechaProgramada, new Timestamp(ahora.getTime()),
-                        EstadoIngesta.PENDIENTE.toString(), med.getId());
-                medsHoyDisplay.add(new MedHorasDisplay(med, hora, ingNoTomada));
-            }
-        }
-    }
 
     private void cargaUsr(){
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
@@ -312,10 +203,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpRecyclerView(){
-        medHoyAdapter = new MedicamentosHoyAdapter(medsHoyDisplay, new MedicamentosHoyAdapter.OnClickListener() {
+        medHoyAdapter = new MedicamentosHoyAdapter(ingPendientes, new MedicamentosHoyAdapter.OnClickListener() {
             @Override
-            public void onItemClick(MedHorasDisplay item) {
-                MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(item.getMedicamento().getId(),uid, uidSelf, modo);
+            public void onItemClick(Ingesta item) {
+                MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(item.getMed().getId(),uid, uidSelf, modo);
 
                 getParentFragmentManager()
                         .beginTransaction()
@@ -325,7 +216,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onCheckClick(MedHorasDisplay item) {
+            public void onCheckClick(Ingesta item) {
                 mostrarDialogoIngesta(item);
             }
         });
@@ -345,41 +236,11 @@ public class HomeFragment extends Fragment {
 
     }
 
-    /**
-     * Por cada hora programada para ese día del medicamento, comprueba las ingestas para ver si alguna coincide
-     * @param med
-     * @param dia
-     * @param ingestas
-     */
-    private void procesarHorasDia(Medicamento med, Calendar dia, List<Ingesta> ingestas){
-        List<String> horas = med.getHorario().getHorasDiaStr(dia);
 
-        for(String hora : horas){
-            Timestamp fechaProgramada = Utils.construirTimestamp(dia, hora);
-            boolean yaTomada = false;
-
-            for(Ingesta ing : ingestas){
-                if(ing.getIdMed().equals(med.getId()) && mismaFechaHoraMinuto(ing.getFechaProgramada(), fechaProgramada) &&
-                        ing.getEstadoIngesta() != EstadoIngesta.PENDIENTE){
-                    yaTomada = true;
-                    break;
-                }
-            }
-
-            // Si no existe ingesta tomada es pendiente
-            if(!yaTomada){
-                Calendar aux = Calendar.getInstance();
-                Ingesta ingNoTomada = new Ingesta(fechaProgramada, new Timestamp(aux.getTime()),
-                        EstadoIngesta.PENDIENTE.toString(), med.getId());
-                medsHoyDisplay.add(new MedHorasDisplay(med, hora, ingNoTomada));
-            }
-        }
-    }
-
-    private void ordenarFechaHora(List<MedHorasDisplay> lista) {
+    private void ordenarFechaHora(List<Ingesta> lista) {
         Collections.sort(lista, (a, b) -> {
-            Timestamp t1 = a.getIngesta().getFechaProgramada();
-            Timestamp t2 = b.getIngesta().getFechaProgramada();
+            Timestamp t1 = a.getFechaProgramada();
+            Timestamp t2 = b.getFechaProgramada();
             return Long.compare(t1.getSeconds(), t2.getSeconds());
         });
     }
@@ -387,7 +248,7 @@ public class HomeFragment extends Fragment {
 
     //----------INGESTAS
 
-    private void mostrarDialogoIngesta(MedHorasDisplay item){
+    private void mostrarDialogoIngesta(Ingesta item){
         View dialogView = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_confirm_ingesta, null);
 
@@ -400,7 +261,7 @@ public class HomeFragment extends Fragment {
         Button btnSi = dialogView.findViewById(R.id.btnSi);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-        Medicamento med = item.getMedicamento();
+        Medicamento med = item.getMed();
         tvNombre.setText(med.getNombreMed());
 
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
@@ -424,18 +285,17 @@ public class HomeFragment extends Fragment {
         btnSi.setOnClickListener(v -> {
             Calendar ahora = Calendar.getInstance();
             Timestamp fechaIngesta = new Timestamp(ahora.getTime());
-            Timestamp fechaProgramada = item.getIngesta().getFechaProgramada();
+            Timestamp fechaProgramada = item.getFechaProgramada();
 
             EstadoIngesta estado = calcularEstadoIngesta(fechaProgramada);
-            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), item.getMedicamento().getId());
+            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), item.getMed());
 
-            IngestaDAO ingestaDAO = new IngestaDAO(uid, item.getMedicamento().getId());
+            IngestaDAO ingestaDAO = new IngestaDAO(uid, item.getMed().getId());
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
                     medHoyAdapter.notifyDataSetChanged();
                     mostrarCarga();
-                    //cargarMeds();
                     cargarMedsConIngestas();
                 }
 
@@ -464,18 +324,6 @@ public class HomeFragment extends Fragment {
         } else {
             return EstadoIngesta.RETRASO;
         }
-    }
-
-    private boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2){
-        Calendar c1 = Calendar.getInstance();
-        c1.setTime(t1.toDate());
-        Calendar c2 = Calendar.getInstance();
-        c2.setTime(t2.toDate());
-
-        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
-                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR) &&
-                c1.get(Calendar.HOUR_OF_DAY) == c2.get(Calendar.HOUR_OF_DAY) &&
-                c1.get(Calendar.MINUTE) == c2.get(Calendar.MINUTE);
     }
 
 

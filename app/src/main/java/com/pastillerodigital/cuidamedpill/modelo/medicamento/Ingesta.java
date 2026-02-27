@@ -17,16 +17,16 @@ public class Ingesta implements Persistible {
     @Exclude
     private String idIng;
     @Exclude
-    private String idMed; //guardo el id del medicamento al que pertenece por simplicidad
+    private Medicamento med; //guardo el medicamento al que pertenece por simplicidad
 
     public Ingesta(){}
 
-    public Ingesta(Timestamp fechaProgramada, Timestamp fechaIngesta, String estadoIngestaStr, String idMed) {
+    public Ingesta(Timestamp fechaProgramada, Timestamp fechaIngesta, String estadoIngestaStr, Medicamento med) {
         this.fechaProgramada = fechaProgramada;
         this.fechaIngesta = fechaIngesta;
         this.estadoIngestaStr = estadoIngestaStr;
         this.estadoIngesta = EstadoIngesta.estadoIngestaFromString(estadoIngestaStr);
-        this.idMed = idMed;
+        this.med = med;
     }
 
     public Timestamp getFechaProgramada() {
@@ -73,23 +73,17 @@ public class Ingesta implements Persistible {
         return this.idIng;
     }
     @Exclude
-    public String getIdMed() {
-        return idMed;
+    public Medicamento getMed() {
+        return med;
     }
     @Exclude
-    public void setIdMed(String idMed) {
-        this.idMed = idMed;
+    public void setMed(Medicamento med) {
+        this.med = med;
     }
 
     public static Ingesta doctoObj(DocumentSnapshot doc){
         Ingesta ingesta = new Ingesta();
         ingesta.setId(doc.getId());
-
-        String idMed = doc.getReference()
-                .getParent()
-                .getParent()
-                .getId();
-        ingesta.setIdMed(idMed);
 
         ingesta.setEstadoIngestaStr(doc.getString(Constantes.ING_ESTADOINGESTASTR));
         ingesta.setEstadoIngesta(EstadoIngesta.estadoIngestaFromString(ingesta.getEstadoIngestaStr()));

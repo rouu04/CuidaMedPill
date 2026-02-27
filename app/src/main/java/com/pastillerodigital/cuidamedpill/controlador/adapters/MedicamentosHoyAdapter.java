@@ -1,26 +1,25 @@
 package com.pastillerodigital.cuidamedpill.controlador.adapters;
 
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedHorasDisplay;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedIngDisplay;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoyAdapter.ViewHolder> {
@@ -30,14 +29,14 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
      */
 
     public interface OnClickListener {
-        void onItemClick(MedHorasDisplay medHora);
-        void onCheckClick(MedHorasDisplay medHora);
+        void onItemClick(Ingesta ing);
+        void onCheckClick(Ingesta ing);
     }
 
-    private List<MedHorasDisplay> lista;
+    private List<Ingesta> lista;
     private OnClickListener listener;
 
-    public MedicamentosHoyAdapter(List<MedHorasDisplay> lista, OnClickListener listener) {
+    public MedicamentosHoyAdapter(List<Ingesta> lista, OnClickListener listener) {
         this.lista = lista;
         this.listener = listener;
     }
@@ -52,11 +51,20 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        MedHorasDisplay item = lista.get(position);
-        Medicamento med = item.getMedicamento();
+        Ingesta ing = lista.get(position);
+        Medicamento med = ing.getMed();
 
         holder.tvNombre.setText(med.getNombreMed());
-        holder.tvHora.setText(item.getHora());
+        // Hora
+        if (ing.getFechaProgramada() != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(ing.getFechaProgramada().toDate());
+            holder.tvHora.setText(String.format(
+                    "%02d:%02d",
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE)
+            ));
+        }
 
         //todo cambios en funcion estado
 
@@ -85,8 +93,8 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
             holder.imgTipoMed.setImageDrawable(drawable);
         }
 
-        holder.btnCheck.setOnClickListener(v -> listener.onCheckClick(item));
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
+        holder.btnCheck.setOnClickListener(v -> listener.onCheckClick(ing));
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(ing));
     }
 
     @Override
@@ -94,7 +102,7 @@ public class MedicamentosHoyAdapter extends RecyclerView.Adapter<MedicamentosHoy
         return lista.size();
     }
 
-    public void update(List<MedHorasDisplay> nueva) {
+    public void update(List<Ingesta> nueva) {
         lista = nueva;
         notifyDataSetChanged();
     }

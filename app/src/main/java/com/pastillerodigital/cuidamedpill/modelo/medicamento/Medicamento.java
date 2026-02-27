@@ -4,11 +4,13 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -200,6 +202,73 @@ public class Medicamento implements Persistible {
         }
 
         return map;
+    }
+
+    public List<Ingesta> getIngestasPorDia(Calendar diaObjetivo) {
+        List<Ingesta> resultado = new ArrayList<>();
+        if (lIngestas == null || diaObjetivo == null) return resultado;
+
+        Calendar calIng = Calendar.getInstance();
+        for (Ingesta ing : lIngestas) {
+            if (ing.getFechaProgramada() == null) continue;
+            calIng.setTime(ing.getFechaProgramada().toDate());
+
+            boolean mismoDia = calIng.get(Calendar.YEAR) == diaObjetivo.get(Calendar.YEAR) &&
+                            calIng.get(Calendar.DAY_OF_YEAR) == diaObjetivo.get(Calendar.DAY_OF_YEAR);
+
+            if (mismoDia)resultado.add(ing);
+        }
+
+        return resultado;
+    }
+
+    public List<Ingesta> getIngestasPendientesDia(Calendar dia, List<Timestamp> horasProgramadas) {
+        List<Ingesta> ingestasExistentes = getIngestasPorDia(dia);
+
+        List<Ingesta> pendientes = new ArrayList<>();
+
+        if (horasProgramadas == null) return pendientes;
+        if (ingestasExistentes == null) ingestasExistentes = new ArrayList<>();
+
+        for (Timestamp horaProgramada : horasProgramadas) { //para cada hora programada del medicamento hoy
+            Ingesta ingEncontrada = null;
+
+            for (Ingesta ing : ingestasExistentes) {// Buscar si ya existe ingesta para esa hora
+                if (ing.getFechaProgramada() == null) continue;
+                if (mismaFechaHoraMinuto(ing.getFechaProgramada(), horaProgramada)) {
+                    ingEncontrada = ing;
+                    break;
+                }
+            }
+
+
+            if (ingEncontrada == null) { //si no existe la ingesta se crea una pendiente
+                Ingesta nuevaPendiente = new Ingesta(horaProgramada, new Timestamp(new java.util.Date()),
+                        EstadoIngesta.PENDIENTE.toString(), this);
+                pendientes.add(nuevaPendiente);
+                continue;
+            }
+
+            // Si existe pero está pendiente
+            if (ingEncontrada.getEstadoIngesta() == EstadoIngesta.PENDIENTE) {
+                pendientes.add(ingEncontrada);
+            }
+        }
+
+        return pendientes;
+    }
+
+    private boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2) {
+
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(t1.toDate());
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(t2.toDate());
+
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR) &&
+                c1.get(Calendar.HOUR_OF_DAY) == c2.get(Calendar.HOUR_OF_DAY) &&
+                c1.get(Calendar.MINUTE) == c2.get(Calendar.MINUTE);
     }
 
 }

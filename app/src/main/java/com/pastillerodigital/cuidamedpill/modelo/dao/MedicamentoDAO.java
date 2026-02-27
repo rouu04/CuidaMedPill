@@ -1,18 +1,12 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
-import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
-import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
-import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MedicamentoDAO extends AbstractDAO<Medicamento> {
 
@@ -64,7 +58,7 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void getConIngestasHome(OnDataLoadedCallback<List<Medicamento>> callback){
+    public void getConIngestas(OnDataLoadedCallback<List<Medicamento>> callback){
         getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {// Primero get todos los medicamentos
             @Override
             public void onSuccess(List<Medicamento> medicamentos) {
@@ -89,10 +83,14 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                     }
 
                     IngestaDAO ingDAO = new IngestaDAO(uid, med.getId());
-                    ingDAO.getListBasicUltimosDosDias(new OnDataLoadedCallback<List<Ingesta>>() {
+                    ingDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
                         @Override
                         public void onSuccess(List<Ingesta> ingestas) {
                             med.setlIngestas(ingestas); // asignamos ingestas al medicamento
+                            for (Ingesta ing : ingestas) {
+                                ing.setMed(med); //para que ingesta también tenga el medicamento por simplicidad
+                            }
+
                             resultado.add(med);
                             cont[0]++;
                             if (cont[0] == medicamentos.size()) { // Todos los medicamentos ya tienen sus ingestas
@@ -115,23 +113,4 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
         });
     }
 
-
-    //-----------ADD
-    /*
-    @Override
-    public void add(Medicamento obj, OnOperationCallback callback) {
-        Map<String,Object> mapObj = Medicamento.toMap(obj);
-
-        db.collection(this.collectionName)
-                .document(this.idCollection)
-                .collection(this.subColName)
-                .add(mapObj)
-                .addOnSuccessListener(documentReference -> {
-                    obj.setId(documentReference.getId());
-                    callback.onSuccess();
-                })
-                .addOnFailureListener(callback::onFailure);
-    }
-
-     */
 }
