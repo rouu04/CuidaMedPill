@@ -12,6 +12,7 @@ public class Ingesta implements Persistible {
     private Timestamp fechaProgramada;
     private Timestamp fechaIngesta;
     private String estadoIngestaStr;
+    private String notas;
     @Exclude
     private EstadoIngesta estadoIngesta;
     @Exclude
@@ -21,12 +22,14 @@ public class Ingesta implements Persistible {
 
     public Ingesta(){}
 
-    public Ingesta(Timestamp fechaProgramada, Timestamp fechaIngesta, String estadoIngestaStr, Medicamento med) {
+    public Ingesta(Timestamp fechaProgramada, Timestamp fechaIngesta, String estadoIngestaStr,
+                   Medicamento med, String notas) {
         this.fechaProgramada = fechaProgramada;
         this.fechaIngesta = fechaIngesta;
         this.estadoIngestaStr = estadoIngestaStr;
         this.estadoIngesta = EstadoIngesta.estadoIngestaFromString(estadoIngestaStr);
         this.med = med;
+        this.notas = notas;
     }
 
     public Timestamp getFechaProgramada() {
@@ -52,6 +55,15 @@ public class Ingesta implements Persistible {
     public void setEstadoIngestaStr(String estadoIngestaStr) {
         this.estadoIngestaStr = estadoIngestaStr;
     }
+
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
+
     @Exclude
     public EstadoIngesta getEstadoIngesta() {
         return estadoIngesta;
@@ -90,6 +102,8 @@ public class Ingesta implements Persistible {
 
         ingesta.setFechaProgramada(doc.getTimestamp(Constantes.ING_FECHAPROGRAMADA));
         ingesta.setFechaIngesta(doc.getTimestamp(Constantes.ING_FECHAINGESTA));
+
+        ingesta.setNotas(doc.getString(Constantes.ING_NOTAS));
 
         return ingesta;
     }

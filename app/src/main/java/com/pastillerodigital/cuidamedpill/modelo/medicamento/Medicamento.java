@@ -265,7 +265,7 @@ public class Medicamento implements Persistible {
 
             if (ingEncontrada == null) { //si no existe la ingesta se crea una pendiente
                 Ingesta nuevaPendiente = new Ingesta(horaProgramada, new Timestamp(new java.util.Date()),
-                        EstadoIngesta.PENDIENTE.toString(), this);
+                        EstadoIngesta.PENDIENTE.toString(), this, null);
                 pendientes.add(nuevaPendiente);
                 continue;
             }
@@ -314,7 +314,7 @@ public class Medicamento implements Persistible {
                 estado = EstadoIngesta.PENDIENTE.toString();
             }
 
-            Ingesta nueva = new Ingesta(horaProg, null, estado, this);
+            Ingesta nueva = new Ingesta(horaProg, null, estado, this, null);
             lIngestas.add(nueva);
             resultado.add(nueva);
         }

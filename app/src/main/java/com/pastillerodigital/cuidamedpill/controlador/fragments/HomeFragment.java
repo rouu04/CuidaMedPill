@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -276,13 +277,24 @@ public class HomeFragment extends Fragment {
             imgTipo.setImageDrawable(drawable);
         }
 
+        EditText etNotasDialog = dialogView.findViewById(R.id.etNotasConfirmIng);
+        if(fechaProgramada == null){
+            etNotasDialog.setVisibility(View.VISIBLE);
+        } else {
+            etNotasDialog.setVisibility(View.GONE);
+        }
+
 
         btnSi.setOnClickListener(v -> {
             Calendar ahora = Calendar.getInstance();
             Timestamp fechaIngesta = new Timestamp(ahora.getTime());
 
             EstadoIngesta estado = calcularEstadoIngesta(fechaProgramada);
-            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med);
+            String nota = "";
+            if(estado.equals(EstadoIngesta.NO_PROGRAMADA)){
+                nota = etNotasDialog.getText().toString().trim();
+            }
+            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
 
             IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
             ingestaDAO.add(ingesta, new OnOperationCallback() {

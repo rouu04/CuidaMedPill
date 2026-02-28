@@ -44,6 +44,7 @@ public class Constantes {
     public static final String ING_ESTADOINGESTASTR = "estadoIngestaStr";
     public static final String ING_FECHAPROGRAMADA = "fechaProgramada";
     public static final String ING_FECHAINGESTA = "fechaIngesta";
+    public static final String ING_NOTAS = "notas";
 
         //HORARIOS
     public static final String HORARIO_HORAS= "horas";

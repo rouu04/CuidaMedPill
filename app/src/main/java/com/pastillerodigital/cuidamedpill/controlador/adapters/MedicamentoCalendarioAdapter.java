@@ -83,8 +83,6 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
         List<Ingesta> ingestasDia = med.getIngestasPorDia(fecha);
 
         for (Ingesta ing : ingestasDia) {
-            //if (ing.getFechaProgramada() == null) continue; puede haber no programados
-
             Calendar cal = Calendar.getInstance();
             Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
             cal.setTime(fechaBase.toDate());
@@ -97,6 +95,13 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
 
             TextView tvHoraEstado = new TextView(holder.itemView.getContext());
             tvHoraEstado.setText(horaStr + " - " + estado);
+
+            String nota = ing.getNotas();
+            if(nota != null && !nota.isEmpty()){
+                tvHoraEstado.setText(horaStr + " - " + estado + " Nota:" + nota);
+            } else {
+                tvHoraEstado.setText(horaStr + " - " + estado);
+            }
 
             holder.llHoras.addView(tvHoraEstado);
         }
