@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
@@ -85,7 +86,8 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
             //if (ing.getFechaProgramada() == null) continue; puede haber no programados
 
             Calendar cal = Calendar.getInstance();
-            cal.setTime(ing.getFechaProgramada().toDate());
+            Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
+            cal.setTime(fechaBase.toDate());
 
             String horaStr = String.format("%02d:%02d",
                     cal.get(Calendar.HOUR_OF_DAY),

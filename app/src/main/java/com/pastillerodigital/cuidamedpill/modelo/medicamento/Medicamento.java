@@ -11,6 +11,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -226,9 +227,11 @@ public class Medicamento implements Persistible {
         if (lIngestas == null || dia == null) return resultado;
 
         for (Ingesta ing : lIngestas) {
-            if (ing.getFechaProgramada() != null) {
+            //Se tiene en cuenta las fechas programadas y las no programadas
+            Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
+            if (fechaBase != null) {
                 Calendar cal = Calendar.getInstance();
-                cal.setTime(ing.getFechaProgramada().toDate());
+                cal.setTime(fechaBase.toDate());
                 if (Utils.mismoDia(cal, dia)) resultado.add(ing);
             }
         }
@@ -259,7 +262,6 @@ public class Medicamento implements Persistible {
                     break;
                 }
             }
-
 
             if (ingEncontrada == null) { //si no existe la ingesta se crea una pendiente
                 Ingesta nuevaPendiente = new Ingesta(horaProgramada, new Timestamp(new java.util.Date()),

@@ -25,6 +25,7 @@ import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.IngestasAdapter;
+import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
@@ -127,7 +128,7 @@ public class HomeFragment extends Fragment {
 
     private void setButtonListeners(){
         this.fab.setOnClickListener(v->{
-            //todo add ingesta
+            mostrarDialogoSelMed();
         });
     }
 
@@ -214,7 +215,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCheckClick(Ingesta item) {
-                mostrarDialogoIngesta(item);
+                mostrarDialogoIngesta(item.getMed(), item.getFechaProgramada());
             }
         });
 
@@ -233,7 +234,6 @@ public class HomeFragment extends Fragment {
 
     }
 
-
     private void ordenarFechaHora(List<Ingesta> lista) {
         Collections.sort(lista, (a, b) -> {
             Timestamp t1 = a.getFechaProgramada();
@@ -242,10 +242,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
     //----------INGESTAS
-
-    private void mostrarDialogoIngesta(Ingesta item){
+    private void mostrarDialogoIngesta(Medicamento med, @Nullable Timestamp fechaProgramada){
         View dialogView = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_confirm_ingesta, null);
 
@@ -258,7 +256,6 @@ public class HomeFragment extends Fragment {
         Button btnSi = dialogView.findViewById(R.id.btnSi);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-        Medicamento med = item.getMed();
         tvNombre.setText(med.getNombreMed());
 
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
@@ -279,36 +276,39 @@ public class HomeFragment extends Fragment {
             imgTipo.setImageDrawable(drawable);
         }
 
+
         btnSi.setOnClickListener(v -> {
             Calendar ahora = Calendar.getInstance();
             Timestamp fechaIngesta = new Timestamp(ahora.getTime());
-            Timestamp fechaProgramada = item.getFechaProgramada();
 
             EstadoIngesta estado = calcularEstadoIngesta(fechaProgramada);
-            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), item.getMed());
+            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med);
 
-            IngestaDAO ingestaDAO = new IngestaDAO(uid, item.getMed().getId());
+            IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
-                    medHoyAdapter.notifyDataSetChanged();
-                    mostrarCarga();
-                    cargarMedsConIngestas();
-                    item.getMed().actualizarSigIngesta(ingesta);
-                    //Guardamos en medicamento la nueva sigtoma del horario
-                    medDAO.edit(item.getMed(), new OnOperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            // Recargar ingestas pendientes
-                            mostrarCarga();
-                            cargarMedsConIngestas();
-                        }
+                    //puede haber medicamentos con horario que tengan ingestas fuera de horario
+                    if(med.getHorario() != null && fechaProgramada != null){
+                        medHoyAdapter.notifyDataSetChanged();
+                        mostrarCarga();
+                        cargarMedsConIngestas();
+                        med.actualizarSigIngesta(ingesta);
+                        //Guardamos en medicamento la nueva sigtoma del horario
+                        medDAO.edit(med, new OnOperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // Recargar ingestas pendientes
+                                mostrarCarga();
+                                cargarMedsConIngestas();
+                            }
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            UiUtils.mostrarErrorYReiniciar(requireActivity());
-                        }
-                    });
+                            @Override
+                            public void onFailure(Exception e) {
+                                UiUtils.mostrarErrorYReiniciar(requireActivity());
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -327,6 +327,8 @@ public class HomeFragment extends Fragment {
     }
 
     private EstadoIngesta calcularEstadoIngesta(Timestamp fechaProgramada){
+        if(fechaProgramada == null) return EstadoIngesta.NO_PROGRAMADA;
+
         long diffMinutos = (System.currentTimeMillis() - fechaProgramada.toDate().getTime()) / 60000;
 
         if(diffMinutos <= 60){ //todo cambiar 60 por algo coded
@@ -338,5 +340,31 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void mostrarDialogoSelMed(){
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_lista_medicamentos, null);
+        RecyclerView rv = dialogView.findViewById(R.id.rvListaMedicamentos);
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setView(dialogView)
+                .create();
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //Cargar medicamentos
+        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
+            @Override
+            public void onSuccess(List<Medicamento> lista) {
+                MedicamentoAdapter adapter = new MedicamentoAdapter(lista, med -> {
+                    dialog.dismiss();
+                    mostrarDialogoIngesta(med, null);
+                });
+                rv.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+        dialog.show();
+    }
 
 }
