@@ -77,6 +77,12 @@
     <string name="hint_med_det_NotisMed">Notificaciones de este medicamento</string>
     <string name="button_eliminar">Eliminar</string>
 
+    <!-- HOME-->
+    <string name="text_title_home">Inicio</string>
+    <string name="text_title_home_avisos">Avisos</string>
+    <string name="text_title_home_meds">Medicamentos a tomar hoy</string>
+    <string name="button_home_add_ingesta_noprogram">Añadir toma no programada</string>
+
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>
     <string name="material_timepicker_minute">Minuto</string>

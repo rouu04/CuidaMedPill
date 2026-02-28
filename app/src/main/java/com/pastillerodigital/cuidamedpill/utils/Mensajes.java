@@ -95,7 +95,13 @@ public class Mensajes {
     public static final String MED_DET_ELIM= "Eliminar medicamento";
     public static final String MED_DET_PREG_ELIM= "¿Deseas borrar este medicamento?";
 
-
+    //CALENDARIO
+    public static final String CAL_VISTA_SEMANAL= "Vista semanal";
+    public static final String CAL_VISTA_MENSUAL= "Vista mensual";
+    public static final String CAL_TITLE= "Tu calendario";
+    public static final String CAL_TITLE_SUPERVISOR= "Calendario de %s";
+    public static final String CAL_DIA_SEL= "Medicamentos del día: %02d/%02d/%04d";
+    public static final String CAL_DIA_SEL_HOY= "Medicamentos de hoy";
 
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";

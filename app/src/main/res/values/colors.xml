@@ -40,4 +40,10 @@
     <color name="md_black">#000000</color>
     <color name="md_blanco">#FFFFFF</color>
 
+    <!-- Colores estados ingesta -->
+    <color name="estadoTomado">#00A09D</color>
+    <color name="estadoOlvido">#B32323</color>
+    <color name="estadoRetraso">#B65F1D</color>
+    <color name="estadoPendiente">#005052</color>
+    <color name="estadoNoProgramado">#693EB1</color>
 </resources>

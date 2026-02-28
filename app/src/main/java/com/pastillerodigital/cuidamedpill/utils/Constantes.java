@@ -112,7 +112,7 @@ public class Constantes {
     public static final String INTERVALO_ANIOS = "años";
 
 
-    public static final String ESTADO_INGESTA_OK = "Tomada";
+    public static final String ESTADO_INGESTA_TOMADA = "Tomada";
     public static final String ESTADO_INGESTA_RETRASO = "Retraso";
     public static final String ESTADO_INGESTA_OLVIDO = "Olvido";
     public static final String ESTADO_INGESTA_PENDIENTE = "Pendiente";

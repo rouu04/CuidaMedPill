@@ -26,14 +26,18 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoCalendarioDecorador;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class CalendarioFragment extends Fragment {
 
@@ -103,18 +107,29 @@ public class CalendarioFragment extends Fragment {
     }
 
     private void configCalDefault() {
+        vistaSemanal = true;
+        calendarView.state().edit()
+                .setCalendarDisplayMode(CalendarMode.WEEKS) // modo semanal
+                .commit();
+
+        chipVistaSemanal.setChecked(true);
+        chipVistaSemanal.setText(Mensajes.CAL_VISTA_SEMANAL);
+        chipVistaSemanal.setChipIconVisible(true);
+
+        CalendarDay hoy = CalendarDay.today(); // obtiene el día actual
+        calendarView.setSelectedDate(hoy);//para que se marque el día de hoy como seleccionado al principio
+
         chipVistaSemanal.setOnCheckedChangeListener((buttonView, isChecked) -> {
             vistaSemanal = isChecked;
-
             calendarView.state().edit()
                     .setCalendarDisplayMode(isChecked ? CalendarMode.WEEKS : CalendarMode.MONTHS)
                     .commit();
 
             if (isChecked) {
-                chipVistaSemanal.setText("Vista semanal");
+                chipVistaSemanal.setText(Mensajes.CAL_VISTA_SEMANAL);
                 chipVistaSemanal.setChipIconVisible(true);
             } else {
-                chipVistaSemanal.setText("Vista mensual");
+                chipVistaSemanal.setText(Mensajes.CAL_VISTA_MENSUAL);
                 chipVistaSemanal.setChipIconVisible(false);
             }
         });
@@ -135,10 +150,8 @@ public class CalendarioFragment extends Fragment {
                 cargaUsr(uid);
             }
             else{
-                tvTtitle.setText("Tu calendario");
+                tvTtitle.setText(Mensajes.CAL_TITLE);
             }
-
-
         }
     }
 
@@ -149,11 +162,12 @@ public class CalendarioFragment extends Fragment {
 
             filtrarPorFecha(selectedCalendar);
 
-            adapter.setFechaSeleccionada(selectedCalendar);
-
             // (date.getMonth() en esta librería es 1-12, no 0-11)
-            tvFecha.setText("Medicamentos a tomar el día: " +
-                    date.getDay() + "/" + date.getMonth() + "/" + date.getYear());
+            tvFecha.setText(String.format(Locale.getDefault(), Mensajes.CAL_DIA_SEL,
+                    date.getDay(),
+                    date.getMonth(),
+                    date.getYear()
+            ));
         });
     }
 
@@ -181,14 +195,9 @@ public class CalendarioFragment extends Fragment {
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
                 listaCompleta.addAll(data);
-
-                //Coloreamos el calendario
-                actualizarPuntosCalendario();
-
-                tvFecha.setText("Medicamentos a tomar hoy");
-                filtrarPorFecha(Calendar.getInstance()); //para que salgan las pastillas de hoy
-                //sin tener que darle
-                //todo ordenar alfabeticamente
+                actualizarPuntosCalendario(); //colorea puntos calendario
+                tvFecha.setText(Mensajes.CAL_DIA_SEL_HOY);
+                filtrarPorFecha(Calendar.getInstance()); //para que salgan las pastillas de hoy sin tener que darle
             }
 
             @Override
@@ -202,7 +211,7 @@ public class CalendarioFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                tvTtitle.setText(String.format("Calendario de %s", data.getAliasU()));
+                tvTtitle.setText(String.format(Mensajes.CAL_TITLE_SUPERVISOR, data.getAliasU()));
             }
 
             @Override
@@ -222,6 +231,9 @@ public class CalendarioFragment extends Fragment {
 
             if(!resultado.isEmpty())listaFiltrada.add(med);
         }
+
+        // Ordenar alfabéticamente por nombre del medicamento
+        listaFiltrada.sort((m1, m2) -> m1.getNombreMed().compareToIgnoreCase(m2.getNombreMed()));
 
         adapter.notifyDataSetChanged();
     }

@@ -17,46 +17,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/padding_general">
 
         <!-- Título -->
         <TextView
             android:id="@+id/tvTituloHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tu día"
-            android:textSize="26sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:textColor="@color/md_primary_dark" />
 
         <!-- Avisos -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Avisos"
-            android:textSize="18sp"
+            android:text="@string/text_title_home_avisos"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_marginTop="@dimen/margin_top"
+            android:textColor="@color/md_primary_dark"/>
 
         <LinearLayout
             android:id="@+id/layoutAvisosHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginTop="@dimen/margin_top_element"/>
 
         <!-- Medicamentos -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Medicamentos hoy"
-            android:textSize="18sp"
+            android:text="@string/text_title_home_meds"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginTop="@dimen/margin_top"
+            android:textColor="@color/md_primary_dark"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMedicamentosHoy"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_top_element"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
@@ -64,10 +66,9 @@
         android:id="@+id/fabAddIngesta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="+"
+        android:layout_margin="@dimen/margin_top_element"
+        android:contentDescription="@string/button_home_add_ingesta_noprogram"
         android:layout_gravity="bottom|end"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:backgroundTint="@color/md_primary"
         app:tint="@color/md_background"
         app:srcCompat="@drawable/ic_add"/>

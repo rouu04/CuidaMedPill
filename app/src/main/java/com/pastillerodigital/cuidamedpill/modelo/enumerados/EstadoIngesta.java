@@ -4,7 +4,7 @@ import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public enum EstadoIngesta {
 
-    OK(Constantes.ESTADO_INGESTA_OK),
+    TOMADA(Constantes.ESTADO_INGESTA_TOMADA),
     RETRASO(Constantes.ESTADO_INGESTA_RETRASO),
     OLVIDO(Constantes.ESTADO_INGESTA_OLVIDO),
     PENDIENTE(Constantes.ESTADO_INGESTA_PENDIENTE),

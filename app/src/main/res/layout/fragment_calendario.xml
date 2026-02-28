@@ -1,76 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:fillViewport="true"
+    android:padding="@dimen/padding_scroll">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_elements_layout"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
-        <!-- Título -->
+        <!-- Título + Chip -->
         <TextView
             android:id="@+id/tvTitleCal"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textStyle="bold"
             android:textColor="@color/md_primary_dark"/>
 
-        <!-- Chip -->
         <com.google.android.material.chip.Chip
             android:id="@+id/chipVistaSemanal"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vista mensual"
             android:checkable="true"
+            android:layout_marginTop="@dimen/margin_top"
             app:chipBackgroundColor="@color/md_surface"/>
-    </LinearLayout>
 
-    <!-- Card calendario -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="0dp">
-
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            android:id="@+id/calendarView"
+        <!-- Calendario -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_element"
+            app:cardCornerRadius="@dimen/card_cornerradious"
+            app:cardElevation="@dimen/card_elevation">
 
-    </com.google.android.material.card.MaterialCardView>
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="12dp">
-
+        <!-- Fecha seleccionada -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvFechaSeleccionada"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Medicamentos del día"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:paddingBottom="8dp"
+            android:paddingBottom="@dimen/padding_bottom"
             android:layout_marginTop="@dimen/margin_top"/>
 
+        <!-- RecyclerView dentro de NestedScrollView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMedicamentosDia"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
     </LinearLayout>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

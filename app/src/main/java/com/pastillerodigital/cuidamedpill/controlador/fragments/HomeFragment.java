@@ -346,7 +346,7 @@ public class HomeFragment extends Fragment {
         if(diffMinutos <= 60){ //todo cambiar 60 por algo coded
             //todo por default antes de indicar la ingesta será margen y luego ya se cambia
             //mayor a 24 h será olvido
-            return EstadoIngesta.OK;
+            return EstadoIngesta.TOMADA;
         } else {
             return EstadoIngesta.RETRASO;
         }

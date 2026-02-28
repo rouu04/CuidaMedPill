@@ -1,6 +1,7 @@
 package com.pastillerodigital.cuidamedpill.controlador.adapters;
 
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
@@ -24,6 +26,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<MedicamentoCalendarioAdapter.MedCalViewHolder> {
 
@@ -82,28 +85,51 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
         holder.llHoras.removeAllViews();
         List<Ingesta> ingestasDia = med.getIngestasPorDia(fecha);
 
+        // Ordenar por hora ascendente
+        ingestasDia.sort((i1, i2) -> {
+            Timestamp t1 = (i1.getFechaProgramada() != null) ? i1.getFechaProgramada() : i1.getFechaIngesta();
+            Timestamp t2 = (i2.getFechaProgramada() != null) ? i2.getFechaProgramada() : i2.getFechaIngesta();
+            return t1.compareTo(t2); // compara por fecha/hora
+        });
+
         for (Ingesta ing : ingestasDia) {
             Calendar cal = Calendar.getInstance();
             Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
             cal.setTime(fechaBase.toDate());
 
-            String horaStr = String.format("%02d:%02d",
-                    cal.get(Calendar.HOUR_OF_DAY),
-                    cal.get(Calendar.MINUTE));
-
+            String horaStr = String.format(Locale.getDefault(), "%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
             String estado = ing.getEstadoIngestaStr();
-
-            TextView tvHoraEstado = new TextView(holder.itemView.getContext());
-            tvHoraEstado.setText(horaStr + " - " + estado);
-
             String nota = ing.getNotas();
+
+            // Contenedor horizontal por ingesta
+            LinearLayout container = new LinearLayout(holder.itemView.getContext());
+            container.setOrientation(LinearLayout.HORIZONTAL);
+            container.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            container.setPadding(0, 2, 0, 2);
+
+            // Hora + estado
+            TextView tvHoraEstado = new TextView(holder.itemView.getContext());
+            tvHoraEstado.setText(String.format("%s - %s", horaStr, estado));
+            tvHoraEstado.setTextSize(14);
+            tvHoraEstado.setTypeface(null, Typeface.BOLD);
+            tvHoraEstado.setTextColor(colorSegunEstado(holder, estado));
+
+            container.addView(tvHoraEstado);
+
+            // Notas
             if(nota != null && !nota.isEmpty()){
-                tvHoraEstado.setText(horaStr + " - " + estado + " Nota:" + nota);
-            } else {
-                tvHoraEstado.setText(horaStr + " - " + estado);
+                TextView tvNota = new TextView(holder.itemView.getContext());
+                tvNota.setText(nota);
+                tvNota.setTextSize(12);
+                tvNota.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.md_on_surface));
+                tvNota.setPadding(8,0,0,0);
+                container.addView(tvNota);
             }
 
-            holder.llHoras.addView(tvHoraEstado);
+            holder.llHoras.addView(container);
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -132,5 +158,26 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
     public void setFechaSeleccionada(Calendar nuevaFecha) {
         this.fecha = (Calendar) nuevaFecha.clone(); // clon para evitar mutaciones externas
         notifyDataSetChanged();
+    }
+
+    private int colorSegunEstado(MedCalViewHolder holder, String estadoStr){
+        EstadoIngesta estado = EstadoIngesta.estadoIngestaFromString(estadoStr);
+        if (estado == null) {
+            return ContextCompat.getColor(holder.itemView.getContext(), R.color.md_on_surface); // gris por defecto
+        }
+
+        switch (estado) {
+            case TOMADA:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoTomado);
+            case PENDIENTE:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoPendiente);
+            case OLVIDO:
+            case RETRASO:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoRetraso);
+            case NO_PROGRAMADA:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoNoProgramado);
+            default:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.md_on_surface);
+        }
     }
 }

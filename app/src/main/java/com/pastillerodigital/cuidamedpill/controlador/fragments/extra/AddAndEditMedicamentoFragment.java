@@ -314,6 +314,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 .setTitle(Mensajes.MED_EDITADD_SEL_INTERVALO)
                 .setItems(tipos, (dialog, which) -> {
                     edtTipoIntervalo.setText(tipos[which]);
+                    tipoIntervaloSel = TipoIntervalo.tipoIntervaloFromString(tipos[which]);
                 })
                 .show();
     }
