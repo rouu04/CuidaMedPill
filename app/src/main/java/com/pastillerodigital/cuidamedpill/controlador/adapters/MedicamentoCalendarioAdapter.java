@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
@@ -97,7 +98,11 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
             Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
             cal.setTime(fechaBase.toDate());
 
+
             String horaStr = String.format(Locale.getDefault(), "%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+            EMomentoDia mom = med.getMomentoDiaFromIngesta(ing);
+            if(mom != null) horaStr = mom.toString();
+
             String estado = ing.getEstadoIngestaStr();
             String nota = ing.getNotas();
 
@@ -172,6 +177,7 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
             case PENDIENTE:
                 return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoPendiente);
             case OLVIDO:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoOlvido);
             case RETRASO:
                 return ContextCompat.getColor(holder.itemView.getContext(), R.color.estadoRetraso);
             case NO_PROGRAMADA:

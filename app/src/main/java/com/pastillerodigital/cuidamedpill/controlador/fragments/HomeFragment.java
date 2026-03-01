@@ -40,6 +40,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -118,12 +119,8 @@ public class HomeFragment extends Fragment {
             medDAO = new MedicamentoDAO(uid); //uid (sea el supervisado o no) será del que se obtengan los datos
             uDAO = new UsuarioDAO();
 
-            if(modo != Modo.SUPERVISOR){
-                tvTitleHome.setText("Tus medicamentos hoy");
-            }
-            else{
-                cargaUsr();
-            }
+            if(modo != Modo.SUPERVISOR)tvTitleHome.setText(Mensajes.HOME_TITLE);
+            else cargaUsr();
         }
     }
 
@@ -191,7 +188,7 @@ public class HomeFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                tvTitleHome.setText(String.format("Medicamentos de %s hoy", data.getAliasU()));
+                tvTitleHome.setText(String.format(Mensajes.HOME_TITLE_SUPERVISOR, data.getAliasU()));
             }
 
             @Override
@@ -261,7 +258,7 @@ public class HomeFragment extends Fragment {
 
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
         Drawable drawable = ContextCompat.getDrawable(getContext(), tipoMed.getDrawableRes());
-        int colorResId = getResources().getIdentifier(med.getColorSimb(), "color", getContext().getPackageName());
+        int colorResId = getResources().getIdentifier(med.getColorSimb(), Constantes.COLOR, getContext().getPackageName());
         int color = ContextCompat.getColor(getContext(), colorResId);
 
         if(drawable instanceof LayerDrawable){
@@ -343,9 +340,7 @@ public class HomeFragment extends Fragment {
 
         long diffMinutos = (System.currentTimeMillis() - fechaProgramada.toDate().getTime()) / 60000;
 
-        if(diffMinutos <= 60){ //todo cambiar 60 por algo coded
-            //todo por default antes de indicar la ingesta será margen y luego ya se cambia
-            //mayor a 24 h será olvido
+        if(diffMinutos <= Constantes.MINS_RETRASO){
             return EstadoIngesta.TOMADA;
         } else {
             return EstadoIngesta.RETRASO;

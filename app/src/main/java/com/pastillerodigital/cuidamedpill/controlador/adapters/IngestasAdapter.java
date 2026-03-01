@@ -9,17 +9,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHolder> {
 
@@ -40,6 +43,7 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
         this.listener = listener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medicamento_hoy, parent, false);
@@ -54,13 +58,16 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
         holder.tvNombre.setText(med.getNombreMed());
         // Hora
         if (ing.getFechaProgramada() != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(ing.getFechaProgramada().toDate());
-            holder.tvHora.setText(String.format(
-                    "%02d:%02d",
-                    cal.get(Calendar.HOUR_OF_DAY),
-                    cal.get(Calendar.MINUTE)
-            ));
+            EMomentoDia mom = ing.getMed().getMomentoDiaFromIngesta(ing);
+            String hora;
+            if(mom == null){
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(ing.getFechaProgramada().toDate());
+                hora = String.format(Locale.getDefault(),"%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+            }
+            else hora = mom.toString();
+
+            holder.tvHora.setText(hora);
         }
 
 
@@ -104,7 +111,7 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvNombre;
         TextView tvHora;

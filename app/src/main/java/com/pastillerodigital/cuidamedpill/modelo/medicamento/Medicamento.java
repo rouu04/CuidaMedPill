@@ -4,9 +4,11 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
@@ -277,6 +279,30 @@ public class Medicamento implements Persistible {
         }
 
         return pendientes;
+    }
+
+    public EMomentoDia getMomentoDiaFromIngesta(Ingesta ing){
+        if (horario == null || horario.getHoras() == null) return null;
+        Timestamp fechaProgram = ing.getFechaProgramada();
+        if(fechaProgram == null) return null; //si no fue programada se mostrará la hora
+
+        // Hora y minuto de la ingesta programada
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fechaProgram.toDate());
+        int horaProg = cal.get(Calendar.HOUR_OF_DAY);
+        int minutoProg = cal.get(Calendar.MINUTE);
+
+        for (Hora h : horario.getHoras()) {// Buscar coincidencia en las horas del medicamento
+            if (h == null) continue;
+            if (h.getHora() == horaProg && h.getMin() == minutoProg) {
+                if (h instanceof HoraMomentoDia) { // Si es un HoraMomentoDia devolver su momento
+                    return EMomentoDia.momentoDiaFromString( ((HoraMomentoDia) h).getMomentoDiaStr());
+                }
+                return null;
+            }
+        }
+
+        return null;
     }
 
     /**

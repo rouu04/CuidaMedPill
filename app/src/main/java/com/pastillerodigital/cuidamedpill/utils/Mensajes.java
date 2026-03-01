@@ -103,6 +103,10 @@ public class Mensajes {
     public static final String CAL_DIA_SEL= "Medicamentos del día: %02d/%02d/%04d";
     public static final String CAL_DIA_SEL_HOY= "Medicamentos de hoy";
 
+    //HOME
+    public static final String HOME_TITLE= "Inicio";
+    public static final String HOME_TITLE_SUPERVISOR= "Medicamentos de %s hoy";
+
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";
 

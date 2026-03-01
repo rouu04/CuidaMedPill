@@ -58,6 +58,7 @@ public class CalendarioFragment extends Fragment {
     private String uidSelf;
     private Modo modo;
     private boolean vistaSemanal = false;
+    private Calendar fechaSeleccionada = Calendar.getInstance();
 
     private enum TipoDia {
         PASADO,
@@ -107,7 +108,6 @@ public class CalendarioFragment extends Fragment {
     }
 
     private void configCalDefault() {
-        vistaSemanal = true;
         calendarView.state().edit()
                 .setCalendarDisplayMode(CalendarMode.WEEKS) // modo semanal
                 .commit();
@@ -120,7 +120,6 @@ public class CalendarioFragment extends Fragment {
         calendarView.setSelectedDate(hoy);//para que se marque el día de hoy como seleccionado al principio
 
         chipVistaSemanal.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            vistaSemanal = isChecked;
             calendarView.state().edit()
                     .setCalendarDisplayMode(isChecked ? CalendarMode.WEEKS : CalendarMode.MONTHS)
                     .commit();
@@ -160,7 +159,8 @@ public class CalendarioFragment extends Fragment {
             Calendar selectedCalendar = Calendar.getInstance();
             selectedCalendar.set(date.getYear(), date.getMonth() - 1, date.getDay());
 
-            filtrarPorFecha(selectedCalendar);
+            fechaSeleccionada = selectedCalendar;
+            filtrarPorFecha(fechaSeleccionada);
 
             // (date.getMonth() en esta librería es 1-12, no 0-11)
             tvFecha.setText(String.format(Locale.getDefault(), Mensajes.CAL_DIA_SEL,
@@ -196,8 +196,9 @@ public class CalendarioFragment extends Fragment {
                 listaCompleta.clear();
                 listaCompleta.addAll(data);
                 actualizarPuntosCalendario(); //colorea puntos calendario
-                tvFecha.setText(Mensajes.CAL_DIA_SEL_HOY);
-                filtrarPorFecha(Calendar.getInstance()); //para que salgan las pastillas de hoy sin tener que darle
+                if(fechaSeleccionada.equals(Calendar.getInstance())) tvFecha.setText(Mensajes.CAL_DIA_SEL_HOY);
+                else tvFecha.setText(Mensajes.CAL_DIA_SEL);
+                filtrarPorFecha(fechaSeleccionada); //carga las pastillas del día seleccionado (inicializado a hoy) sin tener que darle
             }
 
             @Override
@@ -234,8 +235,7 @@ public class CalendarioFragment extends Fragment {
 
         // Ordenar alfabéticamente por nombre del medicamento
         listaFiltrada.sort((m1, m2) -> m1.getNombreMed().compareToIgnoreCase(m2.getNombreMed()));
-
-        adapter.notifyDataSetChanged();
+        adapter.setFechaSeleccionada(fecha);
     }
 
     private void actualizarPuntosCalendario() {
