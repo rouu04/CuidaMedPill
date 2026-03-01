@@ -105,7 +105,16 @@ public class Mensajes {
 
     //HOME
     public static final String HOME_TITLE= "Inicio";
-    public static final String HOME_TITLE_SUPERVISOR= "Medicamentos de %s hoy";
+    public static final String HOME_TITLE_SUPERVISOR= "Inicio de %s";
+    public static final String HOME_TITLE_AVISOS= "Avisos";
+    public static final String HOME_TITLE_AVISOS_SUPERVISOR= "Sus avisos";
+    public static final String HOME_MEDS_HOY= "Medicamentos hoy";
+    public static final String HOME_MEDS_HOY_SUPERVISOR= "Sus medicamentos hoy";
+    public static final String HOME_MEDS_AYER= "AYER ";
+    public static final String HOME_CONFING_TITULO= "¿Te has tomado este medicamento?";
+    public static final String HOME_CONFING_TITULO_SUPERVISOR= "¿%s se ha tomado este medicamento?";
+    public static final String HOME_SELMED_TITULO= "Selecciona el medicamento no programado tomado";
+    public static final String HOME_SELMED_TITULO_SUPERVISOR= "Selecciona el medicamento de %s no programado tomado";
 
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";

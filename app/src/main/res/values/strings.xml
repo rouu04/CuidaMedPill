@@ -8,6 +8,8 @@
     <string name="basic_hint_editar">Editar</string>
     <string name="basic_button_cancelar">Cancelar</string>
     <string name="basic_hint_guardar">Guardar</string>
+    <string name="basic_hint_no">No</string>
+    <string name="basic_hint_si">Sí</string>
 
 
     <!-- WelcomeActivity (inicio de sesión o registro) y RegistroActivity -->
@@ -81,7 +83,9 @@
     <string name="text_title_home">Inicio</string>
     <string name="text_title_home_avisos">Avisos</string>
     <string name="text_title_home_meds">Medicamentos a tomar hoy</string>
-    <string name="button_home_add_ingesta_noprogram">Añadir toma no programada</string>
+    <string name="button_home_add_ingesta_noprogram">Ingesta no programada</string>
+    <string name="text_title_nombre">Nombre</string>
+    <string name="hint_home_add_nota">Añadir nota opcional</string>
 
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>

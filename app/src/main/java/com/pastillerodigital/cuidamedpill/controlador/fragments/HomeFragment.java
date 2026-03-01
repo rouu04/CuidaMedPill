@@ -21,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
@@ -33,6 +35,7 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
@@ -42,6 +45,7 @@ import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,13 +55,13 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private RecyclerView rvMedicamentosHoy;
-    private TextView tvTitleHome;
-    private FloatingActionButton fab;
+    private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy;
+    private ExtendedFloatingActionButton fab;
     private View progressHome;
     private LinearLayout layoutFormHome;
 
     //Logica
-    private String uidSelf, uid;
+    private String uidSelf, uid, uAlias = "";
     private Modo modo;
     private MedicamentoDAO medDAO;
     private UsuarioDAO uDAO;
@@ -97,13 +101,14 @@ public class HomeFragment extends Fragment {
         fab = view.findViewById(R.id.fabAddIngesta);
         progressHome = view.findViewById(R.id.progressHome);
         layoutFormHome = view.findViewById(R.id.formLayoutHome);
+        tvTitleAvisos = view.findViewById(R.id.tvTituloAvisosHome);
+        tvMedsHoy = view.findViewById(R.id.tvMedsHoyHome);
 
         mostrarCarga();
         setUpRecyclerView();
         leerArgsYConsec();
         setButtonListeners();
 
-        //cargarMeds();
         cargarMedsConIngestas();
     }
 
@@ -119,9 +124,19 @@ public class HomeFragment extends Fragment {
             medDAO = new MedicamentoDAO(uid); //uid (sea el supervisado o no) será del que se obtengan los datos
             uDAO = new UsuarioDAO();
 
-            if(modo != Modo.SUPERVISOR)tvTitleHome.setText(Mensajes.HOME_TITLE);
-            else cargaUsr();
+            if(modo != Modo.SUPERVISOR){
+                tvTitleHome.setText(Mensajes.HOME_TITLE);
+                tvTitleAvisos.setText(Mensajes.HOME_TITLE_AVISOS);
+                tvMedsHoy.setText(Mensajes.HOME_MEDS_HOY);
+            }
+            else {
+                setInterfazSupervisor();
+            }
         }
+    }
+
+    private void setInterfazSupervisor(){
+        cargaUsr(); //establece título pantallas con el alias del asistido
     }
 
     private void setButtonListeners(){
@@ -170,12 +185,12 @@ public class HomeFragment extends Fragment {
         Calendar hoy = Calendar.getInstance();
         Calendar ayer = (Calendar) hoy.clone();
         ayer.add(Calendar.DAY_OF_MONTH, -1);
+        Utils.limpiarHora(ayer);
 
         for(Medicamento med: lMed){
             if (med.getHorario() == null) continue;
-
-            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
             ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
+            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
         }
 
         ordenarFechaHora(ingPendientes);
@@ -188,7 +203,10 @@ public class HomeFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                tvTitleHome.setText(String.format(Mensajes.HOME_TITLE_SUPERVISOR, data.getAliasU()));
+                uAlias = data.getAliasU();
+                tvTitleHome.setText(String.format(Mensajes.HOME_TITLE_SUPERVISOR, uAlias));
+                tvTitleAvisos.setText(String.format(Mensajes.HOME_TITLE_AVISOS_SUPERVISOR));
+                tvMedsHoy.setText(String.format(Mensajes.HOME_MEDS_HOY_SUPERVISOR));
             }
 
             @Override
@@ -213,7 +231,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCheckClick(Ingesta item) {
-                mostrarDialogoIngesta(item.getMed(), item.getFechaProgramada());
+                mostrarDialogoIngesta(item.getMed(), item);
             }
         });
 
@@ -234,27 +252,26 @@ public class HomeFragment extends Fragment {
 
     private void ordenarFechaHora(List<Ingesta> lista) {
         Collections.sort(lista, (a, b) -> {
-            Timestamp t1 = a.getFechaProgramada();
-            Timestamp t2 = b.getFechaProgramada();
-            return Long.compare(t1.getSeconds(), t2.getSeconds());
+            if (a.getFechaProgramada() == null) return 1;
+            if (b.getFechaProgramada() == null) return -1;
+
+            return a.getFechaProgramada().compareTo(b.getFechaProgramada());
         });
     }
 
     //----------INGESTAS
-    private void mostrarDialogoIngesta(Medicamento med, @Nullable Timestamp fechaProgramada){
-        View dialogView = LayoutInflater.from(getContext())
-                .inflate(R.layout.dialog_confirm_ingesta, null);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+    private void mostrarDialogoIngesta(Medicamento med, @Nullable Ingesta ing){
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_confirm_ingesta, null);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
 
         ImageView imgTipo = dialogView.findViewById(R.id.imgTipoMedDialog);
         TextView tvNombre = dialogView.findViewById(R.id.tvNombreMedDialog);
+        TextView tvTituloDialog = dialogView.findViewById(R.id.tvTituloDialogConfIng);
+        TextView tvHora = dialogView.findViewById(R.id.tvHoraConfIng);
         Button btnSi = dialogView.findViewById(R.id.btnSi);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
-
-        tvNombre.setText(med.getNombreMed());
 
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
         Drawable drawable = ContextCompat.getDrawable(getContext(), tipoMed.getDrawableRes());
@@ -274,11 +291,27 @@ public class HomeFragment extends Fragment {
             imgTipo.setImageDrawable(drawable);
         }
 
+        if(modo == Modo.SUPERVISOR){
+            tvTituloDialog.setText(String.format(Mensajes.HOME_CONFING_TITULO_SUPERVISOR, uAlias));
+        }
+        else{
+            tvTituloDialog.setText(Mensajes.HOME_CONFING_TITULO);
+        }
+
+        tvNombre.setText(med.getNombreMed());
+        if(med.getTipoMedStr() != null) tvHora.setText(med.getTipoMedStr());
+
         EditText etNotasDialog = dialogView.findViewById(R.id.etNotasConfirmIng);
-        if(fechaProgramada == null){
+        Timestamp fechaProgramada = ing != null ? ing.getFechaProgramada() : null;
+        if(fechaProgramada== null){ //no programada
             etNotasDialog.setVisibility(View.VISIBLE);
+            tvHora.setVisibility(View.GONE);
         } else {
             etNotasDialog.setVisibility(View.GONE);
+            tvHora.setVisibility(View.VISIBLE);
+            EMomentoDia mom = med.getMomentoDiaFromIngesta(ing);
+            if(mom != null) tvHora.setText(mom.toString());
+            else tvHora.setText(Utils.timestampToString(fechaProgramada));
         }
 
 
@@ -337,20 +370,22 @@ public class HomeFragment extends Fragment {
 
     private EstadoIngesta calcularEstadoIngesta(Timestamp fechaProgramada){
         if(fechaProgramada == null) return EstadoIngesta.NO_PROGRAMADA;
-
         long diffMinutos = (System.currentTimeMillis() - fechaProgramada.toDate().getTime()) / 60000;
-
-        if(diffMinutos <= Constantes.MINS_RETRASO){
-            return EstadoIngesta.TOMADA;
-        } else {
-            return EstadoIngesta.RETRASO;
-        }
+        if(diffMinutos <= Constantes.MINS_RETRASO)return EstadoIngesta.TOMADA;
+        else return EstadoIngesta.RETRASO;
     }
 
     private void mostrarDialogoSelMed(){
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_lista_medicamentos, null);
         RecyclerView rv = dialogView.findViewById(R.id.rvListaMedicamentos);
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
+        TextView tvTitle = dialogView.findViewById(R.id.tvTituloSelMedHome);
+
+        String titulo = "";
+        if(modo == Modo.SUPERVISOR)titulo = Mensajes.HOME_SELMED_TITULO;
+        else titulo = String.format(Mensajes.HOME_SELMED_TITULO_SUPERVISOR, uAlias);
+        tvTitle.setText(titulo);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
                 .setView(dialogView)
                 .create();
         rv.setLayoutManager(new LinearLayoutManager(getContext()));

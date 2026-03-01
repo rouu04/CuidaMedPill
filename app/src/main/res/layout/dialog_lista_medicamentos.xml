@@ -1,20 +1,24 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+    android:padding="@dimen/padding_general"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:text="¿Qué medicamento te has tomado?"
+        android:id="@+id/tvTituloSelMedHome"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textColor="@color/md_primary_dark"
         android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvListaMedicamentos"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top"
+        android:maxHeight="250dp"/>
 
 </LinearLayout>

@@ -143,36 +143,6 @@ public class Utils {
         return new Timestamp(c.getTime());
     }
 
-    public static String timestampAHoraHome(Timestamp timestamp) {
-        if (timestamp == null) return "";
-
-        Calendar ahora = Calendar.getInstance();
-        Calendar fecha = Calendar.getInstance();
-        fecha.setTime(timestamp.toDate());
-
-        // Formateo de hora
-        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        String horaStr = sdfHora.format(fecha.getTime());
-
-        // Solo comparo fechas
-        Calendar hoy = (Calendar) ahora.clone();
-        limpiarHora(hoy);
-        Calendar fechaSoloDia = (Calendar) fecha.clone();
-        limpiarHora(fechaSoloDia);
-
-        long diffMillis = fechaSoloDia.getTimeInMillis() - hoy.getTimeInMillis();
-        int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
-
-        if (diffDays == 0) {
-            return "Hoy " + horaStr;
-        } else if (diffDays == -1) {
-            return "Ayer " + horaStr;
-        } else {// Si no es hoy ni ayer, muestro fecha completa
-            SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            return sdfFecha.format(fecha.getTime()) + " " + horaStr;
-        }
-    }
-
     public static boolean mismoDia(Calendar c1, Calendar c2) {
         return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
                 c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);

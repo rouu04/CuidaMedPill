@@ -19,7 +19,10 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -58,18 +61,19 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
         holder.tvNombre.setText(med.getNombreMed());
         // Hora
         if (ing.getFechaProgramada() != null) {
+            StringBuilder sbHora = new StringBuilder();
+            if(esAyer(Utils.timestampToCalendar(ing.getFechaProgramada()))) sbHora.append(Mensajes.HOME_MEDS_AYER);
+
             EMomentoDia mom = ing.getMed().getMomentoDiaFromIngesta(ing);
-            String hora;
             if(mom == null){
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(ing.getFechaProgramada().toDate());
-                hora = String.format(Locale.getDefault(),"%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+                sbHora.append(String.format(Locale.getDefault(),"%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
             }
-            else hora = mom.toString();
+            else sbHora.append(mom.toString());
 
-            holder.tvHora.setText(hora);
+            holder.tvHora.setText(sbHora.toString());
         }
-
 
         //SIMBOLO MEDICAMENTO
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
@@ -125,5 +129,14 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
             imgTipoMed = v.findViewById(R.id.imgTipoMedHoy);
             btnCheck = v.findViewById(R.id.btnCheck);
         }
+    }
+
+    private boolean esAyer(Calendar fecha){
+        Calendar ayer = Calendar.getInstance();
+        ayer.add(Calendar.DAY_OF_MONTH, -1);
+
+        return fecha.get(Calendar.YEAR) == ayer.get(Calendar.YEAR) &&
+                fecha.get(Calendar.MONTH) == ayer.get(Calendar.MONTH) &&
+                fecha.get(Calendar.DAY_OF_MONTH) == ayer.get(Calendar.DAY_OF_MONTH);
     }
 }

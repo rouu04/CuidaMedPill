@@ -161,13 +161,7 @@ public class CalendarioFragment extends Fragment {
 
             fechaSeleccionada = selectedCalendar;
             filtrarPorFecha(fechaSeleccionada);
-
-            // (date.getMonth() en esta librería es 1-12, no 0-11)
-            tvFecha.setText(String.format(Locale.getDefault(), Mensajes.CAL_DIA_SEL,
-                    date.getDay(),
-                    date.getMonth(),
-                    date.getYear()
-            ));
+            actualizarTextoFecha();
         });
     }
 
@@ -196,8 +190,7 @@ public class CalendarioFragment extends Fragment {
                 listaCompleta.clear();
                 listaCompleta.addAll(data);
                 actualizarPuntosCalendario(); //colorea puntos calendario
-                if(fechaSeleccionada.equals(Calendar.getInstance())) tvFecha.setText(Mensajes.CAL_DIA_SEL_HOY);
-                else tvFecha.setText(Mensajes.CAL_DIA_SEL);
+                actualizarTextoFecha();
                 filtrarPorFecha(fechaSeleccionada); //carga las pastillas del día seleccionado (inicializado a hoy) sin tener que darle
             }
 
@@ -260,6 +253,25 @@ public class CalendarioFragment extends Fragment {
             return TipoDia.PRESENTE;
 
         return TipoDia.PASADO;
+    }
+
+    private boolean esHoy(Calendar fecha){
+        Calendar hoy = Calendar.getInstance();
+        return fecha.get(Calendar.YEAR) == hoy.get(Calendar.YEAR) &&
+                fecha.get(Calendar.MONTH) == hoy.get(Calendar.MONTH) &&
+                fecha.get(Calendar.DAY_OF_MONTH) == hoy.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private void actualizarTextoFecha(){
+        if(esHoy(fechaSeleccionada)){
+            tvFecha.setText(Mensajes.CAL_DIA_SEL_HOY);
+        }else{
+            tvFecha.setText(String.format(Locale.getDefault(), Mensajes.CAL_DIA_SEL,
+                    fechaSeleccionada.get(Calendar.DAY_OF_MONTH),
+                    fechaSeleccionada.get(Calendar.MONTH)+1,
+                    fechaSeleccionada.get(Calendar.YEAR)
+            ));
+        }
     }
 
 }

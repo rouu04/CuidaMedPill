@@ -1,15 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="@dimen/padding_general"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/tvTituloDialog"
+        android:id="@+id/tvTituloDialogConfIng"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="¿Te has tomado este medicamento?"
-        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textColor="@color/md_primary_dark"
         android:textStyle="bold"
         android:gravity="center"/>
 
@@ -18,23 +19,54 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginBottom="@dimen/margin_bottom">
 
-        <ImageView
-            android:id="@+id/imgTipoMedDialog"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"/>
+        <!-- Icono del medicamento -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTipoMedDet"
+            android:layout_width="@dimen/size_image_icon_card_width"
+            android:layout_height="@dimen/size_image_icon_card_height"
+            app:cardCornerRadius="@dimen/card_cornerradious"
+            app:cardElevation="@dimen/card_elevation"
+            app:contentPadding="@dimen/card_contentPadding"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/md_surface">
 
-        <TextView
-            android:id="@+id/tvNombreMedDialog"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgTipoMedDialog"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/contdesc_med_simb"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bloque vertical: nombre + hora -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_start">
+
+            <TextView
+                android:id="@+id/tvNombreMedDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:text="@string/text_title_nombre"
+                android:textColor="@color/md_primary_dark"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvHoraConfIng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:gravity="center_vertical"
+                android:textColor="@color/md_on_surface"
+                android:visibility="gone"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <!--EditText para notas -->
@@ -42,11 +74,12 @@
         android:id="@+id/etNotasConfirmIng"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Añadir nota (opcional)"
+        android:hint="@string/hint_home_add_nota"
         android:inputType="textMultiLine"
         android:lines="3"
-        android:gravity="top"
-        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/margin_bottom_element"
+        android:background="@null"
         android:visibility="gone"/>
 
     <LinearLayout
@@ -56,17 +89,20 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/btnSi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sí"
-            android:layout_marginEnd="16dp"/>
-
-        <Button
             android:id="@+id/btnNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No"/>
+            android:text="@string/basic_hint_no"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_marginEnd="@dimen/margin_end"/>
+
+        <Button
+            android:id="@+id/btnSi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="@string/basic_hint_si" />
+
     </LinearLayout>
 
 </LinearLayout>
