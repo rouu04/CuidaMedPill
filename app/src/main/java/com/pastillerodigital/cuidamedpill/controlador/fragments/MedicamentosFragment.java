@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
@@ -38,7 +38,7 @@ public class MedicamentosFragment extends Fragment {
     private View progressMed;
     private RecyclerView rvMed;
     private FloatingActionButton fab;
-    private TextView tvTitleMeds;
+    private MaterialToolbar tbTitleMeds;
     private LinearLayout layoutFormMeds;
 
     //Elementos lógicos
@@ -83,7 +83,7 @@ public class MedicamentosFragment extends Fragment {
         progressMed = view.findViewById(R.id.progressMed);
         rvMed = view.findViewById(R.id.rvMedicamentos);
         fab = view.findViewById(R.id.fabAddMedicamento);
-        tvTitleMeds = view.findViewById(R.id.tvTitleMeds);
+        tbTitleMeds = view.findViewById(R.id.topAppBarMeds);
         layoutFormMeds = view.findViewById(R.id.formLayoutMeds);
 
         //Lógica:
@@ -108,7 +108,7 @@ public class MedicamentosFragment extends Fragment {
             uDAO = new UsuarioDAO();
 
             if(modo != Modo.SUPERVISOR){
-                tvTitleMeds.setText(Mensajes.MEDS_TITLE);
+                tbTitleMeds.setTitle(Mensajes.MEDS_TITLE);
             }
             else{
                 cargaUsr();
@@ -172,7 +172,7 @@ public class MedicamentosFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                tvTitleMeds.setText(String.format(Mensajes.MEDS_TITULO_SUPERV, data.getAliasU()));
+                tbTitleMeds.setTitle(String.format(Mensajes.MEDS_TITULO_SUPERV, data.getAliasU()));
             }
 
             @Override

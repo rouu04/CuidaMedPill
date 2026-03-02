@@ -30,4 +30,9 @@
     </style>
 
     <style name="Theme.CuidaMedPill" parent="Base.Theme.CuidaMedPill" />
+
+    <style name="ToolbarTitleBold" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

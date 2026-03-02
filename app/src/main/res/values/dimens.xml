@@ -15,7 +15,9 @@
     <dimen name="size_image_height">100dp</dimen>
     <dimen name="size_image_mini_width">70dp</dimen>
     <dimen name="size_image_mini_height">70dp</dimen>
-    <dimen name="size_image_icon_width">70dp</dimen>
+    <dimen name="size_image_tiny_width">70dp</dimen>
+    <dimen name="size_image_tiny_height">50dp</dimen>
+    <dimen name="size_image_icon_width">50dp</dimen>
     <dimen name="size_image_icon_height">70dp</dimen>
     <dimen name="size_image_icon_mini_width">35dp</dimen>
     <dimen name="size_image_icon_mini_height">35dp</dimen>

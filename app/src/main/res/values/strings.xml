@@ -53,6 +53,7 @@
     <string name="text_hint_add_asist">Vincula un usuario asistido existente. Si el asistido no tiene cuenta, puedes registrarlo</string>
 
     <!-- MEDICAMENTOS -->
+    <string name="text_title_meds">Tus medicamentos</string>
     <string name="text_title_edit_med">Editar medicamento</string>
     <string name="text_title_add_med">Añadir medicamento</string>
     <string name="text_title_med_detalles">Detalles del medicamento</string>
@@ -83,9 +84,12 @@
     <string name="text_title_home">Inicio</string>
     <string name="text_title_home_avisos">Avisos</string>
     <string name="text_title_home_meds">Medicamentos a tomar hoy</string>
-    <string name="button_home_add_ingesta_noprogram">Ingesta no programada</string>
+    <string name="button_home_add_ingesta_noprogram">No programado</string>
     <string name="text_title_nombre">Nombre</string>
     <string name="hint_home_add_nota">Añadir nota opcional</string>
+
+
+    <string name="text_title_cal">Tu calendario</string>
 
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>

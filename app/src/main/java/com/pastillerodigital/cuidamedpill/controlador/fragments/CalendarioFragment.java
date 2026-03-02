@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.chip.Chip;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoCalendarioAdapter;
@@ -33,7 +34,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -43,7 +43,8 @@ public class CalendarioFragment extends Fragment {
 
     private MaterialCalendarView calendarView;
     private RecyclerView rvMedicamentos;
-    private TextView tvFecha, tvTtitle;
+    private TextView tvFecha;
+    private MaterialToolbar tbTtitleCal;
     private Chip chipVistaSemanal;
 
     //Elementos lógica
@@ -97,7 +98,7 @@ public class CalendarioFragment extends Fragment {
         calendarView = view.findViewById(R.id.calendarView);
         rvMedicamentos = view.findViewById(R.id.rvMedicamentosDia);
         tvFecha = view.findViewById(R.id.tvFechaSeleccionada);
-        tvTtitle = view.findViewById(R.id.tvTitleCal);
+        tbTtitleCal = view.findViewById(R.id.topAppBarCal);
         chipVistaSemanal = view.findViewById(R.id.chipVistaSemanal);
 
         configCalDefault();
@@ -149,7 +150,7 @@ public class CalendarioFragment extends Fragment {
                 cargaUsr(uid);
             }
             else{
-                tvTtitle.setText(Mensajes.CAL_TITLE);
+                tbTtitleCal.setTitle(Mensajes.CAL_TITLE);
             }
         }
     }
@@ -205,7 +206,7 @@ public class CalendarioFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                tvTtitle.setText(String.format(Mensajes.CAL_TITLE_SUPERVISOR, data.getAliasU()));
+                tbTtitleCal.setTitle(String.format(Mensajes.CAL_TITLE_SUPERVISOR, data.getAliasU()));
             }
 
             @Override

@@ -213,11 +213,10 @@ public class MedicamentoDetalleFragment extends Fragment {
     }
 
     private void fillView(){
-        tvNombre.setText(medicamento.getNombreMed() != null ? medicamento.getNombreMed() : "");
-        tvFechaCad.setText(medicamento.getFechaCad() != null ? Utils.timestampToString(medicamento.getFechaCad()) : "");
-        tvFechaFin.setText(medicamento.getFechaFin() != null ? Utils.timestampToString(medicamento.getFechaFin()) : "");
-        tvRestantes.setText(medicamento.getnMedRestantes() >= 0 ? String.valueOf(medicamento.getnMedRestantes()) : "");
-        tvNotas.setText(medicamento.getNotasMed() != null ? medicamento.getNotasMed() : "");
+        mostrarSiHayContenido(tvFechaCad, medicamento.getFechaCad() != null ? Utils.timestampToString(medicamento.getFechaCad()) : null);
+        mostrarSiHayContenido(tvFechaFin, medicamento.getFechaFin() != null ? Utils.timestampToString(medicamento.getFechaFin()) : null);
+        mostrarSiHayContenido(tvRestantes, medicamento.getnMedRestantes());
+        mostrarSiHayContenido(tvNotas, medicamento.getNotasMed());
 
         // Tipo y color
         TipoMed tipo = medicamento.getTipoMed() != null ? medicamento.getTipoMed() : TipoMed.CAPSULA;
@@ -296,5 +295,35 @@ public class MedicamentoDetalleFragment extends Fragment {
     private void ocultarCarga(){
         progressMedDetalle.setVisibility(View.GONE);
         layoutFormMedDetalle.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Muestra u oculta un TextView o ChipGroup dependiendo de si hay contenido
+     * Solo aplica en modo ASISTIDO
+     */
+    private void mostrarSiHayContenido(View view, Object contenido) {
+        if (modo == Modo.ASISTIDO) {
+            boolean tieneContenido = false;
+
+            if (contenido instanceof String) {
+                String texto = (String) contenido;
+                tieneContenido = texto != null && !texto.isEmpty();
+                if (view instanceof TextView) ((TextView) view).setText(texto);
+            } else if (contenido instanceof Integer) { // para números
+                int valor = (Integer) contenido;
+                tieneContenido = valor >= 0;
+                if (view instanceof TextView) ((TextView) view).setText(String.valueOf(valor));
+            } else if (contenido instanceof List) { // para ChipGroup
+                List<?> lista = (List<?>) contenido;
+                tieneContenido = lista != null && !lista.isEmpty();
+            } else if (contenido != null) { // otros tipos
+                tieneContenido = true;
+            }
+
+            view.setVisibility(tieneContenido ? View.VISIBLE : View.GONE);
+        } else {
+            // En modo SUPERVISOR o normal siempre mostrar
+            view.setVisibility(View.VISIBLE);
+        }
     }
 }
