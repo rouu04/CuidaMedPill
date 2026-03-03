@@ -54,4 +54,7 @@ dependencies {
     implementation(libs.material.calendarview)
     implementation(libs.threetenabp)
 
+    implementation("androidx.work:work-runtime:2.9.0")
+    implementation("com.google.guava:guava:32.1.3-android")
+
 }

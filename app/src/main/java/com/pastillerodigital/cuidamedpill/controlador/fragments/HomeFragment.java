@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
@@ -169,7 +168,7 @@ public class HomeFragment extends Fragment {
                 }
                 //Tenemos la lista de medicamentos con ingestas.
                 //Necesitamos ver las ingestas pendientes de ayer y hoy
-                getIngPendientes();
+                getIngPendientesPresente();
             }
 
             @Override
@@ -179,7 +178,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getIngPendientes(){
+    private void getIngPendientesPresente(){
         ingPendientes.clear();
 
         Calendar hoy = Calendar.getInstance();
@@ -189,8 +188,10 @@ public class HomeFragment extends Fragment {
 
         for(Medicamento med: lMed){
             if (med.getHorario() == null) continue;
-            ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
-            ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
+            if(!med.checkAndUpdateFinTratamiento()){
+                ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
+                ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
+            }
         }
 
         ordenarFechaHora(ingPendientes);
@@ -324,9 +325,11 @@ public class HomeFragment extends Fragment {
             if(estado.equals(EstadoIngesta.NO_PROGRAMADA)){
                 nota = etNotasDialog.getText().toString().trim();
             }
-            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
 
+            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
+            //AlarmaHelper.cancelarAlarma(requireContext(), ingesta);
             IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
+
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
@@ -335,7 +338,7 @@ public class HomeFragment extends Fragment {
                         medHoyAdapter.notifyDataSetChanged();
                         mostrarCarga();
                         cargarMedsConIngestas();
-                        med.actualizarSigIngesta(ingesta);
+                        med.ingestaTomada(ingesta);
                         //Guardamos en medicamento la nueva sigtoma del horario
                         medDAO.edit(med, new OnOperationCallback() {
                             @Override
@@ -408,5 +411,7 @@ public class HomeFragment extends Fragment {
         });
         dialog.show();
     }
+
+
 
 }

@@ -2,6 +2,7 @@ package com.pastillerodigital.cuidamedpill.controlador.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.pastillerodigital.cuidamedpill.controlador.fragments.MedicamentosFrag
 import com.pastillerodigital.cuidamedpill.controlador.fragments.PerfilFragment;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.NotificationHelper;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+
+        NotificationHelper.crearCanal(this); //canal de notificaciones
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
 
         navInferior = findViewById(R.id.bottomNavigation);
         navInferior.setItemIconTintList(null);

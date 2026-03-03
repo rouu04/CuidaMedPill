@@ -189,7 +189,9 @@ public class CalendarioFragment extends Fragment {
             @Override
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
-                listaCompleta.addAll(data);
+                for(Medicamento med: data){
+                    if(!med.checkAndUpdateFinTratamiento()) listaCompleta.add(med);
+                }
                 actualizarPuntosCalendario(); //colorea puntos calendario
                 actualizarTextoFecha();
                 filtrarPorFecha(fechaSeleccionada); //carga las pastillas del día seleccionado (inicializado a hoy) sin tener que darle

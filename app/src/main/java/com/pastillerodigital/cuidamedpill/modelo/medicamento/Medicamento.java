@@ -191,7 +191,26 @@ public class Medicamento implements Persistible {
         return med;
     }
 
+    public boolean checkAndUpdateFinTratamiento(){
+        if (fechaFin == null) return false;
 
+        Calendar hoy = Calendar.getInstance(); // Fecha actual
+        Utils.limpiarHora(hoy);
+        Calendar fin = Utils.timestampToCalendar(fechaFin); // Fecha fin convertida a Calendar
+        if (fin == null) return false;
+        Utils.limpiarHora(fin);
+
+        if (!hoy.before(fin)) {
+            //todo mandar aviso pertinente?
+            fechaFin = null;
+            this.horario = null; //ya no se lo toma
+            return true;
+        }
+        return false;
+    }
+
+
+    //---------------INGESTAS
     /**
      *Devuelve true si hay alguna ingesta programada o registrada para el dia dado
      * @param fechaSeleccionada
@@ -369,7 +388,7 @@ public class Medicamento implements Persistible {
                 (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio): null);
     }
 
-    public void actualizarSigIngesta(Ingesta ingTomada) {
+    private void actualizarSigIngesta(Ingesta ingTomada) {
         if (horario == null) return;
 
         // Obtener todas las horas del día de la ingesta tomada
@@ -405,6 +424,15 @@ public class Medicamento implements Persistible {
         }
 
         if (proxima != null) horario.setSigIngesta(proxima);
+    }
+
+    public void ingestaTomada(Ingesta ingTomada){
+        if(horario != null) actualizarSigIngesta(ingTomada);
+
+        //Comprobar elementos opcionales ->
+        if(nMedRestantes != -1) nMedRestantes --;
+        //todo lanzar aviso si fuese necesario
+
     }
 
 

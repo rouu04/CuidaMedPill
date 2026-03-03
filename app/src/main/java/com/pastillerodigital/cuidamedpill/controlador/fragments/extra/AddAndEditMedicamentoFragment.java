@@ -44,6 +44,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
@@ -455,7 +456,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     }
                 }
 
-                if(isEdit) editMedicamento(medActual);
+                if(isEdit){
+                    editMedicamento(medActual);
+
+                }
                 else addMedicamento(medActual);
             }
 
@@ -638,6 +642,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.add(med, new OnOperationCallback() {
             @Override
             public void onSuccess() {//medicamento añadido, volvemos a la lista
+                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
@@ -654,6 +659,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.edit(med, new OnOperationCallback() {
             @Override
             public void onSuccess() { // Medicamento actualizado, volvemos atrás
+                RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
+                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
