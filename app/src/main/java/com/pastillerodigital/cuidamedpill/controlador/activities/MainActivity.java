@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        NotificationHelper.crearCanal(this); //canal de notificaciones
+        NotificationHelper.crearCanales(this); //canales de notificaciones
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);

@@ -8,6 +8,8 @@ public class Constantes {
     public static final String COLLECTION_USUARIOS = "usuarios";
     public static final String COLLECTION_MEDICAMENTOS = "medicamentos";
     public static final String COLLECTION_INGESTAS = "ingestas";
+    public static final String COLLECTION_AVISOS = "avisos";
+
         //PERSISTENCIA SESIÓN
     public static final String PERSIST_NOMBREARCHIVOPREF = "CUIDAMEDPILL_PREFS";
     public static final String PERSIST_KEYUSERID = "USERID";
@@ -45,6 +47,17 @@ public class Constantes {
     public static final String ING_FECHAPROGRAMADA = "fechaProgramada";
     public static final String ING_FECHAINGESTA = "fechaIngesta";
     public static final String ING_NOTAS = "notas";
+
+    //---------------TABLA AVISOS
+    public static final String AVISO_TIPOAVISOSTR = "tipoAvisoStr";
+    public static final String AVISO_TITULO = "titulo";
+    public static final String AVISO_MENSAJE = "mensaje";
+    public static final String AVISO_FECHACREACION = "fechaCreacion";
+    public static final String AVISO_LEIDO = "leido";
+    public static final String AVISO_NOTIMOSTRADA = "notiMostrada";
+    public static final String AVISO_MEDID = "medId";
+    public static final String AVISO_UDESTID = "uDestId";
+    public static final String AVISO_UORIGID = "uOrigId";
 
         //HORARIOS
     public static final String HORARIO_HORAS= "horas";
@@ -94,6 +107,9 @@ public class Constantes {
     public static final String TIPOINTERVALO_MENSUAL = "Mensual";
     public static final String TIPOINTERVALO_TRIMESTRAL = "Trimestral";
     public static final String TIPOINTERVALO_ANUAL = "Anual";
+
+    //AVISOS
+    public static final String TIPOAVISO_CADUCIDAD = "Caducidad";
 
             // unidades singular
     public static final String INTERVALO_DIA = "día";

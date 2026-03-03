@@ -12,34 +12,46 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 
+/**
+ * Clase que realmente muestra la notificación cuando llega la hora
+ * Worker indica que trabaja en segundo plano
+ */
 public class NotificacionWorker extends Worker {
 
     public NotificacionWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
+    /**
+     * Métod*o que se ejecuta cuando llega el momento programado
+     * @return
+     */
     @NonNull
     @Override
     public Result doWork() {
-        String nombreMed = getInputData().getString("nombreMed");
+        String titulo = getInputData().getString("titulo");
+        String mensaje = getInputData().getString("mensaje");
+        String tipoStr = getInputData().getString("tipoNotificacion");
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(getApplicationContext(), NotificationHelper.CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_pastilla_capsula)
-                        .setContentTitle("Hora de tu medicación")
-                        .setContentText("Es momento de tomar: " + nombreMed)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setAutoCancel(true);
+        if (tipoStr == null) {
+            tipoStr = TipoNotificacion.NORMAL.toString(); // valor por defecto
+        }
 
+        if (titulo == null || mensaje == null) return Result.failure();
+
+        TipoNotificacion tipo = TipoNotificacion.valueOf(tipoStr);
+
+        // Permisos Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (getApplicationContext().checkSelfPermission(
-                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (getApplicationContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
                 return Result.failure();
             }
         }
 
-        NotificationManagerCompat.from(getApplicationContext()).notify((int) System.currentTimeMillis(), builder.build());
+        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo);
         return Result.success();
     }
 }

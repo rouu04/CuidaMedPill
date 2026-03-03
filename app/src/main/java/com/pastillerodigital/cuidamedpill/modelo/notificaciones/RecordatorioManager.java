@@ -16,6 +16,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Programa y cancela recordatorios usando workmanager
+ */
 public class RecordatorioManager {
 
     public static void programarRecordatoriosMedicamento(Context context, Medicamento med) {
@@ -34,20 +38,38 @@ public class RecordatorioManager {
         }
     }
 
+    /**
+     * Crea work request
+     * @param context
+     * @param med
+     * @param tiempoNotificacion
+     */
     public static void programarRecordatorio(Context context, Medicamento med, long tiempoNotificacion) {
         long delay = tiempoNotificacion - System.currentTimeMillis();
         if (delay <= 0) return;
-        Data data = new Data.Builder().putString("nombreMed", med.getNombreMed()).build();
+        //Crea datos para worker
+        Data data = new Data.Builder()
+                .putString("nombreMed", med.getNombreMed())
+                .putString("titulo", "Hora de tu medicación")  // título por defecto
+                .putString("mensaje", "Es momento de tomar: " + med.getNombreMed()) // mensaje por defecto
+                .putString("tipoNotificacion", "NORMAL") // tipo por defecto
+                .build();
 
+        //Crea tarea
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(NotificacionWorker.class)
                         .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .setInputData(data)
                         .addTag(med.getId())
                         .build();
 
-        WorkManager.getInstance(context).enqueue(request);
+        WorkManager.getInstance(context).enqueue(request); //encola tarea
     }
 
+    /**
+     * Candela todos los recordatorios asociados a ese medicamento
+     * @param context
+     * @param med
+     */
     public static void cancelarRecordatoriosMedicamento(Context context, Medicamento med) {
         WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
     }
