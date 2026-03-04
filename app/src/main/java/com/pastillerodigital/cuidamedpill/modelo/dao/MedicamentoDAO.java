@@ -3,6 +3,7 @@ package com.pastillerodigital.cuidamedpill.modelo.dao;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
@@ -11,11 +12,13 @@ import java.util.List;
 public class MedicamentoDAO extends AbstractDAO<Medicamento> {
 
     private String uid;
+    private UsuarioDAO uDAO;
 
     public MedicamentoDAO(String id){
         super();
         this.uid = id;
         this.path = new String[]{Constantes.COLLECTION_USUARIOS, id, Constantes.COLLECTION_MEDICAMENTOS};
+        this.uDAO = new UsuarioDAO();
     }
 
     @Override
@@ -35,6 +38,21 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Medicamento med = docToObj(documentSnapshot);
+
+                    if(med.getIsNotiGeneral()){ //obtengo la configuracion del usuario
+                        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
+                            @Override
+                            public void onSuccess(Usuario data) {
+                                med.setConfNoti(data.getConfNoti());
+                                callback.onSuccess(med);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                callback.onFailure(e);
+                            }
+                        });
+                    }
 
                     callback.onSuccess(med);
                 })

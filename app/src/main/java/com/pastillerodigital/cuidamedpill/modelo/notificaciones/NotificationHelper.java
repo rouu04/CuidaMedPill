@@ -16,6 +16,9 @@ import androidx.work.ListenableWorker;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 
+/**
+ * Gestiona notificaciones, crea el canal y muesta la notificacion
+ */
 public class NotificationHelper {
 
     public static final String CHANNEL_ID = "canal_medicacion"; //identificador del canal

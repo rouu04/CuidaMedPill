@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
@@ -35,25 +36,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     //-------------FUNCIONES GET
     @Override
     public void get(String id, OnDataLoadedCallback<Usuario> callback) {
-        getCollection()
-                .document(id)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    Usuario u = docToObj(documentSnapshot);
 
-                    //Lista de medicamentos asociados
-                    //todo get lista medicamentos (llamar funcion y en el onsucces se guarda)
-                    //todo mirar qué método de obtener usuarios usas (habrá que reescribir)
-
-
-                    callback.onSuccess(u);
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        callback.onFailure(e);
-                    }
-                });
     }
 
     /**
@@ -208,6 +191,22 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
     }
 
     //------------OTRAS FUNCIONES DAO
+
+    @Override
+    public void add(Usuario obj, OnOperationCallback callback) {
+        String newId = getCollection().document().getId(); // Genero ID primero para poder ponerlo en la config
+        obj.setId(newId);
+        obj.setConfNotiDefault(); //notificaciones default
+
+        getCollection()
+                .document(newId)
+                .set(obj)
+                .addOnSuccessListener(documentReference -> {
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
     /**
      * Añade un usuario asistido a la aplicación, en consecuencia se actualizan las listas del tutor
      * @param ua
@@ -216,10 +215,15 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
      */
     public void add(UsuarioAsistido ua, String idue, OnOperationCallback callback){
         ua.addTutorAAsistido(idue);
+
+        String newId = getCollection().document().getId();
+        ua.setId(newId);
+        ua.setConfNotiDefault();
+
         getCollection()
-                .add(ua)
+                .document(newId)
+                .set(ua)
                 .addOnSuccessListener(documentReference -> {
-                    ua.setId(documentReference.getId());
                     addAsistidoATutor(ua.getId(), idue, callback);
                 })
                 .addOnFailureListener(callback::onFailure);

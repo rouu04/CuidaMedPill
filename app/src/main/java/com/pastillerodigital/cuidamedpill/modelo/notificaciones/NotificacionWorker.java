@@ -36,7 +36,7 @@ public class NotificacionWorker extends Worker {
         String tipoStr = getInputData().getString("tipoNotificacion");
 
         if (tipoStr == null) {
-            tipoStr = TipoNotificacion.NORMAL.toString(); // valor por defecto
+            tipoStr = TipoNotificacion.ESTANDAR.toString(); // valor por defecto
         }
 
         if (titulo == null || mensaje == null) return Result.failure();

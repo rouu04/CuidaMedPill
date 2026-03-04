@@ -26,6 +26,7 @@ public class Constantes {
     public static final String USUARIO_MEDLISTSTR = "medAsigId";
     public static final String USUARIO_PASSWORDHASH = "passwordHash";
     public static final String USUARIO_SALT = "salt";
+    public static final String USUARIO_CONFNOTI = "confNoti";
 
     public static final String USUARIO_ESTANDAR_IDUSRASIST = "idUsrAsistAsig";
     public static final String USUARIO_ASIST_IDUSRTUTORESASIG = "idUsrTutoresAsig";
@@ -41,6 +42,7 @@ public class Constantes {
     public static final String MED_NMEDRESTANTES= "nMedRestantes";
     public static final String MED_HORARIO= "horario";
     public static final String MED_NOTASMED= "notasMed";
+    public static final String MED_ISNOTIGENERAL= "isNotiGeneral";
 
     //---------------TABLA INGESTAS
     public static final String ING_ESTADOINGESTASTR = "estadoIngestaStr";
@@ -58,6 +60,14 @@ public class Constantes {
     public static final String AVISO_MEDID = "medId";
     public static final String AVISO_UDESTID = "uDestId";
     public static final String AVISO_UORIGID = "uOrigId";
+
+    //---------------CONFIGURACION NOTIFICACION
+    public static final String CONFNOTI_AVISOCADUCIDAD = "avisoCaducidad";
+    public static final String CONFNOTI_AVISOCOMPRA = "avisoCompra";
+    public static final String CONFNOTI_AVISOFINTRATAMIENTO = "avisoFinTratamiento";
+    public static final String CONFNOTI_ANTIPROCRASTINADOR = "antiprocrastinador";
+    public static final String CONFNOTI_TIPONOTISTR = "tipoNotiStr";
+    public static final String CONFNOTI_USRSNOTIFICADOSID = "usrsNotificadosId";
 
         //HORARIOS
     public static final String HORARIO_HORAS= "horas";
@@ -107,6 +117,11 @@ public class Constantes {
     public static final String TIPOINTERVALO_MENSUAL = "Mensual";
     public static final String TIPOINTERVALO_TRIMESTRAL = "Trimestral";
     public static final String TIPOINTERVALO_ANUAL = "Anual";
+
+        //TIPO NOTI
+    public static final String TIPONOTI_ESTANDAR = "Estandar";
+    public static final String TIPONOTI_ALARMA= "Alarma";
+    public static final String TIPONOTI_SILENCIOSA = "Silenciosa";
 
     //AVISOS
     public static final String TIPOAVISO_CADUCIDAD = "Caducidad";

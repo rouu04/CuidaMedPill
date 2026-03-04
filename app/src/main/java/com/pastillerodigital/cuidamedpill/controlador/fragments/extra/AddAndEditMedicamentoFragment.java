@@ -442,8 +442,11 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         else fechaInicio = sigToma;
 
         Medicamento medActual = new Medicamento(colorString, selectedTipo.toString(), fechaCad , nombre,
-                fechaFin, fechaInicio, nCajas, horario, null, notasMed);
-        if(isEdit) medActual.setId(medEdit.getId());
+                fechaFin, fechaInicio, nCajas, horario, null, notasMed, true);
+        if(isEdit){
+            medActual.setId(medEdit.getId());
+            medActual.setIsNotiGeneral(medEdit.getIsNotiGeneral());
+        }
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:
         medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {

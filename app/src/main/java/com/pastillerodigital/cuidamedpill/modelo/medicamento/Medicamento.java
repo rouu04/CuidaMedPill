@@ -10,13 +10,12 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +28,8 @@ public class Medicamento implements Persistible {
     //Atributos que aparecerán en la base de datos
     private String nombreMed;
     private String colorSimb;
-
     private String tipoMedStr;
+    private boolean isNotiGeneral = true;
 
     //Opcionales:
     private Timestamp fechaCad;
@@ -47,11 +46,14 @@ public class Medicamento implements Persistible {
     private TipoMed tipoMed;
     @Exclude
     private List<Ingesta> lIngestas =  new ArrayList<>();
+    @Exclude
+    private ConfNoti confNoti;
 
     public Medicamento(){}
 
     public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad, String nombreM,
-                       Timestamp fechaFin, Timestamp fechaInicio, int nMedRestantes, Horario horario, String idM, String notasMed) {
+                       Timestamp fechaFin, Timestamp fechaInicio, int nMedRestantes, Horario horario,
+                       String idM, String notasMed, boolean isNotiGeneral) {
         this.colorSimb = colorSimb;
         this.tipoMedStr = tipoMedStr;
         this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
@@ -63,6 +65,7 @@ public class Medicamento implements Persistible {
         this.idMed = idM;
         this.notasMed = notasMed;
         this.fechaInicio = fechaInicio;
+        this.isNotiGeneral = isNotiGeneral;
     }
 
     public String getNombreMed() {
@@ -136,6 +139,14 @@ public class Medicamento implements Persistible {
         this.fechaInicio = fechaInicio;
     }
 
+    public boolean getIsNotiGeneral() {
+        return isNotiGeneral;
+    }
+
+    public void setIsNotiGeneral(boolean notiGeneral) {
+        isNotiGeneral = notiGeneral;
+    }
+
     @Exclude
     @Override
     public String getId() {
@@ -163,6 +174,14 @@ public class Medicamento implements Persistible {
     public void setlIngestas(List<Ingesta> lIngestas) {
         this.lIngestas = lIngestas;
     }
+    @Exclude
+    public ConfNoti getConfNoti() {
+        return confNoti;
+    }
+    @Exclude
+    public void setConfNoti(ConfNoti confNoti) {
+        this.confNoti = confNoti;
+    }
 
     public static Medicamento doctoObj(DocumentSnapshot doc){
         Medicamento med = new Medicamento();
@@ -187,6 +206,8 @@ public class Medicamento implements Persistible {
                 (Map<String, Object>) doc.get(Constantes.MED_HORARIO) : null;
         Horario horarioObj = Horario.mapToObj(horarioMap);
         med.setHorario(horarioObj);
+
+        med.setIsNotiGeneral(doc.getBoolean(Constantes.MED_ISNOTIGENERAL));
 
         return med;
     }
@@ -432,7 +453,6 @@ public class Medicamento implements Persistible {
         //Comprobar elementos opcionales ->
         if(nMedRestantes != -1) nMedRestantes --;
         //todo lanzar aviso si fuese necesario
-
     }
 
 

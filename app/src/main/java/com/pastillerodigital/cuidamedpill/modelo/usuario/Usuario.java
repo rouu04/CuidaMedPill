@@ -6,11 +6,12 @@ import com.google.firebase.firestore.Exclude;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.Persistible;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNotificacionGeneral;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Usuario implements Persistible {
 
@@ -23,7 +24,7 @@ public class Usuario implements Persistible {
 
     private String passwordHash;
     private String salt;
-    private ConfNotificacionGeneral confNotiGeneral;
+    private ConfNoti confNoti;
 
     //Atributos que NO quiero que estén en firebase directamente pero son necesarios para el objeto
     @DocumentId
@@ -36,7 +37,7 @@ public class Usuario implements Persistible {
     private String passwordPlano;
 
     public Usuario(){
-        this.confNotiGeneral = new ConfNotificacionGeneral();
+        this.confNoti = new ConfNoti(); //todo añadir el usuario cuando se añada
     }
 
     //GETTERS Y SETTERS
@@ -95,6 +96,14 @@ public class Usuario implements Persistible {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public ConfNoti getConfNoti() {
+        return confNoti;
+    }
+
+    public void setConfNoti(ConfNoti confNoti) {
+        this.confNoti = confNoti;
     }
 
     @DocumentId
@@ -162,6 +171,18 @@ public class Usuario implements Persistible {
         u.setPasswordHash(doc.getString(Constantes.USUARIO_PASSWORDHASH));
         u.setSalt(doc.getString(Constantes.USUARIO_SALT));
 
+        Map<String, Object> confMap = (Map<String, Object>) doc.get(Constantes.USUARIO_CONFNOTI);
+        u.setConfNoti(ConfNoti.fromMap(confMap));
+
         return u;
+    }
+
+    public void setConfNotiDefault(){
+        List<String> uidaux = new ArrayList<>();
+        uidaux.add(getId());
+        List<Usuario> uaux = new ArrayList<>();
+        uaux.add(this);
+        getConfNoti().setUsrsNotificadosId(uidaux);
+        getConfNoti().setUsrsNotificados(uaux);
     }
 }
