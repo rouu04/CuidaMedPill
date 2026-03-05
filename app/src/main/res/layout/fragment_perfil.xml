@@ -206,98 +206,10 @@
                 android:layout_marginVertical="@dimen/section_separator_mini"/>
 
             <!-- Notificaciones -->
-            <TextView
-                android:id="@+id/tvTituloNotificaciones"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_title_notisgen"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:textStyle="bold"
-                android:textColor="@color/md_primary_dark"
-                android:layout_marginBottom="@dimen/margin_bottom_element"/>
-
-            <LinearLayout
-                android:id="@+id/layoutNotificaciones"
+            <FrameLayout
+                android:id="@+id/containerNotificaciones"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchAvisoCaducidad"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Aviso de caducidad"/>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchAvisoCompra"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Aviso de compra"/>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchFinTratamiento"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Aviso fin tratamiento"/>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchAntiprocrastinador"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Antiprocrastinador"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutTipoNoti"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Tipo de notificación">
-
-                    <Spinner
-                        android:id="@+id/spTipoNoti"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/tvUsuariosNotificados"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Usuarios que reciben notificaciones"/>
-
-                <TextView
-                    android:id="@+id/tvUsuariosSeleccionados"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ninguno"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnEditarNotis"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Editar"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnGuardarNotis"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Guardar"
-                        android:visibility="gone"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnCancelarNotis"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cancelar"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
             <!-- Separador -->
             <View

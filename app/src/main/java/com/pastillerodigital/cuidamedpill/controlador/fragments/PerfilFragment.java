@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +32,7 @@ import com.pastillerodigital.cuidamedpill.controlador.activities.WelcomeActivity
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditUsuarioFragment;
+import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.NotificacionesFragment;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
@@ -54,19 +57,18 @@ import java.util.List;
  * Fragmento que se muestra al darle al icono de la persona. Los usuarios asistidos no tienen acceso a
  * esta pantalla.
  */
-public class PerfilFragment extends Fragment {
+public class PerfilFragment extends Fragment implements NotificacionesFragment.OnNotificacionesListener{
 
     private View progressPerfil, layoutContenido;
     private android.widget.ImageView imgFotoPerfil;
-    private TextView tvAlias, tvNombreUsr, tvSupervisando, tvUsuariosSeleccionados;
+    private TextView tvAlias, tvNombreUsr, tvSupervisando;
     private RecyclerView rvUsrsAsist;
     private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist,
-            btnRegAsist, btnCancelarAddAsist, btnEditarNotis, btnGuardarNotis, btnCancelarNotis;
-    private LinearLayout layoutNotis, layoutAddAsist;
+            btnRegAsist, btnCancelarAddAsist;
+    private LinearLayout layoutAddAsist;
     private TextInputEditText etUa, etPasswdAsist;
     private TextInputLayout layoutNombreUa, layoutPasswdUa;
-    private SwitchMaterial swCaducidad, swCompra, swFinTrat, swAntipro;
-    private Spinner spTipoNoti;
+    NotificacionesFragment notisFragment;
 
     //Lógica
     private String uidSelf, uid;
@@ -75,9 +77,6 @@ public class PerfilFragment extends Fragment {
     private Modo modo;
     private boolean updateNeeded = false;
     private int fotoPerfilSel;
-    private boolean editandoNotis = false;
-    private List<Usuario> usuariosSeleccionados = new ArrayList<>();
-
 
 
     //CREACIONES DEL FRAGMENT
@@ -124,7 +123,6 @@ public class PerfilFragment extends Fragment {
         tvSupervisando = view.findViewById(R.id.tvSupervisando);
         rvUsrsAsist = view.findViewById(R.id.rvPersonasAsistidas);
         btnAddAsist = view.findViewById(R.id.btnAddAsistido);
-        layoutNotis = view.findViewById(R.id.layoutNotificaciones);
 
         btnEditarPerfil = view.findViewById(R.id.btnEditarPerfil);
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
@@ -141,16 +139,11 @@ public class PerfilFragment extends Fragment {
         btnConfirmAddAsist = view.findViewById(R.id.btnConfirmarAddAsistido);
 
         //Elementos de notificaciones
-        swCaducidad = view.findViewById(R.id.switchAvisoCaducidad);
-        swCompra = view.findViewById(R.id.switchAvisoCompra);
-        swFinTrat = view.findViewById(R.id.switchFinTratamiento);
-        swAntipro = view.findViewById(R.id.switchAntiprocrastinador);
-        tvUsuariosSeleccionados = view.findViewById(R.id.tvUsuariosSeleccionados);
-        btnEditarNotis = view.findViewById(R.id.btnEditarNotis);
-        btnGuardarNotis = view.findViewById(R.id.btnGuardarNotis);
-        btnCancelarNotis = view.findViewById(R.id.btnCancelarNotis);
-        spTipoNoti = view.findViewById(R.id.spTipoNoti);
-        spTipoNoti.setEnabled(false);
+        notisFragment = new NotificacionesFragment();
+        notisFragment.setListener(this); // Nos suscribimos a los cambios
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.containerNotificaciones, notisFragment)
+                .commit();
 
         progressPerfil = view.findViewById(R.id.progressPerfil);
         layoutContenido = view.findViewById(R.id.layoutContenido);
@@ -224,44 +217,6 @@ public class PerfilFragment extends Fragment {
             layoutNombreUa.setError(null);
             layoutPasswdUa.setError(null);
         });
-
-        btnEditarNotis.setOnClickListener(v -> setModoEdicion(true));
-
-        btnCancelarNotis.setOnClickListener(v -> {
-            cargarConfNotificaciones();
-            setModoEdicion(false);
-        });
-
-        btnGuardarNotis.setOnClickListener(v -> guardarConfNotificaciones());
-
-        tvUsuariosSeleccionados.setOnClickListener(v -> {
-
-            if(!editandoNotis) return;
-
-            List<UsuarioAsistido> lista = usrSelf.getUsrAsistidoAsig();
-
-            String[] nombres = new String[lista.size()];
-            boolean[] seleccionados = new boolean[lista.size()];
-
-            for(int i=0;i<lista.size();i++){
-                nombres[i] = lista.get(i).getAliasU();
-                seleccionados[i] = usuariosSeleccionados.contains(lista.get(i));
-            }
-
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Usuarios notificados")
-                    .setMultiChoiceItems(nombres, seleccionados, (dialog, which, isChecked) -> {
-
-                        if(isChecked)
-                            usuariosSeleccionados.add(lista.get(which));
-                        else
-                            usuariosSeleccionados.remove(lista.get(which));
-
-                    })
-                    .setPositiveButton("OK",(d,w)-> actualizarTextoUsuarios())
-                    .show();
-
-        });
     }
 
     private void cargarUsuario(String uid) {
@@ -322,32 +277,12 @@ public class PerfilFragment extends Fragment {
     }
 
     private void cargarConfNotificaciones(){
-
-        ConfNoti conf = usrSelf.getConfNoti();
-
-        swCaducidad.setChecked(conf.isAvisoCaducidad());
-        swCompra.setChecked(conf.isAvisoCompra());
-        swFinTrat.setChecked(conf.isAvisoFinTratamiento());
-        swAntipro.setChecked(conf.isAntiprocrastinador());
-
-        usuariosSeleccionados = conf.getUsrsNotificados();
-        actualizarTextoUsuarios();
+        if (notisFragment != null && usrSelf != null) {
+            notisFragment.cargarDatosEnPantalla(usrSelf.getConfNoti());
+        }
     }
 
     private void setupRecyclerView() {
-
-        // Spinner de tipo de notificación
-        String[] tipos = Arrays.stream(TipoNotificacion.values())
-                .map(TipoNotificacion::toString)
-                .toArray(String[]::new);
-
-        ArrayAdapter<String> adapterNoti = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, tipos);
-        adapterNoti.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spTipoNoti.setAdapter(adapterNoti);
-        // Seleccionamos el valor actual del usuario
-        spTipoNoti.setSelection(Arrays.asList(tipos)
-                .indexOf(usrSelf.getConfNoti().getTipoNoti().toString()));
-
 
         List<UsuarioAsistido> listaOrdenada = new ArrayList<>(usrSelf.getUsrAsistidoAsig());
         listaOrdenada.sort((u1, u2) -> u1.getAliasU().compareToIgnoreCase(u2.getAliasU()));
@@ -509,38 +444,17 @@ public class PerfilFragment extends Fragment {
         });
     }
 
-    private void guardarConfNotificaciones(){
-
-        ConfNoti conf = usrSelf.getConfNoti();
-
-        conf.setAvisoCaducidad(swCaducidad.isChecked());
-        conf.setAvisoCompra(swCompra.isChecked());
-        conf.setAvisoFinTratamiento(swFinTrat.isChecked());
-        conf.setAntiprocrastinador(swAntipro.isChecked());
-
-        conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(spTipoNoti.getSelectedItem().toString()));
-
-        List<String> ids = new ArrayList<>();
-
-        for(Usuario u : usuariosSeleccionados){
-            ids.add(u.getId());
-        }
-
-        conf.setUsrsNotificadosId(ids);
+    @Override
+    public void onGuardarConfiguracion(ConfNoti nuevaConf) {
+        // cuando el usuario pulse "Guardar" en el fragmento hijo
+        usrSelf.setConfNoti(nuevaConf);
 
         uDAO.edit(usrSelf, new OnOperationCallback() {
-            @Override
-            public void onSuccess() {
-                UiUtils.mostrarConfirmacion(requireActivity(),"Notificaciones actualizadas");
-                setModoEdicion(false);
+            @Override public void onSuccess() {
+                UiUtils.mostrarConfirmacion(requireActivity(), "Notificaciones actualizadas");
             }
-
-            @Override
-            public void onFailure(Exception e) {
-                UiUtils.mostrarErrorYReiniciar(requireActivity());
-            }
+            @Override public void onFailure(Exception e) { UiUtils.mostrarErrorYReiniciar(requireActivity()); }
         });
-
     }
 
     private void borrarCuenta(){
@@ -598,23 +512,6 @@ public class PerfilFragment extends Fragment {
             tvSupervisando.setVisibility(View.GONE);
         }
     }
-
-    private void setModoEdicion(boolean editar){
-        editandoNotis = editar;
-
-        swCaducidad.setEnabled(editar);
-        swCompra.setEnabled(editar);
-        swFinTrat.setEnabled(editar);
-        swAntipro.setEnabled(editar);
-
-        tvUsuariosSeleccionados.setEnabled(editar);
-        spTipoNoti.setEnabled(editar);
-
-        btnEditarNotis.setVisibility(editar ? View.GONE : View.VISIBLE);
-        btnGuardarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
-        btnCancelarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
-    }
-
 
 
     private void mostrarCarga() {
@@ -685,19 +582,4 @@ public class PerfilFragment extends Fragment {
         cargarUsuario(uidSelf);
     }
 
-    private void actualizarTextoUsuarios(){
-
-        if(usuariosSeleccionados.isEmpty()){
-            tvUsuariosSeleccionados.setText("Ninguno");
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        for(Usuario u : usuariosSeleccionados){
-            sb.append(u.getAliasU()).append(", ");
-        }
-
-        tvUsuariosSeleccionados.setText(sb.substring(0, sb.length()-2));
-    }
 }

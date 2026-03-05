@@ -23,14 +23,11 @@ public class ConfNoti implements Persistible {
     private boolean avisoFinTratamiento;
     private boolean antiprocrastinador;
     private String tipoNotiStr;
-    private List<String> usrsNotificadosId;
 
     @Exclude
     private String confNotiId;
     @Exclude
     private TipoNotificacion tipoNoti = TipoNotificacion.ESTANDAR;
-    @Exclude
-    private List<Usuario> usrsNotificados;
 
 
     public ConfNoti(){
@@ -42,14 +39,13 @@ public class ConfNoti implements Persistible {
     }
 
     public ConfNoti(boolean avisoCaducidad, boolean avisoCompra, boolean avisoFinTratamiento, TipoNotificacion tipoNotis,
-                    boolean antiprocrastinador, List<String> usrsNotificadosId) {
+                    boolean antiprocrastinador) {
         this.avisoCaducidad = avisoCaducidad;
         this.avisoCompra = avisoCompra;
         this.avisoFinTratamiento = avisoFinTratamiento;
         this.tipoNoti = tipoNotis;
         this.tipoNotiStr = tipoNotis.toString();
         this.antiprocrastinador = antiprocrastinador;
-        this.usrsNotificadosId = usrsNotificadosId;
     }
 
     public boolean isAvisoCaducidad() {
@@ -92,14 +88,6 @@ public class ConfNoti implements Persistible {
         this.antiprocrastinador = antiprocrastinador;
     }
 
-    public List<String> getUsrsNotificadosId() {
-        return usrsNotificadosId;
-    }
-
-    public void setUsrsNotificadosId(List<String> usrsNotificadosId) {
-        this.usrsNotificadosId = usrsNotificadosId;
-    }
-
     @Override
     @Exclude
     public void setId(String id) {
@@ -118,14 +106,6 @@ public class ConfNoti implements Persistible {
     @Exclude
     public void setTipoNoti(TipoNotificacion tipoNoti) {
         this.tipoNoti = tipoNoti;
-    }
-    @Exclude
-    public List<Usuario> getUsrsNotificados() {
-        return usrsNotificados;
-    }
-    @Exclude
-    public void setUsrsNotificados(List<Usuario> usrsNotificados) {
-        this.usrsNotificados = usrsNotificados;
     }
 
     public static ConfNoti doctoObj(DocumentSnapshot doc){
@@ -148,8 +128,6 @@ public class ConfNoti implements Persistible {
             confNoti.setTipoNoti(TipoNotificacion.valueOf(tipoNotiStr));
         }
 
-        confNoti.setUsrsNotificadosId((List<String>) doc.get(Constantes.CONFNOTI_USRSNOTIFICADOSID));
-
         return confNoti;
     }
 
@@ -169,7 +147,6 @@ public class ConfNoti implements Persistible {
             conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(tipo));
         }
 
-        conf.setUsrsNotificadosId((List<String>) map.get(Constantes.CONFNOTI_USRSNOTIFICADOSID));
 
         return conf;
     }

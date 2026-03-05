@@ -182,7 +182,5 @@ public class Usuario implements Persistible {
         uidaux.add(getId());
         List<Usuario> uaux = new ArrayList<>();
         uaux.add(this);
-        getConfNoti().setUsrsNotificadosId(uidaux);
-        getConfNoti().setUsrsNotificados(uaux);
     }
 }
