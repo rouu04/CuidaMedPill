@@ -222,13 +222,80 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Ejemplo: SwitchMaterial todo cuando haya notis-->
-                <!--
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchNotificacion"
+                    android:id="@+id/switchAvisoCaducidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Activar notificaciones"/> -->
+                    android:text="Aviso de caducidad"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchAvisoCompra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aviso de compra"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchFinTratamiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aviso fin tratamiento"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchAntiprocrastinador"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Antiprocrastinador"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutTipoNoti"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tipo de notificación">
+
+                    <Spinner
+                        android:id="@+id/spTipoNoti"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tvUsuariosNotificados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Usuarios que reciben notificaciones"/>
+
+                <TextView
+                    android:id="@+id/tvUsuariosSeleccionados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ninguno"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditarNotis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Editar"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGuardarNotis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Guardar"
+                        android:visibility="gone"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCancelarNotis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cancelar"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

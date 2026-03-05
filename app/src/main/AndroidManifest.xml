@@ -3,9 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permiso para notificaciones -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <!-- Permiso para que salga la alarma incluso cuando está bloqueado-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <!-- Permiso para notificaciones al reiniciar móvil-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- Permiso para vibración en las alarmas-->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -51,6 +56,13 @@
             </intent-filter>
 
         </receiver>
+
+        <activity
+            android:name=".controlador.activities.AlarmaMedicacionActivity"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
     </application>
 

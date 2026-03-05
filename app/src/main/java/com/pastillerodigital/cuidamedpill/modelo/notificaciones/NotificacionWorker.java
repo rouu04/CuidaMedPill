@@ -34,6 +34,8 @@ public class NotificacionWorker extends Worker {
         String titulo = getInputData().getString("titulo");
         String mensaje = getInputData().getString("mensaje");
         String tipoStr = getInputData().getString("tipoNotificacion");
+        String nombreMed = getInputData().getString("nombreMed");
+        boolean antipro = getInputData().getBoolean("antiprocrastinador", false);
 
         if (tipoStr == null) {
             tipoStr = TipoNotificacion.ESTANDAR.toString(); // valor por defecto
@@ -51,7 +53,7 @@ public class NotificacionWorker extends Worker {
             }
         }
 
-        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo);
+        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo, nombreMed, antipro);
         return Result.success();
     }
 }

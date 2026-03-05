@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#FFF3E0">
+
+    <TextView
+        android:id="@+id/txtTituloAnti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No olvides tu medicación"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="#E65100"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/txtMedicamentoAnti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Paracetamol"
+        android:textSize="22sp"
+        android:textColor="#333333"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/txtMensajeAnti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tómalo ahora mismo para no olvidarlo."
+        android:textSize="18sp"
+        android:textColor="#444444"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btnTomadoAnti"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Ya lo he tomado"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btnVoyAhoraAnti"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Voy a tomarlo ahora"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF9800"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btnNoTomadoAnti"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="No lo tomaré"
+        android:textSize="20sp"
+        android:backgroundTint="#BDBDBD"
+        android:textColor="#000000"/>
+
+</LinearLayout>

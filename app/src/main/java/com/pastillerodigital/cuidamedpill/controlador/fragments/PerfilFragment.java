@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
@@ -30,7 +34,9 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
@@ -40,6 +46,7 @@ import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,12 +58,15 @@ public class PerfilFragment extends Fragment {
 
     private View progressPerfil, layoutContenido;
     private android.widget.ImageView imgFotoPerfil;
-    private TextView tvAlias, tvNombreUsr, tvSupervisando;
+    private TextView tvAlias, tvNombreUsr, tvSupervisando, tvUsuariosSeleccionados;
     private RecyclerView rvUsrsAsist;
-    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist, btnRegAsist, btnCancelarAddAsist;
+    private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist,
+            btnRegAsist, btnCancelarAddAsist, btnEditarNotis, btnGuardarNotis, btnCancelarNotis;
     private LinearLayout layoutNotis, layoutAddAsist;
     private TextInputEditText etUa, etPasswdAsist;
     private TextInputLayout layoutNombreUa, layoutPasswdUa;
+    private SwitchMaterial swCaducidad, swCompra, swFinTrat, swAntipro;
+    private Spinner spTipoNoti;
 
     //Lógica
     private String uidSelf, uid;
@@ -65,6 +75,8 @@ public class PerfilFragment extends Fragment {
     private Modo modo;
     private boolean updateNeeded = false;
     private int fotoPerfilSel;
+    private boolean editandoNotis = false;
+    private List<Usuario> usuariosSeleccionados = new ArrayList<>();
 
 
 
@@ -127,6 +139,18 @@ public class PerfilFragment extends Fragment {
         layoutPasswdUa = view.findViewById(R.id.layoutPasswdUa);
         btnRegAsist = view.findViewById(R.id.btnRegAsist);
         btnConfirmAddAsist = view.findViewById(R.id.btnConfirmarAddAsistido);
+
+        //Elementos de notificaciones
+        swCaducidad = view.findViewById(R.id.switchAvisoCaducidad);
+        swCompra = view.findViewById(R.id.switchAvisoCompra);
+        swFinTrat = view.findViewById(R.id.switchFinTratamiento);
+        swAntipro = view.findViewById(R.id.switchAntiprocrastinador);
+        tvUsuariosSeleccionados = view.findViewById(R.id.tvUsuariosSeleccionados);
+        btnEditarNotis = view.findViewById(R.id.btnEditarNotis);
+        btnGuardarNotis = view.findViewById(R.id.btnGuardarNotis);
+        btnCancelarNotis = view.findViewById(R.id.btnCancelarNotis);
+        spTipoNoti = view.findViewById(R.id.spTipoNoti);
+        spTipoNoti.setEnabled(false);
 
         progressPerfil = view.findViewById(R.id.progressPerfil);
         layoutContenido = view.findViewById(R.id.layoutContenido);
@@ -200,6 +224,44 @@ public class PerfilFragment extends Fragment {
             layoutNombreUa.setError(null);
             layoutPasswdUa.setError(null);
         });
+
+        btnEditarNotis.setOnClickListener(v -> setModoEdicion(true));
+
+        btnCancelarNotis.setOnClickListener(v -> {
+            cargarConfNotificaciones();
+            setModoEdicion(false);
+        });
+
+        btnGuardarNotis.setOnClickListener(v -> guardarConfNotificaciones());
+
+        tvUsuariosSeleccionados.setOnClickListener(v -> {
+
+            if(!editandoNotis) return;
+
+            List<UsuarioAsistido> lista = usrSelf.getUsrAsistidoAsig();
+
+            String[] nombres = new String[lista.size()];
+            boolean[] seleccionados = new boolean[lista.size()];
+
+            for(int i=0;i<lista.size();i++){
+                nombres[i] = lista.get(i).getAliasU();
+                seleccionados[i] = usuariosSeleccionados.contains(lista.get(i));
+            }
+
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Usuarios notificados")
+                    .setMultiChoiceItems(nombres, seleccionados, (dialog, which, isChecked) -> {
+
+                        if(isChecked)
+                            usuariosSeleccionados.add(lista.get(which));
+                        else
+                            usuariosSeleccionados.remove(lista.get(which));
+
+                    })
+                    .setPositiveButton("OK",(d,w)-> actualizarTextoUsuarios())
+                    .show();
+
+        });
     }
 
     private void cargarUsuario(String uid) {
@@ -227,6 +289,7 @@ public class PerfilFragment extends Fragment {
                     }
                     else setVistaModo("");
 
+                    cargarConfNotificaciones();
                     setupRecyclerView();
                     ocultarCarga();
                 }
@@ -258,7 +321,34 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    private void cargarConfNotificaciones(){
+
+        ConfNoti conf = usrSelf.getConfNoti();
+
+        swCaducidad.setChecked(conf.isAvisoCaducidad());
+        swCompra.setChecked(conf.isAvisoCompra());
+        swFinTrat.setChecked(conf.isAvisoFinTratamiento());
+        swAntipro.setChecked(conf.isAntiprocrastinador());
+
+        usuariosSeleccionados = conf.getUsrsNotificados();
+        actualizarTextoUsuarios();
+    }
+
     private void setupRecyclerView() {
+
+        // Spinner de tipo de notificación
+        String[] tipos = Arrays.stream(TipoNotificacion.values())
+                .map(TipoNotificacion::toString)
+                .toArray(String[]::new);
+
+        ArrayAdapter<String> adapterNoti = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, tipos);
+        adapterNoti.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spTipoNoti.setAdapter(adapterNoti);
+        // Seleccionamos el valor actual del usuario
+        spTipoNoti.setSelection(Arrays.asList(tipos)
+                .indexOf(usrSelf.getConfNoti().getTipoNoti().toString()));
+
+
         List<UsuarioAsistido> listaOrdenada = new ArrayList<>(usrSelf.getUsrAsistidoAsig());
         listaOrdenada.sort((u1, u2) -> u1.getAliasU().compareToIgnoreCase(u2.getAliasU()));
 
@@ -419,6 +509,40 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    private void guardarConfNotificaciones(){
+
+        ConfNoti conf = usrSelf.getConfNoti();
+
+        conf.setAvisoCaducidad(swCaducidad.isChecked());
+        conf.setAvisoCompra(swCompra.isChecked());
+        conf.setAvisoFinTratamiento(swFinTrat.isChecked());
+        conf.setAntiprocrastinador(swAntipro.isChecked());
+
+        conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(spTipoNoti.getSelectedItem().toString()));
+
+        List<String> ids = new ArrayList<>();
+
+        for(Usuario u : usuariosSeleccionados){
+            ids.add(u.getId());
+        }
+
+        conf.setUsrsNotificadosId(ids);
+
+        uDAO.edit(usrSelf, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                UiUtils.mostrarConfirmacion(requireActivity(),"Notificaciones actualizadas");
+                setModoEdicion(false);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+
+    }
+
     private void borrarCuenta(){
         new AlertDialog.Builder(requireContext())
                 .setTitle(Mensajes.PERF_BORRARCUENTA)
@@ -474,6 +598,23 @@ public class PerfilFragment extends Fragment {
             tvSupervisando.setVisibility(View.GONE);
         }
     }
+
+    private void setModoEdicion(boolean editar){
+        editandoNotis = editar;
+
+        swCaducidad.setEnabled(editar);
+        swCompra.setEnabled(editar);
+        swFinTrat.setEnabled(editar);
+        swAntipro.setEnabled(editar);
+
+        tvUsuariosSeleccionados.setEnabled(editar);
+        spTipoNoti.setEnabled(editar);
+
+        btnEditarNotis.setVisibility(editar ? View.GONE : View.VISIBLE);
+        btnGuardarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
+        btnCancelarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
+    }
+
 
 
     private void mostrarCarga() {
@@ -544,23 +685,19 @@ public class PerfilFragment extends Fragment {
         cargarUsuario(uidSelf);
     }
 
-    private void mostrarSelectorAvatares() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(Mensajes.REG_PUTFOTO);
+    private void actualizarTextoUsuarios(){
 
-        GridView gridView = new GridView(requireContext());
-        gridView.setNumColumns(3);
-        gridView.setAdapter(new FotoPerfilAdapter(requireContext(), UiUtils.fotosPerfil));
+        if(usuariosSeleccionados.isEmpty()){
+            tvUsuariosSeleccionados.setText("Ninguno");
+            return;
+        }
 
-        builder.setView(gridView);
-        AlertDialog dialog = builder.create();
+        StringBuilder sb = new StringBuilder();
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            fotoPerfilSel = UiUtils.fotosPerfil[position];
-            imgFotoPerfil.setImageResource(fotoPerfilSel);
-            dialog.dismiss();
-        });
+        for(Usuario u : usuariosSeleccionados){
+            sb.append(u.getAliasU()).append(", ");
+        }
 
-        dialog.show();
+        tvUsuariosSeleccionados.setText(sb.substring(0, sb.length()-2));
     }
 }

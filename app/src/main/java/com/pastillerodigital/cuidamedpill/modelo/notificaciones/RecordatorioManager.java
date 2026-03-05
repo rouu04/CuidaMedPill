@@ -9,6 +9,7 @@ import androidx.work.WorkManager;
 
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 
@@ -47,12 +48,19 @@ public class RecordatorioManager {
     public static void programarRecordatorio(Context context, Medicamento med, long tiempoNotificacion) {
         long delay = tiempoNotificacion - System.currentTimeMillis();
         if (delay <= 0) return;
+
+        TipoNotificacion tipo = TipoNotificacion.ESTANDAR;
+        if (med.getConfNoti() != null) {
+            tipo = med.getConfNoti().getTipoNoti();
+        }
+
         //Crea datos para worker
         Data data = new Data.Builder()
                 .putString("nombreMed", med.getNombreMed())
                 .putString("titulo", "Hora de tu medicación")  // título por defecto
                 .putString("mensaje", "Es momento de tomar: " + med.getNombreMed()) // mensaje por defecto
-                .putString("tipoNotificacion", "NORMAL") // tipo por defecto
+                .putString("tipoNotificacion", tipo.toString())
+                .putBoolean("antiprocrastinador", med.getConfNoti().isAntiprocrastinador())
                 .build();
 
         //Crea tarea

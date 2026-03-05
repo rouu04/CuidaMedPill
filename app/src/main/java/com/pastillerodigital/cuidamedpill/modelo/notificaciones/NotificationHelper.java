@@ -3,7 +3,9 @@ package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
 import android.os.Build;
@@ -14,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.work.ListenableWorker;
 
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.controlador.activities.AlarmaMedicacionActivity;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 
 /**
@@ -71,7 +74,8 @@ public class NotificationHelper {
         }
     }
 
-    public static void mostrarNotificacion(Context context, String titulo, String mensaje, TipoNotificacion tipo) {
+    public static void mostrarNotificacion(Context context, String titulo, String mensaje, TipoNotificacion tipo,
+                                           String nombreMed, boolean antiprocrastinador) {
         // Android 13+ requiere permiso
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -100,8 +104,19 @@ public class NotificationHelper {
                 .setAutoCancel(true);
 
         if (tipo == TipoNotificacion.ALARMA) {
+            Intent intent = new Intent(context, AlarmaMedicacionActivity.class);
+            intent.putExtra("nombreMed", nombreMed);
+            intent.putExtra("antiprocrastinador", antiprocrastinador);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    context,
+                    (int) System.currentTimeMillis(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
             builder.setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(null, true); // aquí puedes poner un PendingIntent si quieres abrir actividad
+                    .setFullScreenIntent(pendingIntent, true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX);
         }
 
         NotificationManagerCompat.from(context).notify((int) System.currentTimeMillis(), builder.build());

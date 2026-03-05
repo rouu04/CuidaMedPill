@@ -180,7 +180,7 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
             @Override
             public void onSuccess(List<UsuarioAsistido> asistidos) {
                 ue.setUsrAsistidoAsig(asistidos);
-                callback.onSuccess(ue);
+                getySetUsrsNotificados(ue, callback);
             }
 
             @Override
@@ -188,6 +188,42 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 callback.onFailure(e);
             }
         });
+    }
+
+    private void getySetUsrsNotificados(UsuarioEstandar ue, OnDataLoadedCallback<Usuario> callback){
+        ConfNoti conf = ue.getConfNoti();
+        List<String> idsNotificados = conf.getUsrsNotificadosId();
+
+        if (idsNotificados == null || idsNotificados.isEmpty()) {
+            conf.setUsrsNotificados(new ArrayList<>());
+            callback.onSuccess(ue);
+            return;
+        }
+
+        List<Usuario> usuarios = new ArrayList<>();
+        AtomicInteger counter = new AtomicInteger(idsNotificados.size());
+        AtomicBoolean fallo = new AtomicBoolean(false);
+
+        for (String id : idsNotificados) {
+            getCollection()
+                    .document(id)
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            usuarios.add(docToObj(doc)); // Obtenemos el objeto Usuario completo
+                        }
+                        if (counter.decrementAndGet() == 0) {
+                            if (!fallo.get()) {
+                                conf.setUsrsNotificados(usuarios);
+                                callback.onSuccess(ue);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        fallo.set(true);
+                        callback.onFailure(e);
+                    });
+        }
     }
 
     //------------OTRAS FUNCIONES DAO
