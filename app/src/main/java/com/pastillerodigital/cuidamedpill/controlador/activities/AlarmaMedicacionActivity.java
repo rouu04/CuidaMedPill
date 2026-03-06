@@ -13,10 +13,12 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
@@ -28,21 +30,24 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class AlarmaMedicacionActivity extends AppCompatActivity {
 
-    private TextView txtMed;
-    private Button btnTomado, btnVoyAhora, btnNoTomado;
+    private TextView txtMed, txtFechaProgramada;
+    private MaterialButton btnTomado, btnVoyAhora, btnNoTomado;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
+    private ImageView imgMedicamento;
 
     private boolean antiprocrastinador;
     private Medicamento med;
     private MedicamentoDAO medDAO;
     private String uid;
+    private Timestamp fechaProgramada, fechaIngesta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,8 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarma_medicacion);
 
         txtMed = findViewById(R.id.txtMedicamento);
+        txtFechaProgramada = findViewById(R.id.txtFechaProgramadaAlarma);
+        imgMedicamento = findViewById(R.id.imgMedicamentoAlarma);
         btnTomado = findViewById(R.id.btnTomado);
         btnVoyAhora = findViewById(R.id.btnVoyAhora);
         btnNoTomado = findViewById(R.id.btnNoTomado);
@@ -76,6 +83,9 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         String uidSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
         uid = prefs.getString(Constantes.PERSIST_KEYUSERID, uidSelf);
         medDAO = new MedicamentoDAO(uid);
+
+        Calendar ahora = Calendar.getInstance();
+        fechaIngesta = new Timestamp(ahora.getTime());
 
         cargaMed(medId);
     }
@@ -118,6 +128,9 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                 med = data;
                 txtMed.setText(med.getNombreMed());
                 btnVoyAhora.setEnabled(antiprocrastinador);
+                fechaProgramada = getFechaProgramada();
+                txtFechaProgramada.setText(Utils.timestampToString(fechaProgramada));
+                UiUtils.setMedicamentoIcon(AlarmaMedicacionActivity.this, imgMedicamento, med.getTipoMed(), med.getColorSimb());
             }
 
             @Override
@@ -128,24 +141,6 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     }
 
     private void registrarIngesta(){
-        Calendar ahora = Calendar.getInstance();
-        Timestamp fechaIngesta = new Timestamp(ahora.getTime());
-
-        Timestamp fechaProgramada = null;
-        List<Timestamp> horasHoy = med.getFechaHorasDia(Calendar.getInstance());
-        if (horasHoy != null && !horasHoy.isEmpty()) { //selecciono la ultima hora programada
-            for (Timestamp ts : horasHoy) {
-                if (!ts.toDate().before(fechaIngesta.toDate())) { // ts >= fechaIngesta
-                    fechaProgramada = ts;
-                    break;
-                }
-            }
-            // Si no encontramos ninguna hora >= ahora, usamos la última del día
-            if (fechaProgramada == null) {
-                fechaProgramada = horasHoy.get(horasHoy.size() - 1);
-            }
-        }
-
         // Determinar estado de ingesta según retraso
         EstadoIngesta estado;
         if (fechaProgramada == null) {
@@ -175,6 +170,24 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                 UiUtils.mostrarErrorYReiniciar(AlarmaMedicacionActivity.this);
             }
         });
+    }
+
+    private Timestamp getFechaProgramada(){
+        Timestamp fechaProgramada = null;
+        List<Timestamp> horasHoy = med.getFechaHorasDia(Calendar.getInstance());
+        if (horasHoy != null && !horasHoy.isEmpty()) { //selecciono la ultima hora programada
+            for (Timestamp ts : horasHoy) {
+                if (!ts.toDate().before(fechaIngesta.toDate())) { // ts >= fechaIngesta
+                    fechaProgramada = ts;
+                    break;
+                }
+            }
+            // Si no encontramos ninguna hora >= ahora, usamos la última del día
+            if (fechaProgramada == null) {
+                fechaProgramada = horasHoy.get(horasHoy.size() - 1);
+            }
+        }
+        return fechaProgramada;
     }
 
 
@@ -239,15 +252,12 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     private void cerrarAlarmaYVolverHome() {
         callaAlarma();
 
-        // 1. Preparamos el intent para ir a MainActivity
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
-        // 2. Cerramos esta actividad de alarma
         finish();
 
-        // 3. ¡FUERZA EL CIERRE!
         // Esto mata el proceso actual de la app. La próxima vez que el usuario
         // abra la app, Android se verá obligado a crear una instancia totalmente nueva.
         android.os.Process.killProcess(android.os.Process.myPid());

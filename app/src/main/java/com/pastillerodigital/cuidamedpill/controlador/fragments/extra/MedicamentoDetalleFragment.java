@@ -225,13 +225,7 @@ public class MedicamentoDetalleFragment extends Fragment {
         tvNombre.setText(medicamento.getNombreMed());
 
         // Tipo y color
-        TipoMed tipo = medicamento.getTipoMed() != null ? medicamento.getTipoMed() : TipoMed.CAPSULA;
-        imgMedicamento.setImageResource(tipo.getDrawableRes());
-
-        if(medicamento.getColorSimb() != null){
-            int resColor = getResources().getIdentifier(medicamento.getColorSimb(), Constantes.COLOR, requireContext().getPackageName());
-            actualizarImagenColor(tipo, resColor);
-        }
+        UiUtils.setMedicamentoIcon(requireContext(), imgMedicamento, medicamento.getTipoMed(), medicamento.getColorSimb());
 
         // Horas
         chipGroupHoras.removeAllViews();

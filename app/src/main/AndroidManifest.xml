@@ -67,7 +67,7 @@
             android:turnScreenOn="true"
             android:launchMode="singleInstance"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.CuidaMedPill"/>
 
     </application>
 

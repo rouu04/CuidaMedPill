@@ -1,12 +1,14 @@
 package com.pastillerodigital.cuidamedpill.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -142,6 +144,28 @@ public class UiUtils {
             drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
             imgTipo.setImageDrawable(drawable);
         }
+    }
+
+    public static void setMedicamentoIcon(Context context, ImageView imageView, TipoMed tipoMed, String colorSimb) {
+        if(tipoMed == null) tipoMed = TipoMed.CAPSULA;
+        Drawable drawable = ContextCompat.getDrawable(context, tipoMed.getDrawableRes());
+        if(drawable == null) return;
+
+        if(colorSimb != null){
+            int resColor = context.getResources().getIdentifier(colorSimb, Constantes.COLOR, context.getPackageName());
+            int color = ContextCompat.getColor(context, resColor);
+
+            if (drawable instanceof LayerDrawable) {
+                LayerDrawable layerDrawable = (LayerDrawable) drawable;
+                Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
+                if (capaColor != null) capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                imageView.setImageDrawable(layerDrawable);
+            } else {
+                drawable = drawable.mutate();
+                drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                imageView.setImageDrawable(drawable);
+            }
+        } else imageView.setImageDrawable(drawable);
     }
 
 
