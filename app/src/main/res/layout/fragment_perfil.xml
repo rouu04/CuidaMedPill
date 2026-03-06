@@ -72,17 +72,6 @@
 
                 </LinearLayout>
 
-                <!-- BOTÓN EDITAR PERFIL -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEditarPerfil"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/basic_hint_editar"
-                    android:textAllCaps="false"
-                    app:icon="@drawable/ic_editar"
-                    app:iconGravity="textStart"
-                    app:iconPadding="@dimen/padding_icon"/>
 
             </LinearLayout>
 
@@ -227,6 +216,17 @@
                 android:textColor="@color/md_primary_dark"
                 android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
+            <!-- BOTÓN EDITAR PERFIL -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditarPerfil"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_perf_editar"
+                app:icon="@drawable/ic_editar"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/padding_icon"/>
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCerrarSesion"
@@ -234,7 +234,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_cerrarsesion"
-                android:textAllCaps="false"
                 android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
             <com.google.android.material.button.MaterialButton
@@ -243,7 +242,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_eliminar_cuenta"
-                android:textAllCaps="false"
                 android:textColor="@color/md_error_on_primary"
                 app:icon="@drawable/ic_basura"
                 app:iconGravity="textStart"

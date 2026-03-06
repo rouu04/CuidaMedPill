@@ -143,7 +143,7 @@ public class PerfilFragment extends Fragment implements NotificacionesFragment.O
         notisFragment.setListener(this); // Nos suscribimos a los cambios
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.containerNotificaciones, notisFragment)
-                .commit();
+                .commitNow();
 
         progressPerfil = view.findViewById(R.id.progressPerfil);
         layoutContenido = view.findViewById(R.id.layoutContenido);

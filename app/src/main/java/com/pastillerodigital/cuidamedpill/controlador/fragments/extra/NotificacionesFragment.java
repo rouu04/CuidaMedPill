@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
@@ -21,10 +23,10 @@ import java.util.Arrays;
 
 public class NotificacionesFragment extends Fragment {
 
-    private SwitchMaterial switchAvisoCaducidad;
-    private SwitchMaterial switchAvisoCompra;
-    private SwitchMaterial switchFinTratamiento;
-    private SwitchMaterial switchAntiprocrastinador;
+    private MaterialSwitch switchAvisoCaducidad;
+    private MaterialSwitch switchAvisoCompra;
+    private MaterialSwitch switchFinTratamiento;
+    private MaterialSwitch switchAntiprocrastinador;
 
     private Spinner spTipoNoti;
     private MaterialButton btnEditarNotis;
@@ -40,23 +42,7 @@ public class NotificacionesFragment extends Fragment {
 
     private OnNotificacionesListener listener;
 
-    // El padre llama a esto para pasarle los datos
-    public void cargarDatosEnPantalla(ConfNoti conf) {
-        if (getView() == null || getContext() == null) return;
 
-        switchAvisoCaducidad.setChecked(conf.isAvisoCaducidad());
-        switchAvisoCompra.setChecked(conf.isAvisoCompra());
-        switchFinTratamiento.setChecked(conf.isAvisoFinTratamiento());
-        switchAntiprocrastinador.setChecked(conf.isAntiprocrastinador());
-
-        // Configurar Spinner
-        String[] tipos = Arrays.stream(TipoNotificacion.values()).map(Enum::toString).toArray(String[]::new);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, tipos);
-        spTipoNoti.setAdapter(adapter);
-
-        int position = Arrays.asList(tipos).indexOf(conf.getTipoNoti().toString());
-        if (position >= 0) spTipoNoti.setSelection(position);
-    }
 
     public NotificacionesFragment() {
         // Constructor vacío requerido
@@ -87,7 +73,6 @@ public class NotificacionesFragment extends Fragment {
 
         // Botones
         btnEditarNotis.setOnClickListener(v -> setModoEdicion(true));
-        btnCancelarNotis.setOnClickListener(v -> setModoEdicion(false));
         btnGuardarNotis.setOnClickListener(v -> {
             if (listener != null) {
                 ConfNoti nuevaConf = new ConfNoti();
@@ -98,6 +83,7 @@ public class NotificacionesFragment extends Fragment {
 
                 // Obtener valor del spinner
                 String seleccion = spTipoNoti.getSelectedItem().toString();
+                nuevaConf.setTipoNotiStr(seleccion);
                 nuevaConf.setTipoNoti(TipoNotificacion.tipoNotiFromString(seleccion));
 
                 listener.onGuardarConfiguracion(nuevaConf);
@@ -113,12 +99,41 @@ public class NotificacionesFragment extends Fragment {
         });
     }
 
+    // El padre llama a esto para pasarle los datos
+    public void cargarDatosEnPantalla(ConfNoti conf) {
+        if (getView() == null || getContext() == null) return;
+
+        originalConf = new ConfNoti();
+        originalConf.setAvisoCaducidad(conf.isAvisoCaducidad());
+        originalConf.setAvisoCompra(conf.isAvisoCompra());
+        originalConf.setAvisoFinTratamiento(conf.isAvisoFinTratamiento());
+        originalConf.setAntiprocrastinador(conf.isAntiprocrastinador());
+        originalConf.setTipoNoti(conf.getTipoNoti());
+
+        switchAvisoCaducidad.setChecked(conf.isAvisoCaducidad());
+        switchAvisoCompra.setChecked(conf.isAvisoCompra());
+        switchFinTratamiento.setChecked(conf.isAvisoFinTratamiento());
+        switchAntiprocrastinador.setChecked(conf.isAntiprocrastinador());
+
+
+        // Configurar Spinner
+        String[] tipos = Arrays.stream(TipoNotificacion.values()).map(Enum::toString).toArray(String[]::new);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, tipos);
+        spTipoNoti.setAdapter(adapter);
+
+        int position = Arrays.asList(tipos).indexOf(conf.getTipoNoti().toString());
+        if (position >= 0) spTipoNoti.setSelection(position);
+    }
+
+
     /**
      * Habilita/deshabilita elementos según modo edición
      */
     public void setModoEdicion(boolean editar) {
         //Para que se vea bien aunque esté disabled
         float alpha = editar ? 1.0f : 0.85f; // casi opaco cuando está deshabilitado
+        int visText = editar ? View.GONE : View.VISIBLE;
+
         View[] controles = {switchAvisoCaducidad, switchAvisoCompra,
                 switchFinTratamiento, switchAntiprocrastinador, spTipoNoti};
         for (View v : controles) {

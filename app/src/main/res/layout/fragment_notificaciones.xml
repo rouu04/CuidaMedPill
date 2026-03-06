@@ -4,82 +4,172 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/padding_mini">
 
     <TextView
         android:id="@+id/tvTituloNotificaciones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_title_notisgen"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="Notificaciones"
         android:textStyle="bold"
-        android:textColor="@color/md_primary_dark"
-        android:layout_marginBottom="@dimen/margin_bottom_element"/>
+        android:textSize="18sp"
+        android:layout_marginBottom="12dp"/>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchAvisoCaducidad"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/md_primary_dark"
-        android:text="Aviso de caducidad"/>
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchAvisoCompra"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Aviso caducidad -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Aviso de caducidad"
+                    android:textStyle="bold"
+                    android:textSize="15sp"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAvisoCaducidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useMaterialThemeColors="true"/>
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Aviso compra -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Aviso de compra"
+                    android:textStyle="bold"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAvisoCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useMaterialThemeColors="true"/>
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Fin tratamiento -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Aviso fin tratamiento"
+                    android:textStyle="bold"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchFinTratamiento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useMaterialThemeColors="true"/>
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Antiprocrastinador -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Antiprocrastinador"
+                    android:textStyle="bold"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAntiprocrastinador"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useMaterialThemeColors="true"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <Spinner
+        android:id="@+id/spTipoNoti"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/md_primary_dark"
-        android:text="Aviso de compra"/>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchFinTratamiento"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/md_primary_dark"
-        android:text="Aviso fin tratamiento"/>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchAntiprocrastinador"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/md_primary_dark"
-        android:text="Antiprocrastinador"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutTipoNoti"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/md_primary_dark"
-        android:hint="Tipo de notificación">
-
-        <Spinner
-            android:id="@+id/spTipoNoti"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_marginTop="12dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditarNotis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Editar"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGuardarNotis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:visibility="gone"/>
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="Editar notificaciones"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelarNotis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancelar"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:visibility="gone"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarNotis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_start"
+            android:text="Guardar"
+            style="@style/Widget.MaterialComponents.Button"
+            android:visibility="gone"/>
+
+
     </LinearLayout>
+
 </LinearLayout>
