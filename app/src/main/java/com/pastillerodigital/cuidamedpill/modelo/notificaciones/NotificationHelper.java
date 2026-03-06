@@ -108,6 +108,11 @@ public class NotificationHelper {
             intent.putExtra("nombreMed", nombreMed);
             intent.putExtra("antiprocrastinador", antiprocrastinador);
 
+            // Flags para forzar la aparición
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
             PendingIntent pendingIntent = PendingIntent.getActivity(
                     context,
                     (int) System.currentTimeMillis(),
@@ -116,7 +121,11 @@ public class NotificationHelper {
             );
             builder.setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setFullScreenIntent(pendingIntent, true)
-                    .setPriority(NotificationCompat.PRIORITY_MAX);
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC); // Visible en cualquier momento
+
+            // Forzamos la apertura de la actividad manualmente (para que se muestre incluso si está encendido)
+            context.startActivity(intent);
         }
 
         NotificationManagerCompat.from(context).notify((int) System.currentTimeMillis(), builder.build());

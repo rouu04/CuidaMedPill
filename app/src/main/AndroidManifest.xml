@@ -12,6 +12,9 @@
     <!-- Permiso para vibración en las alarmas-->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Pantalla completa en alarmas-->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -60,7 +63,9 @@
         <activity
             android:name=".controlador.activities.AlarmaMedicacionActivity"
             android:showWhenLocked="true"
+            android:showOnLockScreen="true"
             android:turnScreenOn="true"
+            android:launchMode="singleInstance"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 

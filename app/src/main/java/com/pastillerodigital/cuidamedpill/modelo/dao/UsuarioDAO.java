@@ -135,6 +135,20 @@ public class UsuarioDAO extends AbstractDAO<Usuario>{
                 });
     }
 
+    public void getConfigGeneral(String id, OnDataLoadedCallback<ConfNoti> callback){
+        getCollection()
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Usuario u = docToObj(documentSnapshot);
+                    callback.onSuccess(u.getConfNoti());
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {callback.onFailure(e);}
+                });
+    }
+
     /**
      * Obtiene una lista de usuarios asistidos a partir de una lista de ids de usuarios
      * asistidos asignados a un tutor.
