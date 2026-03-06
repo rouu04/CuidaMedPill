@@ -33,13 +33,16 @@ import com.pastillerodigital.cuidamedpill.controlador.adapters.AsistidosAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.AddAndEditUsuarioFragment;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.NotificacionesFragment;
+import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
@@ -452,6 +455,22 @@ public class PerfilFragment extends Fragment implements NotificacionesFragment.O
         uDAO.edit(usrSelf, new OnOperationCallback() {
             @Override public void onSuccess() {
                 UiUtils.mostrarConfirmacion(requireActivity(), "Notificaciones actualizadas");
+
+                // Reprogramar notificaciones locales ---
+                MedicamentoDAO medDAO = new MedicamentoDAO(uidSelf);
+                medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
+                    @Override
+                    public void onSuccess(List<Medicamento> meds) {
+                        for(Medicamento m : meds) {
+                            if(m.getIsNotiGeneral()){
+                                //habrá que comprobar que no es fin de tratamiento
+                                m.setConfNoti(nuevaConf);
+                            }
+                        }
+                        RecordatorioManager.reprogramarMedsGenerales(requireContext(), meds);
+                    }
+                    @Override public void onFailure(Exception e) {}
+                });
             }
             @Override public void onFailure(Exception e) { UiUtils.mostrarErrorYReiniciar(requireActivity()); }
         });

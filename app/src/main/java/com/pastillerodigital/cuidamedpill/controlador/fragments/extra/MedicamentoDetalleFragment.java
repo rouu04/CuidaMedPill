@@ -32,6 +32,7 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -195,6 +196,9 @@ public class MedicamentoDetalleFragment extends Fragment {
                 .setTitle(Mensajes.MED_DET_ELIM)
                 .setMessage(Mensajes.MED_DET_PREG_ELIM)
                 .setPositiveButton(Mensajes.BASIC_ELIMINAR, (d, w) -> {
+                    //Borramos las notificaciones que pueda haber
+                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), medicamento);
+
                     medDAO.delete(medId, new OnOperationCallback() {
                         @Override
                         public void onSuccess() {

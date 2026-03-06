@@ -60,19 +60,29 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
     }
 
     public void getListBasic(OnDataLoadedCallback<List<Medicamento>> callback) {
-        getCollection()
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<Medicamento> listaMedicamentos = new ArrayList<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+        uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() { //para obtener su configuracion
+            @Override
+            public void onSuccess(Usuario user) {
+                getCollection().get().addOnSuccessListener(querySnapshot -> { //get medicamento
+                    List<Medicamento> lista = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         Medicamento med = docToObj(doc);
                         if (med != null) {
-                            listaMedicamentos.add(med);
+                            if (med.getIsNotiGeneral()) { //si es general obtenemos la del usuario
+                                med.setConfNoti(user.getConfNoti());
+                            }
+                            lista.add(med);
                         }
                     }
-                    callback.onSuccess(listaMedicamentos);
-                })
-                .addOnFailureListener(callback::onFailure);
+                    callback.onSuccess(lista);
+                }).addOnFailureListener(callback::onFailure);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
     }
 
     public void getListConIngestas(OnDataLoadedCallback<List<Medicamento>> callback){

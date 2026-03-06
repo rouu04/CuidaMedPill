@@ -1,6 +1,7 @@
 package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
@@ -50,17 +51,21 @@ public class RecordatorioManager {
         if (delay <= 0) return;
 
         TipoNotificacion tipo = TipoNotificacion.ESTANDAR;
+        boolean antiproc = true;
         if (med.getConfNoti() != null) {
             tipo = med.getConfNoti().getTipoNoti();
+            antiproc = med.getConfNoti().isAntiprocrastinador();
         }
 
         //Crea datos para worker
         Data data = new Data.Builder()
+                .putString("idMed", med.getId())
                 .putString("nombreMed", med.getNombreMed())
+                .putLong("tiempoProgramado", tiempoNotificacion)
                 .putString("titulo", "Hora de tu medicación")  // título por defecto
                 .putString("mensaje", "Es momento de tomar: " + med.getNombreMed()) // mensaje por defecto
                 .putString("tipoNotificacion", tipo.toString())
-                .putBoolean("antiprocrastinador", med.getConfNoti().isAntiprocrastinador())
+                .putBoolean("antiprocrastinador", antiproc)
                 .build();
 
         //Crea tarea
@@ -80,5 +85,20 @@ public class RecordatorioManager {
      */
     public static void cancelarRecordatoriosMedicamento(Context context, Medicamento med) {
         WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
+    }
+
+    /**
+     *
+     * @param context
+     * @param listaMeds lista con medicamentos con config general
+     */
+    public static void reprogramarMedsGenerales(Context context, List<Medicamento> listaMeds) {
+        for (Medicamento med : listaMeds) {
+            if (med.getIsNotiGeneral()) {
+                // Cancelamos lo viejo y ponemos lo nuevo con la nueva configuración general
+                cancelarRecordatoriosMedicamento(context, med);
+                programarRecordatoriosMedicamento(context, med);
+            }
+        }
     }
 }

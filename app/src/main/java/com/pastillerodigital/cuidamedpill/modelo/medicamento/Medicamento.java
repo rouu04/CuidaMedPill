@@ -30,6 +30,7 @@ public class Medicamento implements Persistible {
     private String colorSimb;
     private String tipoMedStr;
     private boolean isNotiGeneral = true;
+    private ConfNoti confNoti;
 
     //Opcionales:
     private Timestamp fechaCad;
@@ -46,8 +47,7 @@ public class Medicamento implements Persistible {
     private TipoMed tipoMed;
     @Exclude
     private List<Ingesta> lIngestas =  new ArrayList<>();
-    @Exclude
-    private ConfNoti confNoti;
+
 
     public Medicamento(){}
 
@@ -174,11 +174,10 @@ public class Medicamento implements Persistible {
     public void setlIngestas(List<Ingesta> lIngestas) {
         this.lIngestas = lIngestas;
     }
-    @Exclude
     public ConfNoti getConfNoti() {
         return confNoti;
     }
-    @Exclude
+
     public void setConfNoti(ConfNoti confNoti) {
         this.confNoti = confNoti;
     }
@@ -208,6 +207,8 @@ public class Medicamento implements Persistible {
         med.setHorario(horarioObj);
 
         med.setIsNotiGeneral(doc.getBoolean(Constantes.MED_ISNOTIGENERAL));
+        Map<String, Object> confMap = (Map<String, Object>) doc.get(Constantes.USUARIO_CONFNOTI);
+        med.setConfNoti(ConfNoti.fromMap(confMap));
 
         return med;
     }
