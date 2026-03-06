@@ -18,6 +18,7 @@ import androidx.work.ListenableWorker;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.AlarmaMedicacionActivity;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 /**
  * Gestiona notificaciones, crea el canal y muesta la notificacion
@@ -75,7 +76,7 @@ public class NotificationHelper {
     }
 
     public static void mostrarNotificacion(Context context, String titulo, String mensaje, TipoNotificacion tipo,
-                                           String nombreMed, boolean antiprocrastinador) {
+                                           String nombreMed, boolean antiprocrastinador, String idMed) {
         // Android 13+ requiere permiso
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -105,9 +106,10 @@ public class NotificationHelper {
 
         if (tipo == TipoNotificacion.ALARMA) {
             Intent intent = new Intent(context, AlarmaMedicacionActivity.class);
-            intent.putExtra("nombreMed", nombreMed);
-            intent.putExtra("antiprocrastinador", antiprocrastinador);
 
+            intent.putExtra(Constantes.ARG_MEDID, idMed);
+            intent.putExtra(Constantes.ARG_ANTIPROCRASTINADOR, antiprocrastinador);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             // Flags para forzar la aparición
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TOP |

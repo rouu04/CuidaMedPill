@@ -222,6 +222,8 @@ public class MedicamentoDetalleFragment extends Fragment {
         mostrarSiHayContenido(tvRestantes, medicamento.getnMedRestantes());
         mostrarSiHayContenido(tvNotas, medicamento.getNotasMed());
 
+        tvNombre.setText(medicamento.getNombreMed());
+
         // Tipo y color
         TipoMed tipo = medicamento.getTipoMed() != null ? medicamento.getTipoMed() : TipoMed.CAPSULA;
         imgMedicamento.setImageResource(tipo.getDrawableRes());

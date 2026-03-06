@@ -155,6 +155,7 @@ public class Constantes {
     public static final String ARG_UIDSELF = "uidSelf";
     public static final String ARG_MODO = "Modo";
     public static final String ARG_MEDID = "medId";
+    public static final String ARG_ANTIPROCRASTINADOR= "antiprocrastinador";
 
     //SIMBOLOS MEDICAMENTOS
     public static final int RES_IC_MED_CREMA_LIST = R.drawable.ic_med_crema_list;

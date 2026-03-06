@@ -2,6 +2,9 @@ package com.pastillerodigital.cuidamedpill.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 
 /**
 Clase que incluirá funciones que pueden usar distintas clases relacionadas con la interfaz
@@ -115,6 +119,29 @@ public class UiUtils {
                 .setMessage(mensaje)
                 .setPositiveButton(Mensajes.BASIC_ACEPTAR, null)
                 .show();
+    }
+
+    public static void setDrawableTipoMed(@NonNull android.content.Context context, @NonNull android.widget.ImageView imgTipo,
+                                          @NonNull TipoMed tipoMed, @NonNull String colorSimb) {
+
+        // Obtener drawable del tipo de medicamento
+        Drawable drawable = ContextCompat.getDrawable(context, tipoMed.getDrawableRes());
+        // Obtener color según el color simbólico
+        int colorResId = context.getResources().getIdentifier(colorSimb, Constantes.COLOR, context.getPackageName());
+        int color = ContextCompat.getColor(context, colorResId);
+
+        if (drawable instanceof LayerDrawable) {
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
+            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
+            if (capaColor != null) {
+                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+            imgTipo.setImageDrawable(layerDrawable);
+        } else {
+            drawable = drawable.mutate();
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            imgTipo.setImageDrawable(drawable);
+        }
     }
 
 

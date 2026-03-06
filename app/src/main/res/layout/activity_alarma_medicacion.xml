@@ -50,7 +50,7 @@
         android:id="@+id/btnNoTomado"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="No tomado"
+        android:text="Ignorar"
         android:textSize="18sp"
         android:backgroundTint="#F44336"
         android:textColor="#FFFFFF"/>

@@ -61,7 +61,8 @@ public class NotificacionWorker extends Worker {
             }
         }
 
-        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo, nombreMed, antipro);
+        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo, nombreMed,
+                antipro,idMed);
 
         // AUTO-RECARGA
         if (tiempoProgramado > 0) {

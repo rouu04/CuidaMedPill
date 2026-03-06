@@ -275,22 +275,7 @@ public class HomeFragment extends Fragment {
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
         TipoMed tipoMed = TipoMed.tipoMedFromString(med.getTipoMedStr());
-        Drawable drawable = ContextCompat.getDrawable(getContext(), tipoMed.getDrawableRes());
-        int colorResId = getResources().getIdentifier(med.getColorSimb(), Constantes.COLOR, getContext().getPackageName());
-        int color = ContextCompat.getColor(getContext(), colorResId);
-
-        if(drawable instanceof LayerDrawable){
-            LayerDrawable layerDrawable = (LayerDrawable) drawable;
-            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
-            if(capaColor != null){
-                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            }
-            imgTipo.setImageDrawable(layerDrawable);
-        } else {
-            drawable = drawable.mutate();
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            imgTipo.setImageDrawable(drawable);
-        }
+        UiUtils.setDrawableTipoMed(getContext(), imgTipo, tipoMed, med.getColorSimb());
 
         if(modo == Modo.SUPERVISOR){
             tvTituloDialog.setText(String.format(Mensajes.HOME_CONFING_TITULO_SUPERVISOR, uAlias));
@@ -327,7 +312,6 @@ public class HomeFragment extends Fragment {
             }
 
             Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
-            //AlarmaHelper.cancelarAlarma(requireContext(), ingesta);
             IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
 
             ingestaDAO.add(ingesta, new OnOperationCallback() {
