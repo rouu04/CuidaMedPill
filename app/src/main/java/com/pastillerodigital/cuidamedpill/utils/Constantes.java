@@ -67,6 +67,7 @@ public class Constantes {
     public static final String CONFNOTI_AVISOFINTRATAMIENTO = "avisoFinTratamiento";
     public static final String CONFNOTI_ANTIPROCRASTINADOR = "antiprocrastinador";
     public static final String CONFNOTI_TIPONOTISTR = "tipoNotiStr";
+    public static final String CONFNOTI_AVISOTUTORESOLVIDO = "avisoTutoresOlvido";
     public static final String CONFNOTI_USRSNOTIFICADOSID = "usrsNotificadosId";
 
         //HORARIOS

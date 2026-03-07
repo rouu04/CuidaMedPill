@@ -21,17 +21,22 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.FotoPerfilAdapter;
+import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
+
+import java.util.List;
 
 /**
  * Se usará cuando un tutor quiera añadir o editar un usuario asistido a su cargo
@@ -115,16 +120,30 @@ public class AddAndEditUsuarioFragment extends Fragment {
         fotoPerfilSel = R.drawable.usuario_fotoperfil_default;
         imgUserPhoto.setImageResource(fotoPerfilSel);
 
+        //LOGICA
+
+
         //Notificaciones
         notisFragment = new NotificacionesFragment();
         notisFragment.setModoEdicion(true);
+        notisFragment.setIsVer(false);
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(R.id.containerNotificacionesPerfil, notisFragment)
                 .commitNow();
 
-        //LOGICA
         leerArgumentos();
+
+        if (uidAsist == null && modo == Modo.SUPERVISOR) {
+            view.post(() -> { // Usamos post para asegurar que el fragmento hijo haya terminado de inflar su layout
+                if (isAdded() && notisFragment != null) {
+                    notisFragment.setAsistido(true);
+                    notisFragment.cargarConfiguracionPorDefecto();
+                }
+            });
+        }
+
+
 
         imgUserPhoto.setOnClickListener(v -> mostrarSelectorAvatares());
         btnGuardar.setOnClickListener(v -> {
@@ -165,11 +184,10 @@ public class AddAndEditUsuarioFragment extends Fragment {
                 if(modo == Modo.SUPERVISOR) toolbarSup.setTitle(String.format(Mensajes.PERF_EDIT_ASIST, usuario.getAliasU()));
                 else toolbarSup.setTitle(R.string.text_title_edit);
 
-                if(uEdit.getConfNoti() != null){
-                    notisFragment.cargarDatosEnPantalla(uEdit.getConfNoti());
-                }else{
-                    notisFragment.cargarConfiguracionPorDefecto();
-                }
+
+                if (uidAsist != null) notisFragment.setAsistido(true);
+                if(uEdit.getConfNoti() != null)notisFragment.cargarDatosEnPantalla(uEdit.getConfNoti());
+                else notisFragment.cargarConfiguracionPorDefecto();
 
                 btnGuardar.setText(Mensajes.BASIC_GUARDAR);
                 progressIndicator.setVisibility(View.GONE);
@@ -343,10 +361,24 @@ public class AddAndEditUsuarioFragment extends Fragment {
         usuarioDAO.edit(uEdit, new OnOperationCallback() {
             @Override
             public void onSuccess() {
-                progressIndicator.setVisibility(View.GONE);
-                requireActivity()
-                        .getSupportFragmentManager()
-                        .popBackStack();
+                //cargamos sus medicamentos para cambiar las notificaciones
+                MedicamentoDAO medDAO = new MedicamentoDAO(uEdit.getId());
+                medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
+                    @Override
+                    public void onSuccess(List<Medicamento> meds) {
+                        RecordatorioManager.reprogramarMedsGenerales(requireContext(), meds);
+                        progressIndicator.setVisibility(View.GONE);
+                        requireActivity()
+                                .getSupportFragmentManager()
+                                .popBackStack();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        progressIndicator.setVisibility(View.GONE);
+                        UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    }
+                });
             }
 
             @Override

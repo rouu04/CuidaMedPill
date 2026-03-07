@@ -186,11 +186,7 @@ public class PerfilFragment extends Fragment{
         });
 
         btnEditarPerfil.setOnClickListener(v -> {
-            AddAndEditUsuarioFragment fragment =
-                    AddAndEditUsuarioFragment.newInstance(
-                            uidSelf,
-                            Modo.ESTANDAR
-                    );
+            AddAndEditUsuarioFragment fragment = AddAndEditUsuarioFragment.newInstance(uidSelf, Modo.ESTANDAR);
 
             requireActivity()
                     .getSupportFragmentManager()

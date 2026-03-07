@@ -298,6 +298,14 @@ public class HomeFragment extends Fragment {
             EMomentoDia mom = med.getMomentoDiaFromIngesta(ing);
             if(mom != null) tvHora.setText(mom.toString());
             else tvHora.setText(Utils.timestampToString(fechaProgramada));
+
+            // Cancelar avisos a tutores si existían
+            if (med.getWorkTags() != null) {
+                for (String tag : med.getWorkTags()) {
+                    androidx.work.WorkManager.getInstance(requireContext()).cancelAllWorkByTag(tag);
+                }
+                med.getWorkTags().clear(); // limpiar tags
+            }
         }
 
 

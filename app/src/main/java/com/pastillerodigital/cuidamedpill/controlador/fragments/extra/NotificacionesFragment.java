@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 
@@ -25,13 +27,14 @@ public class NotificacionesFragment extends Fragment {
     private MaterialSwitch switchAvisoCompra;
     private MaterialSwitch switchFinTratamiento;
     private MaterialSwitch switchAntiprocrastinador;
+    private MaterialSwitch switchAvisoTutores;
+    private LinearLayout layoutAvisoTutores;
     private Spinner spTipoNoti;
 
     private TextView tvTitulo;
 
     private ConfNoti originalConf; // Para restaurar si se cancela
-    private boolean modoEdicion = false;
-    private boolean isMed = false;
+    private boolean modoEdicion = false, asist = false, isVer = true;
 
     public NotificacionesFragment() {
         // Constructor vacío requerido
@@ -54,8 +57,11 @@ public class NotificacionesFragment extends Fragment {
         tvTitulo = view.findViewById(R.id.tvTituloNotificaciones);
         spTipoNoti = view.findViewById(R.id.spTipoNoti);
 
+        switchAvisoTutores = view.findViewById(R.id.switchAvisoTutores);
+        layoutAvisoTutores = view.findViewById(R.id.layoutAvisoTutores);
+
         setVistasModoEdicion(modoEdicion);
-        if(isMed) tvTitulo.setVisibility(View.GONE);
+        if(!isVer) tvTitulo.setVisibility(View.GONE);
     }
 
     // El padre llama a esto para pasarle los datos
@@ -74,6 +80,8 @@ public class NotificacionesFragment extends Fragment {
         switchFinTratamiento.setChecked(conf.isAvisoFinTratamiento());
         switchAntiprocrastinador.setChecked(conf.isAntiprocrastinador());
 
+        originalConf.setAvisoTutoresOlvido(conf.isAvisoTutoresOlvido());
+        switchAvisoTutores.setChecked(conf.isAvisoTutoresOlvido());
 
         // Configurar Spinner
         String[] tipos = Arrays.stream(TipoNotificacion.values()).map(Enum::toString).toArray(String[]::new);
@@ -94,20 +102,24 @@ public class NotificacionesFragment extends Fragment {
         int visText = editar ? View.GONE : View.VISIBLE;
 
         View[] controles = {switchAvisoCaducidad, switchAvisoCompra,
-                switchFinTratamiento, switchAntiprocrastinador, spTipoNoti};
+                switchFinTratamiento, switchAntiprocrastinador, spTipoNoti, switchAvisoTutores};
         for (View v : controles) {
             v.setEnabled(editar);
             v.setAlpha(alpha); // forzamos que se vea más fuerte (aunque esté disabled)
         }
-
     }
 
     public void setModoEdicion(boolean modoEdicion) {
         this.modoEdicion = modoEdicion;
     }
 
-    public void setIsMed(boolean isMed){
-        this.isMed = isMed;
+    public void setIsVer(boolean isVer){
+        this.isVer = isVer;
+    }
+
+    public void setAsistido(boolean asistido) {
+        this.asist = asistido;
+        layoutAvisoTutores.setVisibility(asistido ? View.VISIBLE : View.GONE);
     }
 
     public ConfNoti obtenerConfiguracion() {
@@ -122,6 +134,12 @@ public class NotificacionesFragment extends Fragment {
         conf.setTipoNotiStr(seleccion);
         conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(seleccion));
 
+        if(asist){
+            conf.setAvisoTutoresOlvido(switchAvisoTutores.isChecked());
+        } else {
+            conf.setAvisoTutoresOlvido(false); // por defecto
+        }
+
         return conf;
     }
 
@@ -134,7 +152,7 @@ public class NotificacionesFragment extends Fragment {
         conf.setAvisoCaducidad(true);
         conf.setAvisoCompra(true);
         conf.setAvisoFinTratamiento(true);
-        conf.setAntiprocrastinador(false);
+        conf.setAntiprocrastinador(true);
         conf.setTipoNoti(TipoNotificacion.ESTANDAR);
 
         cargarDatosEnPantalla(conf);

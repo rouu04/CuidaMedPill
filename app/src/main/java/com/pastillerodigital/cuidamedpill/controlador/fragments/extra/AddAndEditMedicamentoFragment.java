@@ -270,7 +270,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 tvNotiGeneralInfo.setVisibility(View.GONE);
                 notisFragment = new NotificacionesFragment();
                 notisFragment.setModoEdicion(true);
-                notisFragment.setIsMed(true);
+                notisFragment.setIsVer(false);
                 getChildFragmentManager()
                         .beginTransaction()
                         .replace(R.id.containerNotificacionesMed, notisFragment)

@@ -130,6 +130,31 @@
                     app:useMaterialThemeColors="true"/>
             </LinearLayout>
 
+            <!-- Aviso tutores olvido -->
+            <LinearLayout
+                android:id="@+id/layoutAvisoTutores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Aviso a tutores por olvido"
+                    android:textStyle="bold"
+                    android:textSize="15sp"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAvisoTutores"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useMaterialThemeColors="true"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

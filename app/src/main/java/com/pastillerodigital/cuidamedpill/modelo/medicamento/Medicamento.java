@@ -47,6 +47,8 @@ public class Medicamento implements Persistible {
     private TipoMed tipoMed;
     @Exclude
     private List<Ingesta> lIngestas =  new ArrayList<>();
+    @Exclude
+    private List<String> workTags = new ArrayList<>(); // Lista para guardar tags de WorkManager de avisos a tutores
 
 
     public Medicamento(){}
@@ -181,6 +183,16 @@ public class Medicamento implements Persistible {
 
     public void setConfNoti(ConfNoti confNoti) {
         this.confNoti = confNoti;
+    }
+    @Exclude
+    public void addWorkTag(String tag){
+        if(workTags == null) workTags = new ArrayList<>();
+        if(!workTags.contains(tag)) workTags.add(tag);
+    }
+    @Exclude
+    public List<String> getWorkTags(){
+        if(workTags == null) workTags = new ArrayList<>();
+        return workTags;
     }
 
     public static Medicamento doctoObj(DocumentSnapshot doc){

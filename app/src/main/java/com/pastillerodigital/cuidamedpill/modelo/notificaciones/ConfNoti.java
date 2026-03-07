@@ -23,6 +23,7 @@ public class ConfNoti implements Persistible {
     private boolean avisoFinTratamiento;
     private boolean antiprocrastinador;
     private String tipoNotiStr;
+    private boolean avisoTutoresOlvido;
 
     @Exclude
     private String confNotiId;
@@ -39,13 +40,14 @@ public class ConfNoti implements Persistible {
     }
 
     public ConfNoti(boolean avisoCaducidad, boolean avisoCompra, boolean avisoFinTratamiento, TipoNotificacion tipoNotis,
-                    boolean antiprocrastinador) {
+                    boolean antiprocrastinador, boolean avisoTutoresOlvido) {
         this.avisoCaducidad = avisoCaducidad;
         this.avisoCompra = avisoCompra;
         this.avisoFinTratamiento = avisoFinTratamiento;
         this.tipoNoti = tipoNotis;
         this.tipoNotiStr = tipoNotis.toString();
         this.antiprocrastinador = antiprocrastinador;
+        this.avisoTutoresOlvido = avisoTutoresOlvido;
     }
 
     public boolean isAvisoCaducidad() {
@@ -88,6 +90,14 @@ public class ConfNoti implements Persistible {
         this.antiprocrastinador = antiprocrastinador;
     }
 
+    public boolean isAvisoTutoresOlvido() {
+        return avisoTutoresOlvido;
+    }
+
+    public void setAvisoTutoresOlvido(boolean avisoTutoresOlvido) {
+        this.avisoTutoresOlvido = avisoTutoresOlvido;
+    }
+
     @Override
     @Exclude
     public void setId(String id) {
@@ -128,6 +138,9 @@ public class ConfNoti implements Persistible {
             confNoti.setTipoNoti(TipoNotificacion.valueOf(tipoNotiStr));
         }
 
+        Boolean avisoTut = doc.getBoolean(Constantes.CONFNOTI_AVISOTUTORESOLVIDO);
+        if(avisoTut != null) confNoti.setAvisoTutoresOlvido(avisoTut);
+
         return confNoti;
     }
 
@@ -141,12 +154,15 @@ public class ConfNoti implements Persistible {
         conf.setAvisoFinTratamiento((Boolean) map.get(Constantes.CONFNOTI_AVISOFINTRATAMIENTO));
         conf.setAntiprocrastinador((Boolean) map.get(Constantes.CONFNOTI_ANTIPROCRASTINADOR));
 
+        if (map.containsKey(Constantes.CONFNOTI_AVISOTUTORESOLVIDO)) {
+            conf.setAvisoTutoresOlvido((Boolean) map.get(Constantes.CONFNOTI_AVISOTUTORESOLVIDO));
+        }
+
         String tipo = (String) map.get(Constantes.CONFNOTI_TIPONOTISTR);
         if (tipo != null) {
             conf.setTipoNotiStr(tipo);
             conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(tipo));
         }
-
 
         return conf;
     }
