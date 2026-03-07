@@ -23,6 +23,7 @@ import com.pastillerodigital.cuidamedpill.controlador.fragments.MedicamentosFrag
 import com.pastillerodigital.cuidamedpill.controlador.fragments.PerfilFragment;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoRealTimeManager;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.NotificationHelper;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
@@ -93,11 +94,16 @@ public class MainActivity extends AppCompatActivity {
             Menu menu = navInferior.getMenu();
             MenuItem perfilItem = menu.findItem(R.id.nav_perfil);
             perfilItem.setVisible(false);
+
+            MedicamentoRealTimeManager realtimeManager = new MedicamentoRealTimeManager();
+            realtimeManager.iniciarListener(getApplicationContext(), uid);
         }
 
         if (savedInstanceState == null) {
             replaceFragment(homeFragment);
         }
+
+
 
         // Listener para cambiar fragments
         navInferior.setOnItemSelectedListener(item -> {

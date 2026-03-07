@@ -694,7 +694,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.add(med, new OnOperationCallback() {
             @Override
             public void onSuccess() {//medicamento añadido, volvemos a la lista
-                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                if(modo != Modo.SUPERVISOR) RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
@@ -711,8 +711,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.edit(med, new OnOperationCallback() {
             @Override
             public void onSuccess() { // Medicamento actualizado, volvemos atrás
-                RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
-                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                if(modo != Modo.SUPERVISOR){
+                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
+                    RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                }
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
