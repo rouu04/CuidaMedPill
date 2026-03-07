@@ -48,12 +48,13 @@ public class MedicamentoDetalleFragment extends Fragment {
 
     private MaterialToolbar toolbarSup;
     private ImageView imgMedicamento;
-    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo, tvSigToma;
+    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo, tvSigToma, tvNotiGeneralInfo;
     private ChipGroup chipGroupHoras;
-    private LinearLayout layoutNotificaciones, layoutFormMedDetalle;
+    private LinearLayout layoutFormMedDetalle;
     private MaterialButton btnEditar, btnEliminar;
     private View progressMedDetalle;
     private LinearLayout layoutFormNotificaciones, layoutFormOpciones;
+    private NotificacionesFragment notisFragment;
 
     //LOGICA
     private MedicamentoDAO medDAO;
@@ -97,7 +98,8 @@ public class MedicamentoDetalleFragment extends Fragment {
         tvIntervalo = view.findViewById(R.id.tvIntervaloDet);
         tvSigToma = view.findViewById(R.id.tvSigTomaDet);
         chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
-        layoutNotificaciones = view.findViewById(R.id.layoutNotificacionesDetalle);
+
+        tvNotiGeneralInfo = view.findViewById(R.id.tvNotiGeneralInfo);
 
         tvFechaCad = view.findViewById(R.id.tvFechaCad);
         tvFechaFin = view.findViewById(R.id.tvFechaFin);
@@ -154,6 +156,7 @@ public class MedicamentoDetalleFragment extends Fragment {
         btnEliminar.setOnClickListener(v -> {
             eliminarMed(medId);
         });
+
     }
 
     private void cargarMed() {
@@ -252,33 +255,29 @@ public class MedicamentoDetalleFragment extends Fragment {
         else tvSigToma.setText("-");
 
 
-        // Notificaciones placeholder
-        layoutNotificaciones.removeAllViews();
-        TextView tvNotif = new TextView(requireContext());
-        tvNotif.setText(Mensajes.MED_DET_NOTISLIKEGEN);
-        layoutNotificaciones.addView(tvNotif);
+        // Notificaciones
+        configurarNotificaciones();
     }
+    private void configurarNotificaciones(){
+        if(medicamento.getIsNotiGeneral()){  // Usa configuración general
+            tvNotiGeneralInfo.setVisibility(View.VISIBLE);
 
-    private void actualizarImagenColor(TipoMed tipo, int colorRes) {
-        // Carga drawable correspondiente al tipo de medicamento
-        Drawable drawable = ContextCompat.getDrawable(requireContext(), tipo.getDrawableRes());
-        if(drawable == null) return;
-
-        int color = ContextCompat.getColor(requireContext(), colorRes);
-
-        if (drawable instanceof LayerDrawable) { //si es un layout con capa fija y otra con color se cambia solo la capa color
-            LayerDrawable layerDrawable = (LayerDrawable) drawable;
-            Drawable capaColor = layerDrawable.findDrawableByLayerId(tipo.getDrawableResColoreable());
-
-            if (capaColor != null) {
-                capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            if(notisFragment != null){ //para que no se muestre
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .remove(notisFragment)
+                        .commit();
             }
-            imgMedicamento.setImageDrawable(layerDrawable); //asigna dawable colorado a imageview
+        }else{ // Usa configuración personalizada
+            tvNotiGeneralInfo.setVisibility(View.GONE);
 
-        } else { //en caso de tener un icono simple con tod*o coloreable
-            drawable = drawable.mutate(); // importante para no afectar otras instancias
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            imgMedicamento.setImageDrawable(drawable);
+            notisFragment = new NotificacionesFragment();
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.containerNotificacionesMed, notisFragment)
+                    .commitNow();
+
+            notisFragment.cargarDatosEnPantalla(medicamento.getConfNoti());
         }
     }
 

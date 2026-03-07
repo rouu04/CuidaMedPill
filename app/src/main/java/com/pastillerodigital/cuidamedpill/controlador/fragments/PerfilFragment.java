@@ -60,7 +60,7 @@ import java.util.List;
  * Fragmento que se muestra al darle al icono de la persona. Los usuarios asistidos no tienen acceso a
  * esta pantalla.
  */
-public class PerfilFragment extends Fragment implements NotificacionesFragment.OnNotificacionesListener{
+public class PerfilFragment extends Fragment{
 
     private View progressPerfil, layoutContenido;
     private android.widget.ImageView imgFotoPerfil;
@@ -143,7 +143,6 @@ public class PerfilFragment extends Fragment implements NotificacionesFragment.O
 
         //Elementos de notificaciones
         notisFragment = new NotificacionesFragment();
-        notisFragment.setListener(this); // Nos suscribimos a los cambios
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.containerNotificaciones, notisFragment)
                 .commitNow();
@@ -444,35 +443,6 @@ public class PerfilFragment extends Fragment implements NotificacionesFragment.O
             public void onFailure(Exception e) {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
-        });
-    }
-
-    @Override
-    public void onGuardarConfiguracion(ConfNoti nuevaConf) {
-        // cuando el usuario pulse "Guardar" en el fragmento hijo
-        usrSelf.setConfNoti(nuevaConf);
-
-        uDAO.edit(usrSelf, new OnOperationCallback() {
-            @Override public void onSuccess() {
-                UiUtils.mostrarConfirmacion(requireActivity(), "Notificaciones actualizadas");
-
-                // Reprogramar notificaciones locales ---
-                MedicamentoDAO medDAO = new MedicamentoDAO(uidSelf);
-                medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
-                    @Override
-                    public void onSuccess(List<Medicamento> meds) {
-                        for(Medicamento m : meds) {
-                            if(m.getIsNotiGeneral()){
-                                //habrá que comprobar que no es fin de tratamiento
-                                m.setConfNoti(nuevaConf);
-                            }
-                        }
-                        RecordatorioManager.reprogramarMedsGenerales(requireContext(), meds);
-                    }
-                    @Override public void onFailure(Exception e) {}
-                });
-            }
-            @Override public void onFailure(Exception e) { UiUtils.mostrarErrorYReiniciar(requireActivity()); }
         });
     }
 

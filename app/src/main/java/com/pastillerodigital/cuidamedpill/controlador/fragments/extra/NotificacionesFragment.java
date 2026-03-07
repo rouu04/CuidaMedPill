@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
@@ -27,22 +25,13 @@ public class NotificacionesFragment extends Fragment {
     private MaterialSwitch switchAvisoCompra;
     private MaterialSwitch switchFinTratamiento;
     private MaterialSwitch switchAntiprocrastinador;
-
     private Spinner spTipoNoti;
-    private MaterialButton btnEditarNotis;
-    private MaterialButton btnGuardarNotis;
-    private MaterialButton btnCancelarNotis;
+
+    private TextView tvTitulo;
 
     private ConfNoti originalConf; // Para restaurar si se cancela
-
-    // Definimos una interfaz para avisar al Perfil cuando hay que guardar
-    public interface OnNotificacionesListener {
-        void onGuardarConfiguracion(ConfNoti nuevaConf);
-    }
-
-    private OnNotificacionesListener listener;
-
-
+    private boolean modoEdicion = false;
+    private boolean isMed = false;
 
     public NotificacionesFragment() {
         // Constructor vacío requerido
@@ -58,45 +47,15 @@ public class NotificacionesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Inicializamos
         switchAvisoCaducidad = view.findViewById(R.id.switchAvisoCaducidad);
         switchAvisoCompra = view.findViewById(R.id.switchAvisoCompra);
         switchFinTratamiento = view.findViewById(R.id.switchFinTratamiento);
         switchAntiprocrastinador = view.findViewById(R.id.switchAntiprocrastinador);
+        tvTitulo = view.findViewById(R.id.tvTituloNotificaciones);
         spTipoNoti = view.findViewById(R.id.spTipoNoti);
 
-        btnEditarNotis = view.findViewById(R.id.btnEditarNotis);
-        btnGuardarNotis = view.findViewById(R.id.btnGuardarNotis);
-        btnCancelarNotis = view.findViewById(R.id.btnCancelarNotis);
-
-        setModoEdicion(false); //tod*o quitado menos el botón de editar
-
-        // Botones
-        btnEditarNotis.setOnClickListener(v -> setModoEdicion(true));
-        btnGuardarNotis.setOnClickListener(v -> {
-            if (listener != null) {
-                ConfNoti nuevaConf = new ConfNoti();
-                nuevaConf.setAvisoCaducidad(switchAvisoCaducidad.isChecked());
-                nuevaConf.setAvisoCompra(switchAvisoCompra.isChecked());
-                nuevaConf.setAvisoFinTratamiento(switchFinTratamiento.isChecked());
-                nuevaConf.setAntiprocrastinador(switchAntiprocrastinador.isChecked());
-
-                // Obtener valor del spinner
-                String seleccion = spTipoNoti.getSelectedItem().toString();
-                nuevaConf.setTipoNotiStr(seleccion);
-                nuevaConf.setTipoNoti(TipoNotificacion.tipoNotiFromString(seleccion));
-
-                listener.onGuardarConfiguracion(nuevaConf);
-            }
-            setModoEdicion(false);
-        });
-
-        btnCancelarNotis.setOnClickListener(v -> {
-            if (originalConf != null) {
-                cargarDatosEnPantalla(originalConf); // Revertimos a los datos originales
-            }
-            setModoEdicion(false);
-        });
+        setVistasModoEdicion(modoEdicion);
+        if(isMed) tvTitulo.setVisibility(View.GONE);
     }
 
     // El padre llama a esto para pasarle los datos
@@ -129,7 +88,7 @@ public class NotificacionesFragment extends Fragment {
     /**
      * Habilita/deshabilita elementos según modo edición
      */
-    public void setModoEdicion(boolean editar) {
+    public void setVistasModoEdicion(boolean editar) {
         //Para que se vea bien aunque esté disabled
         float alpha = editar ? 1.0f : 0.85f; // casi opaco cuando está deshabilitado
         int visText = editar ? View.GONE : View.VISIBLE;
@@ -141,19 +100,45 @@ public class NotificacionesFragment extends Fragment {
             v.setAlpha(alpha); // forzamos que se vea más fuerte (aunque esté disabled)
         }
 
-        switchAvisoCaducidad.setEnabled(editar);
-        switchAvisoCompra.setEnabled(editar);
-        switchFinTratamiento.setEnabled(editar);
-        switchAntiprocrastinador.setEnabled(editar);
-        spTipoNoti.setEnabled(editar);
-
-        btnEditarNotis.setVisibility(editar ? View.GONE : View.VISIBLE);
-        btnGuardarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
-        btnCancelarNotis.setVisibility(editar ? View.VISIBLE : View.GONE);
     }
 
-    public void setListener(OnNotificacionesListener listener) {
-        this.listener = listener;
+    public void setModoEdicion(boolean modoEdicion) {
+        this.modoEdicion = modoEdicion;
     }
+
+    public void setIsMed(boolean isMed){
+        this.isMed = isMed;
+    }
+
+    public ConfNoti obtenerConfiguracion() {
+        ConfNoti conf = new ConfNoti();
+
+        conf.setAvisoCaducidad(switchAvisoCaducidad.isChecked());
+        conf.setAvisoCompra(switchAvisoCompra.isChecked());
+        conf.setAvisoFinTratamiento(switchFinTratamiento.isChecked());
+        conf.setAntiprocrastinador(switchAntiprocrastinador.isChecked());
+
+        String seleccion = spTipoNoti.getSelectedItem().toString();
+        conf.setTipoNotiStr(seleccion);
+        conf.setTipoNoti(TipoNotificacion.tipoNotiFromString(seleccion));
+
+        return conf;
+    }
+
+    /**
+     * Será llamado para que al pasar de configuración general a personalizada empiece con estos valores
+     * en vez de tenerlas todas desactivadas
+     */
+    public void cargarConfiguracionPorDefecto() {
+        ConfNoti conf = new ConfNoti();
+        conf.setAvisoCaducidad(true);
+        conf.setAvisoCompra(true);
+        conf.setAvisoFinTratamiento(true);
+        conf.setAntiprocrastinador(false);
+        conf.setTipoNoti(TipoNotificacion.ESTANDAR);
+
+        cargarDatosEnPantalla(conf);
+    }
+
 
 }

@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +45,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -66,10 +68,13 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private View viewColor, progressMedEdit;
     private List<Hora> listaHoras = new ArrayList<>();
     private ChipGroup layoutHorasContainer; //layout profesional de las horas
-    private SwitchMaterial switchHorario; //toggle
+    private SwitchMaterial switchHorario, switchNotiGeneral; //toggle
     private LinearLayout layoutHorarioContainer, layoutFormMedEditAdd;
     private MaterialCardView cardTipoMed;
     private MaterialToolbar toolbarSup;
+    private TextView tvNotiGeneralInfo;
+    private NotificacionesFragment notisFragment;
+    private boolean isNotiGeneral = true;
 
     //Elementos lógicos
     private MedicamentoDAO medDAO;
@@ -155,6 +160,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         edtNMedRestantes = view.findViewById(R.id.edtNMedRestantes);
         layoutNotasMed = view.findViewById(R.id.layoutNotasMed);
         edtNotasMed = view.findViewById(R.id.edtNotasMed);
+
+        //Notificaciones
+        switchNotiGeneral = view.findViewById(R.id.switchNotiGeneral);
+        tvNotiGeneralInfo = view.findViewById(R.id.tvNotiGeneralInfo);
 
         viewColor = view.findViewById(R.id.viewColor);
 
@@ -243,6 +252,33 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                         .getSupportFragmentManager()
                         .popBackStack()
         );
+
+        //Notificaciones
+        switchNotiGeneral.setChecked(true);
+        switchNotiGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isNotiGeneral = isChecked;
+            if(isChecked){
+                tvNotiGeneralInfo.setVisibility(View.VISIBLE);
+                Fragment existing = getChildFragmentManager().findFragmentById(R.id.containerNotificacionesMed);
+                if(existing != null){
+                    getChildFragmentManager()
+                            .beginTransaction()
+                            .remove(existing)
+                            .commit();
+                }
+            }else{
+                tvNotiGeneralInfo.setVisibility(View.GONE);
+                notisFragment = new NotificacionesFragment();
+                notisFragment.setModoEdicion(true);
+                notisFragment.setIsMed(true);
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerNotificacionesMed, notisFragment)
+                        .commitNow();
+                if(medEdit != null && medEdit.getConfNoti() != null)notisFragment.cargarDatosEnPantalla(medEdit.getConfNoti());
+                else notisFragment.cargarConfiguracionPorDefecto();
+            }
+        });
 
     }
 
@@ -441,11 +477,16 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         if(medEdit != null && medEdit.getFechaInicio() != null) fechaInicio = medEdit.getFechaInicio();
         else fechaInicio = sigToma;
 
+        //Notificaciones
+        ConfNoti confNoti = null;
+        if(!isNotiGeneral && notisFragment != null){
+            confNoti = notisFragment.obtenerConfiguracion();
+        }
+
         Medicamento medActual = new Medicamento(colorString, selectedTipo.toString(), fechaCad , nombre,
-                fechaFin, fechaInicio, nCajas, horario, null, notasMed, true);
+                fechaFin, fechaInicio, nCajas, horario, null, notasMed, isNotiGeneral, confNoti);
         if(isEdit){
             medActual.setId(medEdit.getId());
-            medActual.setIsNotiGeneral(medEdit.getIsNotiGeneral());
         }
 
         //No pueden haber dos medicamentos con el mismo nombre para el mismo usuario:
@@ -638,6 +679,14 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             horarioActivo = false;
             switchHorario.setChecked(false);
             layoutHorarioContainer.setVisibility(View.GONE);
+        }
+
+        if(med.getIsNotiGeneral()){
+            switchNotiGeneral.setChecked(true);
+        }else if(med.getConfNoti() != null){
+            notisFragment.cargarDatosEnPantalla(med.getConfNoti());
+        }else{
+            notisFragment.cargarConfiguracionPorDefecto();
         }
     }
 

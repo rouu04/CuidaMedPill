@@ -25,6 +25,7 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -52,6 +53,7 @@ public class AddAndEditUsuarioFragment extends Fragment {
     private String uidSelf, uidAsist;
     private Usuario uEdit;
     Modo modo;
+    private NotificacionesFragment notisFragment;
 
 
     //NUEVAS INSTANCIAS
@@ -113,6 +115,14 @@ public class AddAndEditUsuarioFragment extends Fragment {
         fotoPerfilSel = R.drawable.usuario_fotoperfil_default;
         imgUserPhoto.setImageResource(fotoPerfilSel);
 
+        //Notificaciones
+        notisFragment = new NotificacionesFragment();
+        notisFragment.setModoEdicion(true);
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.containerNotificacionesPerfil, notisFragment)
+                .commitNow();
+
         //LOGICA
         leerArgumentos();
 
@@ -154,6 +164,12 @@ public class AddAndEditUsuarioFragment extends Fragment {
                 layoutPassword.setHint(Mensajes.PERF_EDITPASSWD);
                 if(modo == Modo.SUPERVISOR) toolbarSup.setTitle(String.format(Mensajes.PERF_EDIT_ASIST, usuario.getAliasU()));
                 else toolbarSup.setTitle(R.string.text_title_edit);
+
+                if(uEdit.getConfNoti() != null){
+                    notisFragment.cargarDatosEnPantalla(uEdit.getConfNoti());
+                }else{
+                    notisFragment.cargarConfiguracionPorDefecto();
+                }
 
                 btnGuardar.setText(Mensajes.BASIC_GUARDAR);
                 progressIndicator.setVisibility(View.GONE);
@@ -317,6 +333,11 @@ public class AddAndEditUsuarioFragment extends Fragment {
             String salt = Utils.generarSalt();
             uEdit.setSalt(salt);
             uEdit.setPasswordHash(Utils.hashPassword(password, salt));
+        }
+
+        if(notisFragment != null){
+            ConfNoti nuevaConf = notisFragment.obtenerConfiguracion();
+            uEdit.setConfNoti(nuevaConf);
         }
 
         usuarioDAO.edit(uEdit, new OnOperationCallback() {

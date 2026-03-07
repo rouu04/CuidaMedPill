@@ -78,7 +78,8 @@
     <!-- Espacio -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="40dp"/>
+        android:layout_height="100dp"/>
+
 
     <!-- Botones -->
     <com.google.android.material.button.MaterialButton

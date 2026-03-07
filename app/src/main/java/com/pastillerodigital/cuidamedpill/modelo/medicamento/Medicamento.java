@@ -53,7 +53,7 @@ public class Medicamento implements Persistible {
 
     public Medicamento(String colorSimb, String tipoMedStr, Timestamp fechaCad, String nombreM,
                        Timestamp fechaFin, Timestamp fechaInicio, int nMedRestantes, Horario horario,
-                       String idM, String notasMed, boolean isNotiGeneral) {
+                       String idM, String notasMed, boolean isNotiGeneral, ConfNoti confNoti) {
         this.colorSimb = colorSimb;
         this.tipoMedStr = tipoMedStr;
         this.tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
@@ -66,6 +66,7 @@ public class Medicamento implements Persistible {
         this.notasMed = notasMed;
         this.fechaInicio = fechaInicio;
         this.isNotiGeneral = isNotiGeneral;
+        this.confNoti = confNoti;
     }
 
     public String getNombreMed() {

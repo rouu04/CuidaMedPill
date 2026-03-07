@@ -264,30 +264,36 @@
                 </LinearLayout>
 
             <!-- Contenedor Notificaciones -->
-            <LinearLayout
-                android:id="@+id/layoutFormNotificacionesDetalle"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_top">
-
-                <!-- Título sección: Notificaciones -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hint_med_det_NotisMed"
-                    android:textStyle="bold"
-                    android:textColor="@color/md_primary_dark"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                    android:layout_marginTop="@dimen/margin_top"/>
-
                 <LinearLayout
-                    android:id="@+id/layoutNotificacionesDetalle"
+                    android:id="@+id/layoutFormNotificacionesDetalle"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_top_element"/>
-            </LinearLayout>
+                    android:layout_marginTop="@dimen/margin_top">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_med_det_NotisMed"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_primary_dark"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                        android:layout_marginTop="@dimen/margin_top"/>
+
+                    <!-- Texto cuando usa configuración general -->
+                    <TextView
+                        android:id="@+id/tvNotiGeneralInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Este medicamento utiliza la configuración general definida en el perfil."
+                        android:layout_marginTop="8dp"/>
+
+                    <!-- Contenedor del fragmento -->
+                    <FrameLayout
+                        android:id="@+id/containerNotificacionesMed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
 
             <!-- Contenedor Opciones -->
             <LinearLayout

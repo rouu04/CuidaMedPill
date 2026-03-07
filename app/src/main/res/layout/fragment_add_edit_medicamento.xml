@@ -297,6 +297,37 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvNotificaciones"
+            android:text="Notificaciones"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_primary_dark"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchNotiGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usar configuración general"
+            android:layout_marginTop="@dimen/margin_top_element"/>
+
+        <TextView
+            android:id="@+id/tvNotiGeneralInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Este medicamento usará la configuración de notificaciones definida en el perfil."
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/text_hint_size"
+            android:textColor="@color/md_on_background"/>
+
+        <FrameLayout
+            android:id="@+id/containerNotificacionesMed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_element"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardar"
             style="@style/Widget.MaterialComponents.Button"
