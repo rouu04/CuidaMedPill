@@ -56,9 +56,9 @@ public class RecordatorioManager {
         boolean antiproc = true;
 
 
-        if (med.getConfNoti() != null) {
+        if (med.getConfNoti() != null && !med.getIsNotiGeneral()) {
             programarConConfig(context, med, tiempoNotificacion, med.getConfNoti().getTipoNoti(), med.getConfNoti().isAntiprocrastinador());
-        } else if (med.getIsNotiGeneral()) {
+        } else{
 
             SharedPreferences prefs = context.getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, Context.MODE_PRIVATE);
             String idSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
@@ -85,8 +85,6 @@ public class RecordatorioManager {
                     programarConConfig(context, med, tiempoNotificacion, tipo, antiproc);
                 }
             });
-        } else {
-            programarConConfig(context, med, tiempoNotificacion, tipo, antiproc);
         }
     }
     private static void programarConConfig(Context context, Medicamento med, long tiempoNotificacion,

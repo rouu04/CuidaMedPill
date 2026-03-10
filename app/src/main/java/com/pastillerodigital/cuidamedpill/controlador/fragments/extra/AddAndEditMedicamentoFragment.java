@@ -694,7 +694,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.add(med, new OnOperationCallback() {
             @Override
             public void onSuccess() {//medicamento añadido, volvemos a la lista
-                if(modo != Modo.SUPERVISOR) RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                if(modo != Modo.SUPERVISOR){
+                    RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                    
+                }
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();

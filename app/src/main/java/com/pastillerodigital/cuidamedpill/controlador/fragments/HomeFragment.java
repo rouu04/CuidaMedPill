@@ -347,8 +347,6 @@ public class HomeFragment extends Fragment {
                             }
                         });
                     }
-
-                    uDAO.getBasic();
                 }
 
                 @Override
