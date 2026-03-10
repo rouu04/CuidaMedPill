@@ -25,6 +25,7 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoRealTimeManager;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.NotificationHelper;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,13 +40,12 @@ public class MainActivity extends AppCompatActivity {
     private MedicamentosFragment medicamentosFragment;
     private CalendarioFragment calendarioFragment;
     private PerfilFragment perfilFragment;
-
     private Modo modo;
+    private MedicamentoRealTimeManager realtimeManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("DEBUG_APP", "Entrando a onCreate");
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         AndroidThreeTen.init(this);
@@ -95,8 +95,10 @@ public class MainActivity extends AppCompatActivity {
             MenuItem perfilItem = menu.findItem(R.id.nav_perfil);
             perfilItem.setVisible(false);
 
-            MedicamentoRealTimeManager realtimeManager = new MedicamentoRealTimeManager();
+            realtimeManager = new MedicamentoRealTimeManager();
             realtimeManager.iniciarListener(getApplicationContext(), uid);
+
+            RecordatorioManager.sincronizarRecordatorios(this, uid);
         }
 
         if (savedInstanceState == null) {
@@ -210,6 +212,15 @@ public class MainActivity extends AppCompatActivity {
 
     public Modo getModo() {
         return modo;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (realtimeManager != null) {
+            realtimeManager.detenerListener();
+        }
     }
 
 }

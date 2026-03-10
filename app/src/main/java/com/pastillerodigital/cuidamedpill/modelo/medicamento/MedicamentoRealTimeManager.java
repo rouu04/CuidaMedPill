@@ -9,6 +9,7 @@ import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioMana
 
 public class MedicamentoRealTimeManager {
     private ListenerRegistration listener;
+
     public void iniciarListener(Context context, String uid) {
         //todo cambiar y ponerlo sin cosas hardocded
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -19,7 +20,7 @@ public class MedicamentoRealTimeManager {
                     if (e != null || snapshots == null) return;
 
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        Medicamento med = dc.getDocument().toObject(Medicamento.class);
+                        Medicamento med = Medicamento.doctoObj(dc.getDocument());
                         med.setId(dc.getDocument().getId());
 
                         switch (dc.getType()) {

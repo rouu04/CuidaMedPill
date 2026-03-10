@@ -10,6 +10,8 @@ import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
@@ -165,6 +167,28 @@ public class RecordatorioManager {
 
         // Guardar el tag para poder cancelarlo más tarde si se registra la ingesta
         med.addWorkTag(tag); // suponiendo que agregamos un ArrayList<String> en Medicamento para estos tags
+    }
+
+    public static void sincronizarRecordatorios(Context context, String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("usuarios")
+                .document(uid)
+                .collection("medicamentos")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        Medicamento med = Medicamento.doctoObj(doc);
+                        if (med == null) continue;
+                        med.setId(doc.getId());
+                        // cancelar por si existía
+                        cancelarRecordatoriosMedicamento(context, med);
+                        // volver a programar
+                        programarRecordatoriosMedicamento(context, med);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
     }
 
 }
