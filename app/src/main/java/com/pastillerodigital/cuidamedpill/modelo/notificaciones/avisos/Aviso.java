@@ -1,4 +1,4 @@
-package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
+package com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;

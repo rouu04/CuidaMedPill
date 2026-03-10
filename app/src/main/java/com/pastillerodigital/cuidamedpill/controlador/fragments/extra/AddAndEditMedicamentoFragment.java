@@ -46,7 +46,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;

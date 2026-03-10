@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.List;

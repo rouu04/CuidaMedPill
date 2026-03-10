@@ -1,4 +1,4 @@
-package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
+package com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos;
 
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;

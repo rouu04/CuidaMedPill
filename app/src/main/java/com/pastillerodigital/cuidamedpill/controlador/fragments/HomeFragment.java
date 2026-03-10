@@ -40,6 +40,7 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
@@ -64,6 +65,7 @@ public class HomeFragment extends Fragment {
     private Modo modo;
     private MedicamentoDAO medDAO;
     private UsuarioDAO uDAO;
+    private Usuario usr;
     private IngestasAdapter medHoyAdapter;
     private List<Medicamento> lMed = new ArrayList<>();
     private List<Ingesta> ingPendientes = new ArrayList<>();
@@ -128,15 +130,10 @@ public class HomeFragment extends Fragment {
                 tvTitleAvisos.setText(Mensajes.HOME_TITLE_AVISOS);
                 tvMedsHoy.setText(Mensajes.HOME_MEDS_HOY);
             }
-            else {
-                setInterfazSupervisor();
-            }
+            cargaUsr();
         }
     }
 
-    private void setInterfazSupervisor(){
-        cargaUsr(); //establece título pantallas con el alias del asistido
-    }
 
     private void setButtonListeners(){
         this.fab.setOnClickListener(v->{
@@ -205,9 +202,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(Usuario data) {
                 uAlias = data.getAliasU();
-                tvTitleHome.setText(String.format(Mensajes.HOME_TITLE_SUPERVISOR, uAlias));
-                tvTitleAvisos.setText(String.format(Mensajes.HOME_TITLE_AVISOS_SUPERVISOR));
-                tvMedsHoy.setText(String.format(Mensajes.HOME_MEDS_HOY_SUPERVISOR));
+                if(modo == Modo.SUPERVISOR){
+                    tvTitleHome.setText(String.format(Mensajes.HOME_TITLE_SUPERVISOR, uAlias));
+                    tvTitleAvisos.setText(String.format(Mensajes.HOME_TITLE_AVISOS_SUPERVISOR));
+                    tvMedsHoy.setText(String.format(Mensajes.HOME_MEDS_HOY_SUPERVISOR));
+                }
+                usr = data;
             }
 
             @Override
@@ -325,6 +325,7 @@ public class HomeFragment extends Fragment {
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
+                    AvisoManager.comprobarAvisos(getContext(), usr, med);
                     //puede haber medicamentos con horario que tengan ingestas fuera de horario
                     if(med.getHorario() != null && fechaProgramada != null){
                         medHoyAdapter.notifyDataSetChanged();
@@ -346,6 +347,8 @@ public class HomeFragment extends Fragment {
                             }
                         });
                     }
+
+                    uDAO.getBasic();
                 }
 
                 @Override

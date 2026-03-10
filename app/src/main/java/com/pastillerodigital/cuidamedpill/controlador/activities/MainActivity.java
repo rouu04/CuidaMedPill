@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,8 +23,8 @@ import com.pastillerodigital.cuidamedpill.controlador.fragments.PerfilFragment;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoRealTimeManager;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.NotificationHelper;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.NotificationHelper;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class MainActivity extends AppCompatActivity {

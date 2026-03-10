@@ -5,7 +5,7 @@ import android.content.Context;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.RecordatorioManager;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 
 public class MedicamentoRealTimeManager {
     private ListenerRegistration listener;

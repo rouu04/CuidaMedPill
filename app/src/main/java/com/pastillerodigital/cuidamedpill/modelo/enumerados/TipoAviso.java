@@ -5,6 +5,7 @@ public enum TipoAviso {
     CADUCIDAD,
     COMPRA,
     OLVIDO,
+    FIN_TRATAMIENTO,
     INFO_GENERAL;
 
     public static TipoAviso fromString(String value) {

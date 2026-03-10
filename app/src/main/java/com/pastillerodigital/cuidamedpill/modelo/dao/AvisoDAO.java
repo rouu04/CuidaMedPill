@@ -2,7 +2,7 @@ package com.pastillerodigital.cuidamedpill.modelo.dao;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.Aviso;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.Aviso;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;

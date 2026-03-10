@@ -1,4 +1,4 @@
-package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
+package com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion;
 
 import android.Manifest;
 import android.app.NotificationChannel;
@@ -13,7 +13,6 @@ import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.work.ListenableWorker;
 
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.AlarmaMedicacionActivity;
@@ -30,6 +29,7 @@ public class NotificationHelper {
     public static final String CHANNEL_NORMAL = "canal_normal";
     public static final String CHANNEL_ALARMA = "canal_alarma";
     public static final String CHANNEL_SILENCIOSO = "canal_silencioso";
+    public static final String CHANNEL_AVISOS = "canal_avisos";
 
     /**
      * Crea canal, llamado en main al iniciar app
@@ -72,6 +72,15 @@ public class NotificationHelper {
             silenciosoChannel.setSound(null, null);
             silenciosoChannel.enableVibration(false);
             notificationManager.createNotificationChannel(silenciosoChannel);
+
+            //CANAL AVISOS
+            NotificationChannel avisoChannel = new NotificationChannel(
+                    CHANNEL_AVISOS,
+                    "Avisos del sistema",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            avisoChannel.setDescription("Avisos importantes del sistema");
+            notificationManager.createNotificationChannel(avisoChannel);
         }
     }
 

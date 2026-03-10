@@ -226,6 +226,18 @@ public class Medicamento implements Persistible {
         return med;
     }
 
+    public boolean estaCaducado(){
+        if(fechaCad == null) return false;
+
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy);
+        Calendar cad = Utils.timestampToCalendar(fechaCad);
+        if(cad == null) return false;
+        Utils.limpiarHora(cad);
+
+        return !hoy.before(cad);
+    }
+
     public boolean checkAndUpdateFinTratamiento(){
         if (fechaFin == null) return false;
 
@@ -242,6 +254,18 @@ public class Medicamento implements Persistible {
             return true;
         }
         return false;
+    }
+
+    public boolean tratamientoFinalizado(){
+        if(fechaFin == null) return false;
+
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy);
+        Calendar fin = Utils.timestampToCalendar(fechaFin);
+        if(fin == null) return false;
+        Utils.limpiarHora(fin);
+
+        return !hoy.before(fin);
     }
 
 
@@ -467,6 +491,7 @@ public class Medicamento implements Persistible {
         //Comprobar elementos opcionales ->
         if(nMedRestantes != -1) nMedRestantes --;
         //todo lanzar aviso si fuese necesario
+
     }
 
 

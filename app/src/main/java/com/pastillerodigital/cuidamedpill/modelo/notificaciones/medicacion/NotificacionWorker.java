@@ -1,22 +1,16 @@
-package com.pastillerodigital.cuidamedpill.modelo.notificaciones;
+package com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Clase que realmente muestra la notificación cuando llega la hora
