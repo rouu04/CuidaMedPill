@@ -47,4 +47,12 @@
     <color name="estadoRetraso">#B65F1D</color>
     <color name="estadoPendiente">#005052</color>
     <color name="estadoNoProgramado">#693EB1</color>
+
+    <!-- Colores avisos-->
+    <color name="avisoCaducidad">#89F2E7</color>
+    <color name="avisoCompra">#FF5722</color>
+    <color name="avisoFinTratamiento">#89F2E7</color>
+    <color name="avisoOlvidoAsistido">#D96868</color>
+    <color name="avisoGeneral">#89F2E7</color>
+
 </resources>

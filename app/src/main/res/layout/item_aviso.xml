@@ -20,7 +20,7 @@
             android:text="Título del aviso"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/md_primary_dark" />
 
         <TextView
             android:id="@+id/tvMensajeAviso"
@@ -29,7 +29,7 @@
             android:text="Mensaje opcional"
             android:textSize="14sp"
             android:layout_marginTop="4dp"
-            android:textColor="@android:color/white"/>
+            android:textColor="@color/md_primary_dark"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,21 +38,21 @@
             android:orientation="horizontal"
             android:gravity="end">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnIgnorar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ignorar"
-                android:backgroundTint="@android:color/darker_gray"
-                android:textColor="@android:color/white"/>
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="@color/md_primary_dark"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnResolver"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Resolver"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_marginStart="8dp"
-                android:backgroundTint="@android:color/holo_blue_light"
                 android:textColor="@android:color/white"/>
         </LinearLayout>
     </LinearLayout>

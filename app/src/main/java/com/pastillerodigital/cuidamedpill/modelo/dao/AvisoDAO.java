@@ -6,6 +6,7 @@ import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.Aviso;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class AvisoDAO extends AbstractDAO<Aviso>{
@@ -68,8 +69,7 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
      */
     public void getNoLeidos(OnDataLoadedCallback<List<Aviso>> callback) {
         getCollection()
-                .whereEqualTo("leido", false)
-                .orderBy("fechaCreacion", Query.Direction.DESCENDING)
+                .whereEqualTo(Constantes.AVISO_LEIDO, false)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Aviso> lista = new ArrayList<>();
@@ -77,6 +77,7 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                         Aviso aviso = docToObj(doc);
                         if (aviso != null) lista.add(aviso);
                     }
+                    lista.sort(Comparator.comparing(Aviso::getFechaCreacion));
                     callback.onSuccess(lista);
                 })
                 .addOnFailureListener(callback::onFailure);
@@ -90,6 +91,41 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                 .document(avisoId)
                 .update("leido", true)
                 .addOnSuccessListener(v -> callback.onSuccess())
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    /**
+     * Crea o actualiza un aviso evitando duplicados para el mismo medicamento y tipo.
+     * Si existe uno no leído se actualiza, si no se crea uno nuevo.
+     */
+    public void gestionarAvisoExistente(Aviso aviso, OnOperationCallback callback){
+
+        getCollection()
+                .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, aviso.getTipoAvisoStr())
+                .whereEqualTo(Constantes.AVISO_MEDID, aviso.getMedId())
+                .get()
+                .addOnSuccessListener(query -> {
+                    boolean actualizado = false;
+
+                    for(DocumentSnapshot doc : query.getDocuments()){
+                        Boolean leido = doc.getBoolean(Constantes.AVISO_LEIDO);
+                        if(leido != null && !leido){  // actualizar existente
+                            getCollection()
+                                    .document(doc.getId())
+                                    .set(aviso)
+                                    .addOnSuccessListener(v -> callback.onSuccess())
+                                    .addOnFailureListener(callback::onFailure);
+
+                            actualizado = true;
+                            break;
+                        }
+                    }
+
+                    if(!actualizado){
+                        add(aviso, callback); // crear nuevo aviso
+                    }
+
+                })
                 .addOnFailureListener(callback::onFailure);
     }
 }

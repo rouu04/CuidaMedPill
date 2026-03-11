@@ -66,6 +66,7 @@ public class HomeFragment extends Fragment {
     private Modo modo;
     private MedicamentoDAO medDAO;
     private UsuarioDAO uDAO;
+    private AvisoDAO aDAO;
     private Usuario usr;
     private IngestasAdapter medHoyAdapter;
     private List<Medicamento> lMed = new ArrayList<>();
@@ -128,6 +129,7 @@ public class HomeFragment extends Fragment {
 
             medDAO = new MedicamentoDAO(uid); //uid (sea el supervisado o no) será del que se obtengan los datos
             uDAO = new UsuarioDAO();
+            aDAO = new AvisoDAO(uid);
 
             if(modo != Modo.SUPERVISOR){
                 tvTitleHome.setText(Mensajes.HOME_TITLE);
@@ -180,25 +182,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void cargarAvisosNoLeidos(){
-        //todo hacerlo bien con dao
-        FirebaseFirestore.getInstance()
-                .collection(Constantes.COLLECTION_USUARIOS)
-                .document(uid)
-                .collection(Constantes.COLLECTION_AVISOS)
-                .whereEqualTo(Constantes.AVISO_LEIDO, false)
-                .get()
-                .addOnSuccessListener(query -> {
-                    listaAvisos.clear();
-                    for(DocumentSnapshot doc: query.getDocuments()){
-                        Aviso aviso = doc.toObject(Aviso.class);
-                        if(aviso != null){
-                            aviso.setId(doc.getId());
-                            listaAvisos.add(aviso);
-                        }
-                    }
-                    avisosAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(Throwable::printStackTrace);
+        aDAO.getNoLeidos(new OnDataLoadedCallback<List<Aviso>>() {
+            @Override
+            public void onSuccess(List<Aviso> data) {
+                listaAvisos.clear();
+                listaAvisos.addAll(data);
+                avisosAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     private void getIngPendientesPresente(){
@@ -248,7 +244,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(Ingesta item) {
                 MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(item.getMed().getId(),uid, uidSelf, modo);
-
                 getParentFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragmentApp, detalleFragment)
@@ -261,9 +256,10 @@ public class HomeFragment extends Fragment {
                 mostrarDialogoIngesta(item.getMed(), item);
             }
         });
-
         rvMedicamentosHoy.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMedicamentosHoy.setAdapter(medHoyAdapter);
+        rvMedicamentosHoy.setNestedScrollingEnabled(false);
+
 
         //Adapter avisos
         rvAvisos = getView().findViewById(R.id.rvAvisosHome);
@@ -292,6 +288,7 @@ public class HomeFragment extends Fragment {
             }
         });
         rvAvisos.setAdapter(avisosAdapter);
+        rvAvisos.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -466,7 +463,7 @@ public class HomeFragment extends Fragment {
                 break;
             case COMPRA:
                 break;
-            case FIN_TRATAMIENTO:
+            case FINTRATAMIENTO:
                 break;
         }
         // Marcar como leído

@@ -10,101 +10,109 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/formLayoutHome"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_general">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBarHome"
+        <LinearLayout
+            android:id="@+id/formLayoutHome"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_surface"
-            app:contentInsetStart="0dp"
-            app:contentInsetStartWithNavigation="0dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_general">
 
-            <LinearLayout
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBarHome"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/padding_general_light">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/md_surface"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp">
 
-                <ImageView
-                    android:id="@+id/logoToolbar"
-                    android:layout_width="@dimen/size_image_tiny_width"
-                    android:layout_height="@dimen/size_image_tiny_height"
-                    android:src="@drawable/logo"
-                    android:contentDescription="@string/content_desc_logo" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/padding_general_light">
 
-                <TextView
-                    android:id="@+id/tvTituloHome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start"
-                    android:text="@string/text_title_home"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                    android:textStyle="bold"
-                    android:textColor="@color/md_primary_dark"
-                    android:ellipsize="end"/>
+                    <ImageView
+                        android:id="@+id/logoToolbar"
+                        android:layout_width="@dimen/size_image_tiny_width"
+                        android:layout_height="@dimen/size_image_tiny_height"
+                        android:contentDescription="@string/content_desc_logo"
+                        android:src="@drawable/logo" />
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvTituloHome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start"
+                        android:ellipsize="end"
+                        android:text="@string/text_title_home"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                        android:textColor="@color/md_primary_dark"
+                        android:textStyle="bold" />
 
-        </com.google.android.material.appbar.MaterialToolbar>
+                </LinearLayout>
 
+            </com.google.android.material.appbar.MaterialToolbar>
 
+            <TextView
+                android:id="@+id/tvTituloAvisosHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top"
+                android:text="@string/text_title_home_avisos"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/md_primary_dark"
+                android:textStyle="bold" />
 
-        <!-- Avisos -->
-        <TextView
-            android:id="@+id/tvTituloAvisosHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_title_home_avisos"
-            android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_marginTop="@dimen/margin_top"
-            android:textColor="@color/md_primary_dark"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAvisosHome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top_element"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAvisosHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_top_element"/>
+            <TextView
+                android:id="@+id/tvMedsHoyHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top"
+                android:text="@string/text_title_home_meds"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/md_primary_dark"
+                android:textStyle="bold" />
 
-        <!-- Medicamentos -->
-        <TextView
-            android:id="@+id/tvMedsHoyHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_title_home_meds"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textStyle="bold"
-            android:layout_marginTop="@dimen/margin_top"
-            android:textColor="@color/md_primary_dark"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMedicamentosHoy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top_element"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMedicamentosHoy"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_top_element"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddIngesta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_home_add_ingesta_noprogram"
         android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/margin_end_element"
+        android:layout_marginBottom="@dimen/margin_end"
+        android:text="@string/button_home_add_ingesta_noprogram"
+        android:textAllCaps="true"
+        android:textColor="@color/md_background"
         app:backgroundTint="@color/md_primary"
         app:icon="@drawable/ic_add"
-        app:iconTint="@color/md_background"
-        android:textColor="@color/md_background"
-        android:textAllCaps="true"
-        android:layout_marginEnd="@dimen/margin_end_element"
-        android:layout_marginBottom="@dimen/margin_end"/>
+        app:iconTint="@color/md_background" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

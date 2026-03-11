@@ -24,7 +24,7 @@ public class AvisoFactory {
 
     public static Aviso crearAvisoOlvido(Medicamento med) {
         return new Aviso(
-                TipoAviso.OLVIDO,
+                TipoAviso.OLVIDOASISTIDO,
                 "Toma olvidada",
                 "Has olvidado una toma de " + med.getNombreMed(),
                 med.getId()
@@ -33,7 +33,7 @@ public class AvisoFactory {
 
     public static Aviso crearAvisoFinTratamiento(Medicamento med) {
         return new Aviso(
-                TipoAviso.FIN_TRATAMIENTO,
+                TipoAviso.FINTRATAMIENTO,
                 "Tratamiento finalizado",
                 "El tratamiento de " + med.getNombreMed() + " va a terminar en una semana",
                 med.getId()

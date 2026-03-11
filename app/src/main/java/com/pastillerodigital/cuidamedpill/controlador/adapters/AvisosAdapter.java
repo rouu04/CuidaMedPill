@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pastillerodigital.cuidamedpill.R;
@@ -47,16 +48,19 @@ public class AvisosAdapter extends RecyclerView.Adapter<AvisosAdapter.AvisoVH> {
         // Cambiar color según tipo de aviso
         switch (aviso.getTipoAviso()) {
             case CADUCIDAD:
-                holder.card.setCardBackgroundColor(Color.parseColor("#E53935")); // rojo
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.avisoCaducidad));
                 break;
             case COMPRA:
-                holder.card.setCardBackgroundColor(Color.parseColor("#FDD835")); // amarillo
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.avisoCompra));
                 break;
-            case FIN_TRATAMIENTO:
-                holder.card.setCardBackgroundColor(Color.parseColor("#43A047")); // verde
+            case FINTRATAMIENTO:
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.avisoFinTratamiento));
+                break;
+            case OLVIDOASISTIDO:
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.avisoOlvidoAsistido));
                 break;
             default:
-                holder.card.setCardBackgroundColor(Color.LTGRAY);
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.avisoGeneral));
         }
 
         holder.btnIgnorar.setOnClickListener(v -> {

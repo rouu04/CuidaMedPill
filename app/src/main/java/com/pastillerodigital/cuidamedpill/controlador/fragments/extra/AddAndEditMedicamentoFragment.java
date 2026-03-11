@@ -723,7 +723,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
-                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
+                    AvisoManager.comprobarYMostrarAvisosEdicion(getContext(), usr, med);
                 }
                 else AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()

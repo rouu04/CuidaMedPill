@@ -125,6 +125,62 @@ public class AvisoManager {
         }
     }
 
+    public static void comprobarYMostrarAvisosEdicion(Context context, Usuario usuario, Medicamento med){
+        ConfNoti conf = usuario.getConfNoti();
+        if(conf == null) return;
+
+        AvisoDAO aDAO = new AvisoDAO(usuario.getId());
+
+        // CADUCIDAD
+        if(conf.isAvisoCaducidad() && med.esSemanaACaducado()){
+            Aviso avisoNuevo = AvisoFactory.crearAvisoCaducidad(med);
+            aDAO.gestionarAvisoExistente(avisoNuevo, new OnOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    AvisoNotificacionHelper.mostrarAviso(context, avisoNuevo);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+
+        }
+
+        // COMPRA
+        if(conf.isAvisoCompra() && med.getnMedRestantes() <= 5){
+            Aviso avisoNuevo = AvisoFactory.crearAvisoCompra(med);
+            aDAO.gestionarAvisoExistente(avisoNuevo, new OnOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    AvisoNotificacionHelper.mostrarAviso(context, avisoNuevo);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        }
+
+        // FIN TRATAMIENTO
+        if(conf.isAvisoFinTratamiento() && med.esSemanaAFinTratamiento()){
+            Aviso avisoNuevo = AvisoFactory.crearAvisoFinTratamiento(med);
+            avisoNuevo.setuDestId(usuario.getId());
+            aDAO.gestionarAvisoExistente(avisoNuevo, new OnOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    AvisoNotificacionHelper.mostrarAviso(context, avisoNuevo);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        }
+    }
 
 
     public static void sincronizarAvisos(Context context, String uid) {

@@ -8,8 +8,6 @@ import androidx.work.WorkerParameters;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
-import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.NotificationHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +31,7 @@ public class AvisoTutorWorker extends Worker {
 
         for(String tutorId : tutores){
             Aviso aviso = new Aviso(
-                    TipoAviso.OLVIDO,
+                    TipoAviso.OLVIDOASISTIDO,
                     "Toma olvidada",
                     "El asistido no registró la medicación " + nombreMed,
                     medId

@@ -2,6 +2,7 @@ package com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -9,7 +10,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.dao.AvisoDAO;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.NotificationHelper;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class AvisoNotificacionHelper {
 
@@ -32,7 +36,25 @@ public class AvisoNotificacionHelper {
             }
         }
 
-        NotificationManagerCompat.from(context)
-                .notify((int)System.currentTimeMillis(), builder.build());
+        SharedPreferences prefs = context.getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, Context.MODE_PRIVATE);
+        String idSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
+        String idUsuario = prefs.getString(Constantes.PERSIST_KEYUSERID, idSelf);
+        if (idUsuario == null) return;
+
+        AvisoDAO aDAO = new AvisoDAO(idUsuario);
+        aviso.setNotiMostrada(true);
+        aDAO.edit(aviso, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+
+        NotificationManagerCompat.from(context).notify((int)System.currentTimeMillis(), builder.build());
     }
 }
