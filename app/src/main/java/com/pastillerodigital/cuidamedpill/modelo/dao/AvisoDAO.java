@@ -99,30 +99,27 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
      * Si existe uno no leído se actualiza, si no se crea uno nuevo.
      */
     public void gestionarAvisoExistente(Aviso aviso, OnOperationCallback callback){
-
         getCollection()
                 .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, aviso.getTipoAvisoStr())
                 .whereEqualTo(Constantes.AVISO_MEDID, aviso.getMedId())
+                .whereEqualTo(Constantes.AVISO_LEIDO, false)
+                .limit(1)
                 .get()
                 .addOnSuccessListener(query -> {
-                    boolean actualizado = false;
+                    if(!query.isEmpty()){
 
-                    for(DocumentSnapshot doc : query.getDocuments()){
-                        Boolean leido = doc.getBoolean(Constantes.AVISO_LEIDO);
-                        if(leido != null && !leido){  // actualizar existente
-                            getCollection()
-                                    .document(doc.getId())
-                                    .set(aviso)
-                                    .addOnSuccessListener(v -> callback.onSuccess())
-                                    .addOnFailureListener(callback::onFailure);
+                        DocumentSnapshot doc = query.getDocuments().get(0);
+                        aviso.setId(doc.getId());
+                        aviso.setFechaCreacion(doc.getTimestamp(Constantes.AVISO_FECHACREACION));
 
-                            actualizado = true;
-                            break;
-                        }
-                    }
+                        getCollection()
+                                .document(doc.getId())
+                                .set(aviso)   // actualiza
+                                .addOnSuccessListener(v -> callback.onSuccess())
+                                .addOnFailureListener(callback::onFailure);
 
-                    if(!actualizado){
-                        add(aviso, callback); // crear nuevo aviso
+                    } else {
+                        add(aviso, callback); // crea
                     }
 
                 })

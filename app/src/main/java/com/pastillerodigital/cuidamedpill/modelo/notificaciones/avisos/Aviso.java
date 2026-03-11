@@ -79,6 +79,22 @@ public class Aviso implements Persistible {
         return fechaCreacion;
     }
 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public void setFechaCreacion(Timestamp fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public void setMedId(String medId) {
+        this.medId = medId;
+    }
+
     public boolean isLeido() {
         return leido;
     }

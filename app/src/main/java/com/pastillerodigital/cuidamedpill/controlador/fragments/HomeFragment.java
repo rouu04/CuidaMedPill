@@ -1,5 +1,6 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AvisosAdapter;
@@ -69,7 +68,8 @@ public class HomeFragment extends Fragment {
     private AvisoDAO aDAO;
     private Usuario usr;
     private IngestasAdapter medHoyAdapter;
-    private List<Medicamento> lMed = new ArrayList<>();
+    private List<Medicamento> lMedHorario = new ArrayList<>();
+    private List<Medicamento> lMedTodos = new ArrayList<>();
     private List<Ingesta> ingPendientes = new ArrayList<>();
     private AvisosAdapter avisosAdapter;
     private List<Aviso> listaAvisos = new ArrayList<>();
@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment {
         leerArgsYConsec();
         setButtonListeners();
 
-        cargarMedsConIngestas();
+        cargarMedsYConIngestas();
         cargarAvisosNoLeidos();
     }
 
@@ -160,14 +160,17 @@ public class HomeFragment extends Fragment {
         //ocultar algo si fuese necesario
     }
 
-    private void cargarMedsConIngestas() {
+    private void cargarMedsYConIngestas() {
         medDAO.getListConIngestas(new OnDataLoadedCallback<List<Medicamento>>() {
             @Override
             public void onSuccess(List<Medicamento> medicamentos) {
-                lMed.clear();
+                lMedTodos.clear();
+                lMedTodos.addAll(medicamentos);
+
+                lMedHorario.clear();
                 for (Medicamento med : medicamentos) {
                     if (med.getHorario() == null) continue;
-                    lMed.add(med);
+                    lMedHorario.add(med);
                 }
                 //Tenemos la lista de medicamentos con ingestas.
                 //Necesitamos ver las ingestas pendientes de ayer y hoy
@@ -205,7 +208,7 @@ public class HomeFragment extends Fragment {
         ayer.add(Calendar.DAY_OF_MONTH, -1);
         Utils.limpiarHora(ayer);
 
-        for(Medicamento med: lMed){
+        for(Medicamento med: lMedHorario){
             if (med.getHorario() == null) continue;
             if(!med.checkAndUpdateFinTratamiento()){
                 ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
@@ -311,6 +314,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private Medicamento buscarMedicamento(String id){
+        for(Medicamento m : lMedTodos){
+            if(m.getId().equals(id)) return m;
+        }
+        return null;
+    }
+
     //----------INGESTAS
     private void mostrarDialogoIngesta(Medicamento med, @Nullable Ingesta ing){
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_confirm_ingesta, null);
@@ -381,7 +391,7 @@ public class HomeFragment extends Fragment {
                     if(med.getHorario() != null && fechaProgramada != null){
                         medHoyAdapter.notifyDataSetChanged();
                         mostrarCarga();
-                        cargarMedsConIngestas();
+                        cargarMedsYConIngestas();
                         med.ingestaTomada(ingesta);
                         //Guardamos en medicamento la nueva sigtoma del horario
                         medDAO.edit(med, new OnOperationCallback() {
@@ -389,7 +399,7 @@ public class HomeFragment extends Fragment {
                             public void onSuccess() {
                                 // Recargar ingestas pendientes
                                 mostrarCarga();
-                                cargarMedsConIngestas();
+                                cargarMedsYConIngestas();
                             }
 
                             @Override
@@ -456,19 +466,181 @@ public class HomeFragment extends Fragment {
         dialog.show();
     }
 
+    //AVISOS
     private void mostrarDialogoResolverAviso(Aviso aviso){
-        //todo dialogos por cada tipo de aviso
         switch (aviso.getTipoAviso()){
             case CADUCIDAD:
+                mostrarDialogoCaducidad(aviso);
                 break;
             case COMPRA:
+                mostrarDialogoCompra(aviso);
                 break;
             case FINTRATAMIENTO:
+                mostrarDialogoFinTratamiento(aviso);
                 break;
         }
-        // Marcar como leído
+    }
+
+    private void mostrarDialogoCaducidad(Aviso aviso){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_resolver_caducidad, null);
+
+        ImageView imgTipo = view.findViewById(R.id.imgTipoMedCad);
+        TextView tvNombre = view.findViewById(R.id.tvNombreMedCad);
+        TextView tvFecha = view.findViewById(R.id.tvFechaCadCad);
+        Button btnFecha = view.findViewById(R.id.btnSeleccionarFechaCad);
+        Button btnQuitar = view.findViewById(R.id.btnQuitarFechaCad);
+
+        Medicamento med = buscarMedicamento(aviso.getMedId());
+        if(med == null) return;
+        tvNombre.setText(med.getNombreMed());
+        TipoMed tipo = TipoMed.tipoMedFromString(med.getTipoMedStr());
+        UiUtils.setDrawableTipoMed(getContext(), imgTipo, tipo, med.getColorSimb());
+        Calendar nuevaFecha = Calendar.getInstance();
+
+        btnFecha.setOnClickListener(v -> {
+            DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year, month, day) -> {
+                        nuevaFecha.set(year, month, day);
+                        tvFecha.setText(Utils.calendarToString(nuevaFecha));
+                    },
+                    nuevaFecha.get(Calendar.YEAR),
+                    nuevaFecha.get(Calendar.MONTH),
+                    nuevaFecha.get(Calendar.DAY_OF_MONTH)
+            );
+            picker.show();
+        });
+
+        btnQuitar.setOnClickListener(v -> {
+            tvFecha.setText("Sin fecha de caducidad");
+            nuevaFecha.clear();
+        });
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
+                .setView(view)
+                .setPositiveButton("Guardar", (d, w) -> {
+
+                    if(nuevaFecha.isSet(Calendar.YEAR)){
+                        med.setFechaCad(new Timestamp(nuevaFecha.getTime()));
+                    }else{
+                        med.setFechaCad(null);
+                    }
+
+                    medDAO.edit(med, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            marcarAvisoLeido(aviso);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+
+                })
+                .setNegativeButton("Cancelar", null)
+                .create();
+
+        dialog.show();
+    }
+
+    private void mostrarDialogoCompra(Aviso aviso){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_resolver_compra, null);
+
+        ImageView imgTipo = view.findViewById(R.id.imgTipoMed);
+        TextView tvNombre = view.findViewById(R.id.tvNombreMed);
+        EditText etCantidad = view.findViewById(R.id.etCantidad);
+
+        Medicamento med = buscarMedicamento(aviso.getMedId());
+
+        if(med == null) return;
+        tvNombre.setText(med.getNombreMed());
+        TipoMed tipo = TipoMed.tipoMedFromString(med.getTipoMedStr());
+        UiUtils.setDrawableTipoMed(getContext(), imgTipo, tipo, med.getColorSimb());
+
+        new MaterialAlertDialogBuilder(getContext())
+                .setView(view)
+                .setPositiveButton("Guardar", (d, w) -> {
+                    String texto = etCantidad.getText().toString().trim();
+
+                    if(!texto.isEmpty()){
+                        int cantidad = Integer.parseInt(texto);
+                        med.setnMedRestantes(med.getnMedRestantes() + cantidad);
+
+                        medDAO.edit(med, new OnOperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                                marcarAvisoLeido(aviso);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                UiUtils.mostrarErrorYReiniciar(requireActivity());
+                            }
+                        });
+
+                    }
+
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void mostrarDialogoFinTratamiento(Aviso aviso){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_resolver_fintratamiento, null);
+
+        ImageView imgTipo = view.findViewById(R.id.imgTipoMed);
+        TextView tvNombre = view.findViewById(R.id.tvNombreMed);
+        Button btnFecha = view.findViewById(R.id.btnSeleccionarFechaFin);
+
+        Medicamento med = buscarMedicamento(aviso.getMedId());
+
+        if(med == null) return;
+        tvNombre.setText(med.getNombreMed());
+        TipoMed tipo = TipoMed.tipoMedFromString(med.getTipoMedStr());
+        UiUtils.setDrawableTipoMed(getContext(), imgTipo, tipo, med.getColorSimb());
+
+        Calendar nuevaFecha = Calendar.getInstance();
+        btnFecha.setOnClickListener(v -> {
+            DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year, month, day) -> {
+                        nuevaFecha.set(year, month, day);
+                        },
+                        nuevaFecha.get(Calendar.YEAR),
+                        nuevaFecha.get(Calendar.MONTH),
+                        nuevaFecha.get(Calendar.DAY_OF_MONTH)
+            );
+
+            picker.show();
+        });
+
+        new MaterialAlertDialogBuilder(getContext())
+                .setView(view)
+                .setPositiveButton("Guardar", (d, w) -> {
+
+                    if(nuevaFecha.isSet(Calendar.YEAR)){
+                        med.setFechaFin(new Timestamp(nuevaFecha.getTime()));
+
+                        medDAO.edit(med, new OnOperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                                marcarAvisoLeido(aviso);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                UiUtils.mostrarErrorYReiniciar(requireActivity());
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+
+    private void marcarAvisoLeido(Aviso aviso){
         aviso.setLeido(true);
-        new AvisoDAO(uid).edit(aviso, new OnOperationCallback() {
+
+        aDAO.edit(aviso, new OnOperationCallback() {
             @Override
             public void onSuccess() {
                 listaAvisos.remove(aviso);
