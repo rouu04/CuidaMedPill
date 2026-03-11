@@ -10,6 +10,8 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 
+import java.util.List;
+
 public class AvisoManager {
 
     public static void comprobarYMostrarAvisos(Context context, Usuario usuario, Medicamento med) {
@@ -34,7 +36,6 @@ public class AvisoManager {
         }
 
         // COMPRA
-        //todo quitar hardcoded
         if(conf.isAvisoCompra() && med.getnMedRestantes() <= 5){
             Aviso aviso = AvisoFactory.crearAvisoCompra(med);
             aDAO.add(aviso, new OnOperationCallback() {
@@ -66,7 +67,6 @@ public class AvisoManager {
 
                 }
             });
-            AvisoNotificacionHelper.mostrarAviso(context, aviso);
         }
     }
 
@@ -78,49 +78,36 @@ public class AvisoManager {
         // CADUCIDAD
         if(conf.isAvisoCaducidad() && med.esSemanaACaducado()){
             Aviso aviso = AvisoFactory.crearAvisoCaducidad(med);
-            aDAO.add(aviso, new OnOperationCallback() {
+            aDAO.gestionarAvisoExistente(aviso, new OnOperationCallback() {
                 @Override
-                public void onSuccess() {
-
-                }
+                public void onSuccess() {}
 
                 @Override
-                public void onFailure(Exception e) {
-
-                }
+                public void onFailure(Exception e) {}
             });
         }
 
         // COMPRA
-        //todo quitar hardcoded
         if(conf.isAvisoCompra() && med.getnMedRestantes() <= 5){
             Aviso aviso = AvisoFactory.crearAvisoCompra(med);
-            aDAO.add(aviso, new OnOperationCallback() {
+            aDAO.gestionarAvisoExistente(aviso, new OnOperationCallback() {
                 @Override
-                public void onSuccess() {
-                }
+                public void onSuccess() {}
 
                 @Override
-                public void onFailure(Exception e) {
-
-                }
+                public void onFailure(Exception e) {}
             });
         }
 
         // FIN TRATAMIENTO
         if(conf.isAvisoFinTratamiento() && med.esSemanaAFinTratamiento()){
             Aviso aviso = AvisoFactory.crearAvisoFinTratamiento(med);
-            aviso.setuDestId(usuario.getId());
-
-            aDAO.add(aviso, new OnOperationCallback() {
+            aDAO.gestionarAvisoExistente(aviso, new OnOperationCallback() {
                 @Override
-                public void onSuccess() {
-                }
+                public void onSuccess() {}
 
                 @Override
-                public void onFailure(Exception e) {
-
-                }
+                public void onFailure(Exception e) {}
             });
         }
     }
@@ -203,5 +190,11 @@ public class AvisoManager {
 
                 })
                 .addOnFailureListener(Throwable::printStackTrace);
+    }
+
+    public static void comprobarAvisosInicio(Context context, Usuario usuario, List<Medicamento> meds){
+        for(Medicamento med : meds){
+            comprobarYMostrarAvisosEdicion(context, usuario, med);
+        }
     }
 }

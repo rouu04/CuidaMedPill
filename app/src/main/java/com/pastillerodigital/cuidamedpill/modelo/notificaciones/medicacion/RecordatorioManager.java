@@ -10,6 +10,7 @@ import androidx.work.WorkManager;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
@@ -186,6 +187,37 @@ public class RecordatorioManager {
                 .addOnFailureListener(e -> {
                     e.printStackTrace();
                 });
+    }
+
+    /**
+     * Cancela todas las notificaciones de un usuario usando los DAO.
+     * @param context
+     * @param uid id del usuario
+     */
+    public static void cancelarTodasNotificaciones(Context context, String uid) {
+        MedicamentoDAO medDAO = new MedicamentoDAO(uid);
+
+        medDAO.getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {
+            @Override
+            public void onSuccess(List<Medicamento> medicamentos) {
+                for (Medicamento med : medicamentos) {
+                    //notificaciones estándar
+                    cancelarRecordatoriosMedicamento(context, med);
+                    //avisos a tutores
+                    if (med.getWorkTags() != null) {
+                        for (String tag : med.getWorkTags()) {
+                            WorkManager.getInstance(context).cancelAllWorkByTag(tag);
+                        }
+                        med.getWorkTags().clear();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

@@ -115,7 +115,6 @@ public class HomeFragment extends Fragment {
         setButtonListeners();
 
         cargarMedsYConIngestas();
-        cargarAvisosNoLeidos();
     }
 
     private void leerArgsYConsec(){
@@ -166,6 +165,8 @@ public class HomeFragment extends Fragment {
             public void onSuccess(List<Medicamento> medicamentos) {
                 lMedTodos.clear();
                 lMedTodos.addAll(medicamentos);
+                AvisoManager.comprobarAvisosInicio(getContext(), usr, medicamentos);
+                cargarAvisosNoLeidos();
 
                 lMedHorario.clear();
                 for (Medicamento med : medicamentos) {
@@ -233,6 +234,21 @@ public class HomeFragment extends Fragment {
                     tvMedsHoy.setText(String.format(Mensajes.HOME_MEDS_HOY_SUPERVISOR));
                 }
                 usr = data;
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void editaMedAviso(Medicamento med, Aviso aviso){
+        medDAO.edit(med, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                AvisoManager.comprobarYMostrarAvisosEdicion(getContext(), usr, med);
+                marcarAvisoLeido(aviso);
             }
 
             @Override
@@ -523,19 +539,7 @@ public class HomeFragment extends Fragment {
                     }else{
                         med.setFechaCad(null);
                     }
-
-                    medDAO.edit(med, new OnOperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            marcarAvisoLeido(aviso);
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            UiUtils.mostrarErrorYReiniciar(requireActivity());
-                        }
-                    });
-
+                    editaMedAviso(med, aviso);
                 })
                 .setNegativeButton("Cancelar", null)
                 .create();
@@ -565,21 +569,8 @@ public class HomeFragment extends Fragment {
                     if(!texto.isEmpty()){
                         int cantidad = Integer.parseInt(texto);
                         med.setnMedRestantes(med.getnMedRestantes() + cantidad);
-
-                        medDAO.edit(med, new OnOperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                marcarAvisoLeido(aviso);
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                UiUtils.mostrarErrorYReiniciar(requireActivity());
-                            }
-                        });
-
+                        editaMedAviso(med, aviso);
                     }
-
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
@@ -618,18 +609,7 @@ public class HomeFragment extends Fragment {
 
                     if(nuevaFecha.isSet(Calendar.YEAR)){
                         med.setFechaFin(new Timestamp(nuevaFecha.getTime()));
-
-                        medDAO.edit(med, new OnOperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                marcarAvisoLeido(aviso);
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                UiUtils.mostrarErrorYReiniciar(requireActivity());
-                            }
-                        });
+                        editaMedAviso(med, aviso);
                     }
                 })
                 .setNegativeButton("Cancelar", null)

@@ -314,8 +314,22 @@ public class MedicamentoDetalleFragment extends Fragment {
             }
 
             view.setVisibility(tieneContenido ? View.VISIBLE : View.GONE);
-        } else {
-            // En modo SUPERVISOR o normal siempre mostrar
+        } else { //se asigna tod*o y se enseña
+            if (view instanceof TextView) {
+                if (contenido instanceof String) {
+                    ((TextView) view).setText((String) contenido);
+                } else if (contenido instanceof Integer) {
+                    ((TextView) view).setText(String.valueOf(contenido));
+                } else if (contenido instanceof com.google.firebase.Timestamp) {
+                    // Usamos utilidades para convertir Timestamp a String
+                    ((TextView) view).setText(Utils.timestampToString((com.google.firebase.Timestamp) contenido));
+                } else if (contenido != null) {
+                    ((TextView) view).setText(contenido.toString());
+                } else {
+                    ((TextView) view).setText("-");
+                }
+            }
+            // siempre mostrar la vista
             view.setVisibility(View.VISIBLE);
         }
     }

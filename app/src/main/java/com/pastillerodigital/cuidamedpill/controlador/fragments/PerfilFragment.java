@@ -30,6 +30,7 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioEstandar;
@@ -321,7 +322,7 @@ public class PerfilFragment extends Fragment{
                                     usrSelf.setIdUsrAsistAsig(lstrua);
                                     usrSelf.setUsrAsistidoAsig(listua);
 
-
+                                    RecordatorioManager.cancelarTodasNotificaciones(getContext(), uid);
                                     UiUtils.mostrarConfirmacion(requireActivity(), Mensajes.PERF_CONF_BORRARCUENTA);
                                     setupRecyclerView();
                                 }
@@ -497,6 +498,9 @@ public class PerfilFragment extends Fragment{
     private void cerrarSesion(){
         SharedPreferences prefs = requireActivity().getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, requireContext().MODE_PRIVATE);
         prefs.edit().clear().apply();
+
+        //Cancelamos notificaciones
+        RecordatorioManager.cancelarTodasNotificaciones(getContext(), uidSelf);
     }
 
     private void gotoWelcomeActivity(){

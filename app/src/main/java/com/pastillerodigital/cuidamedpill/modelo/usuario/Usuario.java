@@ -32,7 +32,7 @@ public class Usuario implements Persistible {
     @Exclude
     protected TipoUsuario tipoUsuario;
     @Exclude
-    private List<Medicamento> medList = new ArrayList<>();
+    protected List<Medicamento> medList = new ArrayList<>();
     @Exclude
     private String passwordPlano;
 
