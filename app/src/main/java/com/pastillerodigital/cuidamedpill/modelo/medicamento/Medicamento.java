@@ -226,7 +226,7 @@ public class Medicamento implements Persistible {
         return med;
     }
 
-    public boolean estaCaducado(){
+    public boolean esSemanaACaducado(){
         if(fechaCad == null) return false;
 
         Calendar hoy = Calendar.getInstance();
@@ -234,8 +234,12 @@ public class Medicamento implements Persistible {
         Calendar cad = Utils.timestampToCalendar(fechaCad);
         if(cad == null) return false;
         Utils.limpiarHora(cad);
+        // Si ya caducó no nos interesa
+        if(!hoy.before(cad)) return false;
 
-        return !hoy.before(cad);
+        Calendar limite = (Calendar) hoy.clone();
+        limite.add(Calendar.DAY_OF_YEAR, 7); // una semana
+        return !cad.after(limite); // caduca dentro de los próximos 7 días
     }
 
     public boolean checkAndUpdateFinTratamiento(){
@@ -256,7 +260,7 @@ public class Medicamento implements Persistible {
         return false;
     }
 
-    public boolean tratamientoFinalizado(){
+    public boolean esSemanaAFinTratamiento(){
         if(fechaFin == null) return false;
 
         Calendar hoy = Calendar.getInstance();
@@ -265,7 +269,12 @@ public class Medicamento implements Persistible {
         if(fin == null) return false;
         Utils.limpiarHora(fin);
 
-        return !hoy.before(fin);
+        // Si ya terminó no lo consideramos
+        if(!hoy.before(fin)) return false;
+
+        Calendar limite = (Calendar) hoy.clone();
+        limite.add(Calendar.DAY_OF_YEAR, 7);
+        return !fin.after(limite); // termina en los próximos 7 días
     }
 
 

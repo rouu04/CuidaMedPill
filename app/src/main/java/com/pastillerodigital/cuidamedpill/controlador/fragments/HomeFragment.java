@@ -1,8 +1,5 @@
 package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,11 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
+import com.pastillerodigital.cuidamedpill.controlador.adapters.AvisosAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.IngestasAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
+import com.pastillerodigital.cuidamedpill.modelo.dao.AvisoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
@@ -40,6 +40,7 @@ import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.Aviso;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -54,7 +55,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView rvMedicamentosHoy;
+    private RecyclerView rvMedicamentosHoy, rvAvisos;
     private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy;
     private ExtendedFloatingActionButton fab;
     private View progressHome;
@@ -69,6 +70,8 @@ public class HomeFragment extends Fragment {
     private IngestasAdapter medHoyAdapter;
     private List<Medicamento> lMed = new ArrayList<>();
     private List<Ingesta> ingPendientes = new ArrayList<>();
+    private AvisosAdapter avisosAdapter;
+    private List<Aviso> listaAvisos = new ArrayList<>();
 
     public static HomeFragment newInstance(String userIdSelf, Modo modo) {
         HomeFragment fragment = new HomeFragment();
@@ -111,6 +114,7 @@ public class HomeFragment extends Fragment {
         setButtonListeners();
 
         cargarMedsConIngestas();
+        cargarAvisosNoLeidos();
     }
 
     private void leerArgsYConsec(){
@@ -173,6 +177,28 @@ public class HomeFragment extends Fragment {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
+    }
+
+    private void cargarAvisosNoLeidos(){
+        //todo hacerlo bien con dao
+        FirebaseFirestore.getInstance()
+                .collection(Constantes.COLLECTION_USUARIOS)
+                .document(uid)
+                .collection(Constantes.COLLECTION_AVISOS)
+                .whereEqualTo(Constantes.AVISO_LEIDO, false)
+                .get()
+                .addOnSuccessListener(query -> {
+                    listaAvisos.clear();
+                    for(DocumentSnapshot doc: query.getDocuments()){
+                        Aviso aviso = doc.toObject(Aviso.class);
+                        if(aviso != null){
+                            aviso.setId(doc.getId());
+                            listaAvisos.add(aviso);
+                        }
+                    }
+                    avisosAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(Throwable::printStackTrace);
     }
 
     private void getIngPendientesPresente(){
@@ -238,6 +264,34 @@ public class HomeFragment extends Fragment {
 
         rvMedicamentosHoy.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMedicamentosHoy.setAdapter(medHoyAdapter);
+
+        //Adapter avisos
+        rvAvisos = getView().findViewById(R.id.rvAvisosHome);
+        rvAvisos.setLayoutManager(new LinearLayoutManager(getContext()));
+        avisosAdapter = new AvisosAdapter(listaAvisos, new AvisosAdapter.OnAvisoClickListener() {
+            @Override
+            public void onIgnorar(Aviso aviso) {
+                aviso.setLeido(true);
+                new AvisoDAO(uid).edit(aviso, new OnOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        listaAvisos.remove(aviso);
+                        avisosAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    }
+                });
+            }
+
+            @Override
+            public void onResolver(Aviso aviso) {
+                mostrarDialogoResolverAviso(aviso);
+            }
+        });
+        rvAvisos.setAdapter(avisosAdapter);
     }
 
     @Override
@@ -325,7 +379,7 @@ public class HomeFragment extends Fragment {
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
-                    AvisoManager.comprobarAvisos(getContext(), usr, med);
+                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
                     //puede haber medicamentos con horario que tengan ingestas fuera de horario
                     if(med.getHorario() != null && fechaProgramada != null){
                         medHoyAdapter.notifyDataSetChanged();
@@ -405,6 +459,30 @@ public class HomeFragment extends Fragment {
         dialog.show();
     }
 
+    private void mostrarDialogoResolverAviso(Aviso aviso){
+        //todo dialogos por cada tipo de aviso
+        switch (aviso.getTipoAviso()){
+            case CADUCIDAD:
+                break;
+            case COMPRA:
+                break;
+            case FIN_TRATAMIENTO:
+                break;
+        }
+        // Marcar como leído
+        aviso.setLeido(true);
+        new AvisoDAO(uid).edit(aviso, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                listaAvisos.remove(aviso);
+                avisosAdapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
 
 }

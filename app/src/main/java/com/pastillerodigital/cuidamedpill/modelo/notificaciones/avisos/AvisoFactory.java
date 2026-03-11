@@ -30,4 +30,13 @@ public class AvisoFactory {
                 med.getId()
         );
     }
+
+    public static Aviso crearAvisoFinTratamiento(Medicamento med) {
+        return new Aviso(
+                TipoAviso.FIN_TRATAMIENTO,
+                "Tratamiento finalizado",
+                "El tratamiento de " + med.getNombreMed() + " va a terminar en una semana",
+                med.getId()
+        );
+    }
 }

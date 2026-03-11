@@ -23,6 +23,7 @@ import com.pastillerodigital.cuidamedpill.controlador.fragments.PerfilFragment;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoUsuario;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.MedicamentoRealTimeManager;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoManager;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.NotificationHelper;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             realtimeManager.iniciarListener(getApplicationContext(), uid);
 
             RecordatorioManager.sincronizarRecordatorios(this, uid);
+            AvisoManager.sincronizarAvisos(this, uid);
         }
 
         if (savedInstanceState == null) {

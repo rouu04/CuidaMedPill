@@ -69,11 +69,10 @@
             android:layout_marginTop="@dimen/margin_top"
             android:textColor="@color/md_primary_dark"/>
 
-        <LinearLayout
-            android:id="@+id/layoutAvisosHome"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAvisosHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="@dimen/margin_top_element"/>
 
         <!-- Medicamentos -->

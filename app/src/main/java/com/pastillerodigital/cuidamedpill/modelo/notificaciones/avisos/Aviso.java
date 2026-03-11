@@ -151,17 +151,4 @@ public class Aviso implements Persistible {
         return aviso;
     }
 
-
-    /*
-    AvisoSistema aviso = AvisoFactory.crearAvisoCaducidad(med);
-AvisoRepository.guardarAviso(usuario.getId(), aviso);
-
-if (usuario.getConfNotiGeneral().isAvisoCaducidad()) {
-    lanzarNotificacion(aviso);
-}
-
-Worker solo recibe:
-.putString("titulo", aviso.getTitulo())
-.putString("mensaje", aviso.getMensaje())
-     */
 }

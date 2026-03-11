@@ -46,6 +46,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Horario;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoManager;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
@@ -87,6 +88,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private TipoMed selectedTipo = TipoMed.CAPSULA;
     private int colorMed;
     private TipoIntervalo tipoIntervaloSel;
+    private Usuario usr;
 
     private final int[] coloresDisponibles = {
             R.color.md_primary,
@@ -194,8 +196,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             if(medId != null){ //edición
                 toolbarSup.setTitle(R.string.text_title_edit_med);
                 isEdit = true;
-                if(modo == Modo.SUPERVISOR) cargarUsr();
-                else toolbarSup.setTitle(R.string.text_title_edit_med);
+                if(modo != Modo.SUPERVISOR) toolbarSup.setTitle(R.string.text_title_edit_med);
                 cargarMed(medId);
             }
             else{
@@ -205,10 +206,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 edtSigToma.setText(Utils.calendarToString(hoy));
                 selectedTipo = TipoMed.CAPSULA;
                 actualizarImagenTipo(TipoMed.CAPSULA);
-                if(modo == Modo.SUPERVISOR) cargarUsr();
-                else toolbarSup.setTitle(R.string.text_title_add_med);
+                if(modo == Modo.SUPERVISOR) toolbarSup.setTitle(R.string.text_title_add_med);
                 ocultarCarga();
             }
+            cargarUsr();
         }
     }
 
@@ -316,8 +317,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         uDAO.getBasic(uid, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario data) {
-                if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
-                else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+                if(modo == Modo.SUPERVISOR){
+                    if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
+                    else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+                }
+                usr = data;
+
             }
 
             @Override
@@ -696,8 +701,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             public void onSuccess() {//medicamento añadido, volvemos a la lista
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
-                    
+                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
                 }
+                else AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
@@ -717,7 +723,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
                 }
+                else AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
@@ -729,8 +737,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
         });
     }
-
-
 
     //--------FUNCIONES PARA EL SIMBOLO Y COLOR DEL ICONO DEL MEDICAMENTO
     private void actualizarImagenTipo(TipoMed tipo){
