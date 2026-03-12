@@ -81,6 +81,16 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <TextView
+                android:id="@+id/tvEmptyAvisos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No hay avisos pendientes"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:padding="16dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+
+            <TextView
                 android:id="@+id/tvMedsHoyHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,6 +107,16 @@
                 android:layout_marginTop="@dimen/margin_top_element"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
+                android:id="@+id/tvEmptyMedsHoy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No hay medicamentos pendientes para hoy"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:padding="16dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

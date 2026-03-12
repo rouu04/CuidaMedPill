@@ -1,8 +1,11 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
+import android.content.Context;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.Aviso;
+import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoNotificacionHelper;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
@@ -112,6 +115,7 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                         aviso.setId(doc.getId());
                         aviso.setFechaCreacion(doc.getTimestamp(Constantes.AVISO_FECHACREACION));
 
+                        //todo revisar si hace falta
                         getCollection()
                                 .document(doc.getId())
                                 .set(aviso)   // actualiza
@@ -122,6 +126,29 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                         add(aviso, callback); // crea
                     }
 
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void getAvisoPendiente(Aviso aviso, OnDataLoadedCallback<Aviso> callback){
+        getCollection()
+                .whereEqualTo("tipoAvisoStr", aviso.getTipoAvisoStr())
+                .whereEqualTo("medId", aviso.getMedId())
+                .whereEqualTo("leido", false)
+                .whereEqualTo("notiMostrada", false) // solo los que aún no se mostraron
+                .limit(1)
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (query.isEmpty()) {
+                        callback.onSuccess(null); // no hay aviso pendiente
+                        return;
+                    }
+                    DocumentSnapshot doc = query.getDocuments().get(0);
+                    Aviso avisoBD = doc.toObject(Aviso.class);
+                    if (avisoBD != null) {
+                        avisoBD.setId(doc.getId());
+                    }
+                    callback.onSuccess(avisoBD);
                 })
                 .addOnFailureListener(callback::onFailure);
     }

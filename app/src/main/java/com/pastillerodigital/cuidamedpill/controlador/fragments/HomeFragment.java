@@ -55,7 +55,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private RecyclerView rvMedicamentosHoy, rvAvisos;
-    private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy;
+    private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy, tvEmptyAvisos, tvEmptyMedsHoy;
     private ExtendedFloatingActionButton fab;
     private View progressHome;
     private LinearLayout layoutFormHome;
@@ -108,6 +108,9 @@ public class HomeFragment extends Fragment {
         layoutFormHome = view.findViewById(R.id.formLayoutHome);
         tvTitleAvisos = view.findViewById(R.id.tvTituloAvisosHome);
         tvMedsHoy = view.findViewById(R.id.tvMedsHoyHome);
+
+        tvEmptyAvisos = view.findViewById(R.id.tvEmptyAvisos);
+        tvEmptyMedsHoy = view.findViewById(R.id.tvEmptyMedsHoy);
 
         mostrarCarga();
         setUpRecyclerView();
@@ -192,6 +195,7 @@ public class HomeFragment extends Fragment {
                 listaAvisos.clear();
                 listaAvisos.addAll(data);
                 avisosAdapter.notifyDataSetChanged();
+                isVistaNoAvisos();
             }
 
             @Override
@@ -219,6 +223,7 @@ public class HomeFragment extends Fragment {
 
         ordenarFechaHora(ingPendientes);
         medHoyAdapter.update(ingPendientes);
+        isVistaNoMedsHoy();
         ocultarCarga();
     }
 
@@ -337,6 +342,26 @@ public class HomeFragment extends Fragment {
         return null;
     }
 
+    private void isVistaNoMedsHoy(){
+        if(ingPendientes.isEmpty()){
+            tvEmptyMedsHoy.setVisibility(View.VISIBLE);
+            rvMedicamentosHoy.setVisibility(View.GONE);
+        }else{
+            tvEmptyMedsHoy.setVisibility(View.GONE);
+            rvMedicamentosHoy.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void isVistaNoAvisos(){
+        if(listaAvisos.isEmpty()){
+            tvEmptyAvisos.setVisibility(View.VISIBLE);
+            rvAvisos.setVisibility(View.GONE);
+        }else{
+            tvEmptyAvisos.setVisibility(View.GONE);
+            rvAvisos.setVisibility(View.VISIBLE);
+        }
+    }
+
     //----------INGESTAS
     private void mostrarDialogoIngesta(Medicamento med, @Nullable Ingesta ing){
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_confirm_ingesta, null);
@@ -424,6 +449,8 @@ public class HomeFragment extends Fragment {
                             }
                         });
                     }
+
+
                 }
 
                 @Override
@@ -625,6 +652,8 @@ public class HomeFragment extends Fragment {
             public void onSuccess() {
                 listaAvisos.remove(aviso);
                 avisosAdapter.notifyDataSetChanged();
+
+                isVistaNoAvisos();
             }
 
             @Override
