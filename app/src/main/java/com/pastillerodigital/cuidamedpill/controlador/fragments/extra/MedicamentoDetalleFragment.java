@@ -301,11 +301,15 @@ public class MedicamentoDetalleFragment extends Fragment {
             if (contenido instanceof String) {
                 String texto = (String) contenido;
                 tieneContenido = texto != null && !texto.isEmpty();
-                if (view instanceof TextView) ((TextView) view).setText(texto);
+                if (view instanceof TextView && tieneContenido) ((TextView) view).setText(texto);
+
             } else if (contenido instanceof Integer) { // para números
                 int valor = (Integer) contenido;
-                tieneContenido = valor >= 0;
-                if (view instanceof TextView) ((TextView) view).setText(String.valueOf(valor));
+                // Solo mostrar si es >=0 y diferente de -1
+                tieneContenido = valor >= 0 && valor != -1;
+                if (view instanceof TextView && tieneContenido) {
+                    ((TextView) view).setText(String.valueOf(valor));
+                }
             } else if (contenido instanceof List) { // para ChipGroup
                 List<?> lista = (List<?>) contenido;
                 tieneContenido = lista != null && !lista.isEmpty();
@@ -314,14 +318,14 @@ public class MedicamentoDetalleFragment extends Fragment {
             }
 
             view.setVisibility(tieneContenido ? View.VISIBLE : View.GONE);
-        } else { //se asigna tod*o y se enseña
+        } else { // Modo normal: siempre mostrar
             if (view instanceof TextView) {
                 if (contenido instanceof String) {
                     ((TextView) view).setText((String) contenido);
                 } else if (contenido instanceof Integer) {
-                    ((TextView) view).setText(String.valueOf(contenido));
+                    int valor = (Integer) contenido;
+                    ((TextView) view).setText(valor >= 0 ? String.valueOf(valor) : "-"); // -1 se muestra como guion
                 } else if (contenido instanceof com.google.firebase.Timestamp) {
-                    // Usamos utilidades para convertir Timestamp a String
                     ((TextView) view).setText(Utils.timestampToString((com.google.firebase.Timestamp) contenido));
                 } else if (contenido != null) {
                     ((TextView) view).setText(contenido.toString());

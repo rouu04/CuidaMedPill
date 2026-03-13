@@ -69,8 +69,10 @@
             android:exported="false"
             android:theme="@style/Theme.CuidaMedPill"/>
 
+        <activity
+            android:name=".controlador.activities.AntiprocrastinadorActivity"
+            android:exported="false" />
+
     </application>
-
-
 
 </manifest>

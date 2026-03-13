@@ -11,6 +11,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 /**
  * Clase que realmente muestra la notificación cuando llega la hora
@@ -34,7 +35,7 @@ public class NotificacionWorker extends Worker {
         String mensaje = getInputData().getString("mensaje");
         String tipoStr = getInputData().getString("tipoNotificacion");
         String nombreMed = getInputData().getString("nombreMed");
-        boolean antipro = getInputData().getBoolean("antiprocrastinador", false);
+        boolean antipro = getInputData().getBoolean(Constantes.ARG_ANTIPROCRASTINADOR, false);
         long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
 
         if (idMed == null || nombreMed == null) return Result.failure();

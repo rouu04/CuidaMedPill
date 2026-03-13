@@ -101,21 +101,26 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         btnVoyAhora.setOnClickListener(v -> {
             callaAlarma();
             if (antiprocrastinador) {
-
+                // Abrir pantalla antiprocrastinador
                 Intent intent = new Intent(
                         AlarmaMedicacionActivity.this,
                         AntiprocrastinadorActivity.class
                 );
-
-                //intent.putExtra("nombreMed", nombreMed); todo poner id med
-
+                intent.putExtra("nombreMed", med.getNombreMed());
+                intent.putExtra(Constantes.ARG_MEDID, med.getId());
                 startActivity(intent);
+
+                // Cerramos esta alarma, pero no matamos el proceso
+                finish();
+            } else {
+                // Si no es antiprocrastinador, volver a home
+                cerrarAlarmaYVolverHome();
             }
-            cerrarAlarmaYVolverHome();
         });
 
         btnNoTomado.setOnClickListener(v -> {
-            //Ignorar, se queda pendiente
+            // Ignorar, se queda pendiente
+            callaAlarma();
             cerrarAlarmaYVolverHome();
         });
     }

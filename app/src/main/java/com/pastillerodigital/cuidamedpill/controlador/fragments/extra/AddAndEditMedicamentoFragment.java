@@ -209,6 +209,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 if(modo == Modo.SUPERVISOR) toolbarSup.setTitle(R.string.text_title_add_med);
                 ocultarCarga();
             }
+
             cargarUsr();
         }
     }
@@ -255,6 +256,16 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         );
 
         //Notificaciones
+        notisFragment = new NotificacionesFragment();
+        notisFragment.setModoEdicion(true);
+        notisFragment.setIsVer(false);
+
+        // Añadimos al contenedor, si existe
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.containerNotificacionesMed, notisFragment)
+                .commitNow();
+
         switchNotiGeneral.setChecked(true);
         switchNotiGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isNotiGeneral = isChecked;
@@ -660,6 +671,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         if (med.getFechaFin() != null) edtFechaFin.setText(Utils.timestampToString(med.getFechaFin()));
 
         if (med.getnMedRestantes() >= 0) edtNMedRestantes.setText(String.valueOf(med.getnMedRestantes()));
+        else {
+            edtNMedRestantes.setText("");
+        }
 
         // Notas
         if (med.getNotasMed() != null) edtNotasMed.setText(med.getNotasMed());
@@ -686,12 +700,15 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             layoutHorarioContainer.setVisibility(View.GONE);
         }
 
-        if(med.getIsNotiGeneral()){
+        if (med.getIsNotiGeneral()) {
             switchNotiGeneral.setChecked(true);
-        }else if(med.getConfNoti() != null){
-            notisFragment.cargarDatosEnPantalla(med.getConfNoti());
-        }else{
-            notisFragment.cargarConfiguracionPorDefecto();
+        } else {
+            switchNotiGeneral.setChecked(false);
+            if(med.getConfNoti() != null){
+                notisFragment.cargarDatosEnPantalla(med.getConfNoti());
+            } else {
+                notisFragment.cargarConfiguracionPorDefecto();
+            }
         }
     }
 
