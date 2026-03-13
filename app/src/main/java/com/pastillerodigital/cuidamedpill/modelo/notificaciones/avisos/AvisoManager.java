@@ -47,41 +47,41 @@ public class AvisoManager {
     }
 
 
-    private static void gestionarAviso(Context context, AvisoDAO aDAO, Aviso aviso){
-        aDAO.gestionarAvisoExistente(aviso, new OnOperationCallback() {
+    private static void gestionarAviso(Context context, AvisoDAO aDAO, Aviso aviso) {
+        aDAO.getAvisoPendiente(aviso, new OnDataLoadedCallback<Aviso>() {
             @Override
-            public void onSuccess() {
-                aDAO.getAvisoPendiente(aviso, new OnDataLoadedCallback<Aviso>() {
-                    @Override
-                    public void onSuccess(Aviso aviso) {
-                        if (aviso == null) return;
-                        if(!aviso.isNotiMostrada()){
-                            aviso.setNotiMostrada(true);
-                            aDAO.edit(aviso, new OnOperationCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    AvisoNotificacionHelper.mostrarAviso(context, aviso);
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-
-                                }
-                            });
+            public void onSuccess(Aviso avisoExistente) {
+                if (avisoExistente != null) {
+                    if (!avisoExistente.isNotiMostrada()) {
+                        dispararNotificacion(context, aDAO, avisoExistente);
+                    }
+                } else {
+                    aDAO.add(aviso, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            dispararNotificacion(context, aDAO, aviso);
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+                        @Override
+                        public void onFailure(Exception e) {}
+                    });
+                }
             }
 
             @Override
             public void onFailure(Exception e) {
-
             }
+        });
+    }
+
+    private static void dispararNotificacion(Context context, AvisoDAO aDAO, Aviso aviso) {
+        aviso.setNotiMostrada(true);
+        aDAO.edit(aviso, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                AvisoNotificacionHelper.mostrarAviso(context, aviso);
+            }
+            @Override
+            public void onFailure(Exception e) {}
         });
     }
 

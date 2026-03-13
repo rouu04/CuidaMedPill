@@ -136,7 +136,6 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                 .whereEqualTo("tipoAvisoStr", aviso.getTipoAvisoStr())
                 .whereEqualTo("medId", aviso.getMedId())
                 .whereEqualTo("leido", false)
-                .whereEqualTo("notiMostrada", false) // solo los que aún no se mostraron
                 .limit(1)
                 .get()
                 .addOnSuccessListener(query -> {
@@ -157,6 +156,7 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
     public ListenerRegistration listenNoLeidos(OnDataLoadedCallback<List<Aviso>> callback) {
         return getCollection()
                 .whereEqualTo(Constantes.AVISO_LEIDO, false)
+
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         callback.onFailure(e);
