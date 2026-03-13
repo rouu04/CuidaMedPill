@@ -1,6 +1,7 @@
 package com.pastillerodigital.cuidamedpill.controlador.activities;
 
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -67,9 +69,7 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         btnVoyAhora = findViewById(R.id.btnVoyAhora);
         btnNoTomado = findViewById(R.id.btnNoTomado);
 
-        iniciarAlarma();
         desbloquearPantalla();
-        iniciarVibracion();
 
         leerArgumentosYConsec();
         setButtonListeners();
@@ -199,6 +199,10 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     //------------FUNCIONES ALARMA
 
     private void iniciarAlarma() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
 
         setVolumeControlStream(AudioManager.STREAM_ALARM);
 
@@ -242,15 +246,33 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     }
 
     private void callaAlarma() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
+        try {
+            // 1. CANCELAR LA NOTIFICACIÓN DEL SISTEMA (EL "FANTASMA")
+            if (med != null) {
+                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (nm != null) {
+                    nm.cancel(med.getId().hashCode()); // Cancelamos el ID que generamos antes
+                }
             }
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        if (vibrator != null) {
-            vibrator.cancel();
+
+            // 2. Detener vibración
+            if (vibrator != null) {
+                vibrator.cancel();
+                vibrator = null;
+            }
+
+            // 3. Detener  MediaPlayer
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                mediaPlayer = null;
+                Log.d("Alarma", "Sistema y Actividad silenciados");
+            }
+        } catch (Exception e) {
+            Log.e("Alarma", "Error al callar: " + e.getMessage());
         }
     }
 
@@ -260,13 +282,7 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-        finish();
-
-        // Esto mata el proceso actual de la app. La próxima vez que el usuario
-        // abra la app, Android se verá obligado a crear una instancia totalmente nueva.
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(0);
+        finishAffinity();
     }
 
     /**
@@ -276,5 +292,12 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         callaAlarma();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        iniciarAlarma();
+        iniciarVibracion();
     }
 }

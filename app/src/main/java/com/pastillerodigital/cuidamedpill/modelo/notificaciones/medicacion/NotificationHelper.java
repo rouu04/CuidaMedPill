@@ -94,6 +94,8 @@ public class NotificationHelper {
             }
         }
 
+        int notificationId = idMed.hashCode();
+
         String channelId;
         switch (tipo) {
             case ALARMA:
@@ -115,30 +117,39 @@ public class NotificationHelper {
 
         if (tipo == TipoNotificacion.ALARMA) {
             Intent intent = new Intent(context, AlarmaMedicacionActivity.class);
-
             intent.putExtra(Constantes.ARG_MEDID, idMed);
             intent.putExtra(Constantes.ARG_ANTIPROCRASTINADOR, antiprocrastinador);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            // Flags para forzar la aparición
+
+            // Flags para asegurar que la actividad se lance correctamente sobre otras
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TOP |
                     Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
+
             PendingIntent pendingIntent = PendingIntent.getActivity(
                     context,
-                    (int) System.currentTimeMillis(),
+                    notificationId,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
-            builder.setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(pendingIntent, true)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC); // Visible en cualquier momento
 
-            // Forzamos la apertura de la actividad manualmente (para que se muestre incluso si está encendido)
+            // 4. Construcción de la notificación
+            builder = new NotificationCompat.Builder(context, channelId)
+                    .setSmallIcon(R.drawable.ic_pastilla_capsula) // Asegúrate de que este recurso existe
+                    .setContentTitle(titulo)
+                    .setContentText(mensaje)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setAutoCancel(true)
+                    .setOngoing(tipo == TipoNotificacion.ALARMA) // Evita que se borre deslizando si es alarma
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+            builder.setFullScreenIntent(pendingIntent, true);
+
+            // Lanzamos la actividad manualmente para asegurar la apertura inmediata
             context.startActivity(intent);
         }
 
-        NotificationManagerCompat.from(context).notify((int) System.currentTimeMillis(), builder.build());
+        NotificationManagerCompat.from(context).notify(notificationId, builder.build());
     }
 }
