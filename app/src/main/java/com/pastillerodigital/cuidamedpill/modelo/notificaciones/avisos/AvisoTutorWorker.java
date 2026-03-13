@@ -9,8 +9,11 @@ import androidx.work.WorkerParameters;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AvisoTutorWorker extends Worker {
 
@@ -29,11 +32,14 @@ public class AvisoTutorWorker extends Worker {
         if (tutoresArray == null) return Result.failure();
         List<String> tutores = Arrays.asList(tutoresArray);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        String fechaAviso = sdf.format(new Date());
+
         for(String tutorId : tutores){
             Aviso aviso = new Aviso(
                     TipoAviso.OLVIDOASISTIDO,
                     "Toma olvidada",
-                    "El asistido no registró la medicación " + nombreMed,
+                    "El asistido no registró la medicación " + nombreMed + " (" + fechaAviso + ")",
                     medId
             );
 

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.MainActivity;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.AvisosAdapter;
@@ -73,6 +74,7 @@ public class HomeFragment extends Fragment {
     private List<Ingesta> ingPendientes = new ArrayList<>();
     private AvisosAdapter avisosAdapter;
     private List<Aviso> listaAvisos = new ArrayList<>();
+    private ListenerRegistration avisosListener;
 
     public static HomeFragment newInstance(String userIdSelf, Modo modo) {
         HomeFragment fragment = new HomeFragment();
@@ -111,6 +113,7 @@ public class HomeFragment extends Fragment {
 
         tvEmptyAvisos = view.findViewById(R.id.tvEmptyAvisos);
         tvEmptyMedsHoy = view.findViewById(R.id.tvEmptyMedsHoy);
+        rvAvisos = view.findViewById(R.id.rvAvisosHome);
 
         mostrarCarga();
         setUpRecyclerView();
@@ -169,7 +172,7 @@ public class HomeFragment extends Fragment {
                 lMedTodos.clear();
                 lMedTodos.addAll(medicamentos);
                 AvisoManager.comprobarAvisosInicio(getContext(), usr, medicamentos);
-                cargarAvisosNoLeidos();
+                escucharAvisos();
 
                 lMedHorario.clear();
                 for (Medicamento med : medicamentos) {
@@ -203,6 +206,24 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    private void escucharAvisos(){
+        avisosListener = aDAO.listenNoLeidos(new OnDataLoadedCallback<List<Aviso>>() {
+            @Override
+            public void onSuccess(List<Aviso> data) {
+                listaAvisos.clear();
+                listaAvisos.addAll(data);
+                avisosAdapter.notifyDataSetChanged();
+                isVistaNoAvisos();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+
     }
 
     private void getIngPendientesPresente(){
@@ -252,7 +273,7 @@ public class HomeFragment extends Fragment {
         medDAO.edit(med, new OnOperationCallback() {
             @Override
             public void onSuccess() {
-                AvisoManager.comprobarYMostrarAvisosEdicion(getContext(), usr, med);
+                AvisoManager.comprobarAvisos(getContext(), usr, med);
                 marcarAvisoLeido(aviso);
             }
 
@@ -286,7 +307,7 @@ public class HomeFragment extends Fragment {
 
 
         //Adapter avisos
-        rvAvisos = getView().findViewById(R.id.rvAvisosHome);
+
         rvAvisos.setLayoutManager(new LinearLayoutManager(getContext()));
         avisosAdapter = new AvisosAdapter(listaAvisos, new AvisosAdapter.OnAvisoClickListener() {
             @Override
@@ -427,7 +448,7 @@ public class HomeFragment extends Fragment {
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
-                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
+                    AvisoManager.comprobarAvisos(getContext(), usr, med);
                     //puede haber medicamentos con horario que tengan ingestas fuera de horario
                     if(med.getHorario() != null && fechaProgramada != null){
                         medHoyAdapter.notifyDataSetChanged();
@@ -661,6 +682,16 @@ public class HomeFragment extends Fragment {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (avisosListener != null) {
+            avisosListener.remove();
+        }
     }
 
 }

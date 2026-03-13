@@ -701,7 +701,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             public void onSuccess() {//medicamento añadido, volvemos a la lista
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
-                    AvisoManager.comprobarYMostrarAvisos(getContext(), usr, med);
+                    AvisoManager.comprobarAvisos(getContext(), usr, med);
                 }
                 else AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()
@@ -723,7 +723,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
-                    AvisoManager.comprobarYMostrarAvisosEdicion(getContext(), usr, med);
+                    AvisoManager.comprobarAvisos(getContext(), usr, med);
                 }
                 else AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()
