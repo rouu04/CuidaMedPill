@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.Timestamp;
@@ -171,7 +172,7 @@ public class HomeFragment extends Fragment {
             public void onSuccess(List<Medicamento> medicamentos) {
                 lMedTodos.clear();
                 lMedTodos.addAll(medicamentos);
-                AvisoManager.comprobarAvisosInicio(getContext(), usr, medicamentos);
+                AvisoManager.comprobarAvisosGeneral(getContext(), usr, medicamentos);
                 escucharAvisos();
 
                 lMedHorario.clear();
@@ -448,28 +449,27 @@ public class HomeFragment extends Fragment {
             ingestaDAO.add(ingesta, new OnOperationCallback() {
                 @Override
                 public void onSuccess() {
-                    AvisoManager.comprobarAvisos(getContext(), usr, med);
                     //puede haber medicamentos con horario que tengan ingestas fuera de horario
-                    if(med.getHorario() != null && fechaProgramada != null){
-                        medHoyAdapter.notifyDataSetChanged();
-                        mostrarCarga();
-                        cargarMedsYConIngestas();
-                        med.ingestaTomada(ingesta);
-                        //Guardamos en medicamento la nueva sigtoma del horario
-                        medDAO.edit(med, new OnOperationCallback() {
-                            @Override
-                            public void onSuccess() {
+
+                    med.ingestaTomada(ingesta); //actualiza sig ingesta y resta med
+                    medDAO.edit(med, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if(med.getHorario() == null || fechaProgramada == null) AvisoManager.comprobarAvisos(getContext(), usr, med);
+                            else{
                                 // Recargar ingestas pendientes
                                 mostrarCarga();
                                 cargarMedsYConIngestas();
+                                medHoyAdapter.notifyDataSetChanged();
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                UiUtils.mostrarErrorYReiniciar(requireActivity());
-                            }
-                        });
-                    }
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+
 
 
                 }
@@ -551,8 +551,8 @@ public class HomeFragment extends Fragment {
         ImageView imgTipo = view.findViewById(R.id.imgTipoMedCad);
         TextView tvNombre = view.findViewById(R.id.tvNombreMedCad);
         TextView tvFecha = view.findViewById(R.id.tvFechaCadCad);
-        Button btnFecha = view.findViewById(R.id.btnSeleccionarFechaCad);
-        Button btnQuitar = view.findViewById(R.id.btnQuitarFechaCad);
+        MaterialButton btnFecha = view.findViewById(R.id.btnSeleccionarFechaCad);
+        MaterialButton btnQuitar = view.findViewById(R.id.btnQuitarFechaCad);
 
         Medicamento med = buscarMedicamento(aviso.getMedId());
         if(med == null) return;
@@ -629,7 +629,7 @@ public class HomeFragment extends Fragment {
 
         ImageView imgTipo = view.findViewById(R.id.imgTipoMed);
         TextView tvNombre = view.findViewById(R.id.tvNombreMed);
-        Button btnFecha = view.findViewById(R.id.btnSeleccionarFechaFin);
+        MaterialButton btnFecha = view.findViewById(R.id.btnSeleccionarFechaFin);
 
         Medicamento med = buscarMedicamento(aviso.getMedId());
 

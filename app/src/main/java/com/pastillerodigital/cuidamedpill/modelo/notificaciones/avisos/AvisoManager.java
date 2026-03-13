@@ -15,7 +15,7 @@ import java.util.List;
 
 public class AvisoManager {
 
-    public static void comprobarAvisosInicio(Context context, Usuario usuario, List<Medicamento> meds){
+    public static void comprobarAvisosGeneral(Context context, Usuario usuario, List<Medicamento> meds){
         for(Medicamento med : meds){
             comprobarAvisos(context, usuario, med);
         }

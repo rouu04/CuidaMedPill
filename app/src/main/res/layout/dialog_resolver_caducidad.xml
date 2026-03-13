@@ -56,18 +56,20 @@
         android:textStyle="bold"
         android:layout_marginTop="12dp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSeleccionarFechaCad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Seleccionar fecha"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_marginTop="12dp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnQuitarFechaCad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Quitar fecha de caducidad"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_marginTop="8dp"/>
 
 </LinearLayout>

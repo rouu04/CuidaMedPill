@@ -499,8 +499,6 @@ public class Medicamento implements Persistible {
 
         //Comprobar elementos opcionales ->
         if(nMedRestantes != -1) nMedRestantes --;
-        //todo lanzar aviso si fuese necesario
-
     }
 
 
