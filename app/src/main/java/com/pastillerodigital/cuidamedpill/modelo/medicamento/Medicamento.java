@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Medicamentos
@@ -344,7 +345,7 @@ public class Medicamento implements Persistible {
 
             for (Ingesta ing : ingestasExistentes) {// Buscar si ya existe ingesta para esa hora
                 if (ing.getFechaProgramada() == null) continue;
-                if (Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), horaProgramada)) {
+                if (Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), horaProgramada, TimeZone.getDefault())) {
                     ingEncontrada = ing;
                     break;
                 }
@@ -441,7 +442,7 @@ public class Medicamento implements Persistible {
         if(lista == null) return null;
         for(Ingesta ing : lista){
             if(ing.getFechaProgramada() == null) continue;
-            if(Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), hora)) return ing;
+            if(Utils.mismaFechaHoraMinuto(ing.getFechaProgramada(), hora, TimeZone.getDefault())) return ing;
         }
         return null;
     }

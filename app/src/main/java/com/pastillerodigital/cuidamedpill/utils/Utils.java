@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class Utils {
 
@@ -148,10 +149,10 @@ public class Utils {
                 c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
     }
 
-    public static boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2) {
-        Calendar c1 = Calendar.getInstance();
+    public static boolean mismaFechaHoraMinuto(Timestamp t1, Timestamp t2, TimeZone tz) {
+        Calendar c1 = Calendar.getInstance(tz);
         c1.setTime(t1.toDate());
-        Calendar c2 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance(tz);
         c2.setTime(t2.toDate());
 
         return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&

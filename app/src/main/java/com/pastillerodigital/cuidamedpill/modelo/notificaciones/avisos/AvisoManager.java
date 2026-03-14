@@ -33,7 +33,7 @@ public class AvisoManager {
         }
 
         // COMPRA
-        if(conf.isAvisoCompra() && med.getnMedRestantes() <= 5){
+        if(conf.isAvisoCompra() && 0 >= med.getnMedRestantes() && med.getnMedRestantes() <= 5){
             Aviso aviso = AvisoFactory.crearAvisoCompra(med);
             gestionarAviso(context, aDAO, aviso);
         }
