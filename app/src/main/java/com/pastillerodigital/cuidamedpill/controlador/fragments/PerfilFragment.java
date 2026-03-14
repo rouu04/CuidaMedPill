@@ -50,7 +50,7 @@ public class PerfilFragment extends Fragment{
 
     private View progressPerfil, layoutContenido;
     private android.widget.ImageView imgFotoPerfil;
-    private TextView tvAlias, tvNombreUsr, tvSupervisando;
+    private TextView tvAlias, tvNombreUsr, tvSupervisando, tvAsistEmpty;
     private RecyclerView rvUsrsAsist;
     private Button btnAddAsist,btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnConfirmAddAsist,
             btnRegAsist, btnCancelarAddAsist;
@@ -110,6 +110,7 @@ public class PerfilFragment extends Fragment{
         tvAlias = view.findViewById(R.id.tvAlias);
         tvNombreUsr = view.findViewById(R.id.tvNombreUsuario);
         tvSupervisando = view.findViewById(R.id.tvSupervisando);
+        tvAsistEmpty = view.findViewById(R.id.tvAsistEmpty);
         rvUsrsAsist = view.findViewById(R.id.rvPersonasAsistidas);
         btnAddAsist = view.findViewById(R.id.btnAddAsistido);
 
@@ -267,7 +268,6 @@ public class PerfilFragment extends Fragment{
     }
 
     private void setupRecyclerView() {
-
         List<UsuarioAsistido> listaOrdenada = new ArrayList<>(usrSelf.getUsrAsistidoAsig());
         listaOrdenada.sort((u1, u2) -> u1.getAliasU().compareToIgnoreCase(u2.getAliasU()));
 
@@ -364,6 +364,14 @@ public class PerfilFragment extends Fragment{
 
         rvUsrsAsist.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUsrsAsist.setAdapter(adapter);
+
+        if(listaOrdenada.isEmpty()){
+            tvAsistEmpty.setVisibility(View.VISIBLE);
+            rvUsrsAsist.setVisibility(View.GONE);
+        }else{
+            tvAsistEmpty.setVisibility(View.GONE);
+            rvUsrsAsist.setVisibility(View.VISIBLE);
+        }
     }
 
     //--------FUNCIONES AUXILIARES CON GRANDES FUNCIONALIDADES

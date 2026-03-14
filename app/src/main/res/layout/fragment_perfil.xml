@@ -94,6 +94,16 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginBottom="@dimen/margin_bottom_element" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvAsistEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No tienes ningún usuario asistido vinculado"
+                android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:visibility="gone"
+                android:padding="@dimen/padding_general_light"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPersonasAsistidas"
                 android:layout_width="match_parent"

@@ -62,6 +62,16 @@
                 android:paddingBottom="@dimen/padding_bottom"
                 android:layout_marginTop="@dimen/margin_top"/>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvDiaEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No hay nada registrado para este día"
+                android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:visibility="gone"
+                android:padding="@dimen/padding_general_light"/>
+
             <!-- RecyclerView dentro de NestedScrollView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMedicamentosDia"

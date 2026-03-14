@@ -43,7 +43,7 @@ public class CalendarioFragment extends Fragment {
 
     private MaterialCalendarView calendarView;
     private RecyclerView rvMedicamentos;
-    private TextView tvFecha;
+    private TextView tvFecha, tvDiaEmpty;
     private MaterialToolbar tbTtitleCal;
     private Chip chipVistaSemanal;
 
@@ -97,6 +97,7 @@ public class CalendarioFragment extends Fragment {
         calendarView = view.findViewById(R.id.calendarView);
         rvMedicamentos = view.findViewById(R.id.rvMedicamentosDia);
         tvFecha = view.findViewById(R.id.tvFechaSeleccionada);
+        tvDiaEmpty = view.findViewById(R.id.tvDiaEmpty);
         tbTtitleCal = view.findViewById(R.id.topAppBarCal);
         chipVistaSemanal = view.findViewById(R.id.chipVistaSemanal);
 
@@ -234,6 +235,14 @@ public class CalendarioFragment extends Fragment {
         listaFiltrada.sort((m1, m2) -> m1.getNombreMed().compareToIgnoreCase(m2.getNombreMed()));
         adapter.setFechaSeleccionada(fecha);
         adapter.notifyDataSetChanged();
+
+        if(listaFiltrada.isEmpty()){
+            tvDiaEmpty.setVisibility(View.VISIBLE);
+            rvMedicamentos.setVisibility(View.GONE);
+        }else{
+            tvDiaEmpty.setVisibility(View.GONE);
+            rvMedicamentos.setVisibility(View.VISIBLE);
+        }
     }
 
     private void actualizarPuntosCalendario() {

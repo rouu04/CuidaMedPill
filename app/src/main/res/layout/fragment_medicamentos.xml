@@ -28,6 +28,16 @@
             app:titleTextAppearance="@style/ToolbarTitleBold"
             app:titleTextColor="@color/md_primary_dark"/>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvMedsEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No hay medicamentos registrados, ¡añade uno!"
+            android:gravity="center"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:visibility="gone"
+            android:padding="@dimen/padding_general_light"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMedicamentos"

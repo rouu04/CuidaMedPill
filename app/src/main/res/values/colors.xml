@@ -31,13 +31,13 @@
     <color name="md_error_on_primary">#B00020</color>
 
     <!-- Colores basicos -->
-    <color name="md_rojo">#FF0000</color>
-    <color name="md_naranja">#FF5722</color>
-    <color name="md_amarillo">#FFEB3B</color>
-    <color name="md_verde">#4CAF50</color>
-    <color name="md_azul">#03A9F4</color>
-    <color name="md_azul_oscuro">#3F51B5</color>
-    <color name="md_violeta">#673AB7</color>
+    <color name="md_rojo">#FF5151</color>
+    <color name="md_naranja">#FF7A50</color>
+    <color name="md_amarillo">#FFEE5B</color>
+    <color name="md_verde">#5EC362</color>
+    <color name="md_azul">#4BC6FB</color>
+    <color name="md_azul_oscuro">#6F85FF</color>
+    <color name="md_violeta">#A578F6</color>
     <color name="md_black">#000000</color>
     <color name="md_blanco">#FFFFFF</color>
 
@@ -50,9 +50,9 @@
 
     <!-- Colores avisos-->
     <color name="avisoCaducidad">#89F2E7</color>
-    <color name="avisoCompra">#FF5722</color>
+    <color name="avisoCompra">#FD835C</color>
     <color name="avisoFinTratamiento">#89F2E7</color>
-    <color name="avisoOlvidoAsistido">#D96868</color>
+    <color name="avisoOlvidoAsistido">#FD6060</color>
     <color name="avisoGeneral">#89F2E7</color>
 
 </resources>

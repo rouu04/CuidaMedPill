@@ -377,9 +377,17 @@ public class HomeFragment extends Fragment {
 
     private void isVistaNoAvisos(){
         if(listaAvisos.isEmpty()){
-            tvEmptyAvisos.setVisibility(View.VISIBLE);
-            rvAvisos.setVisibility(View.GONE);
+            if(modo == Modo.ASISTIDO){ //ocultamos sección de avisos vacíos
+                tvTitleAvisos.setVisibility(View.GONE);
+                tvEmptyAvisos.setVisibility(View.GONE);
+                rvAvisos.setVisibility(View.GONE);
+            }else{
+                tvTitleAvisos.setVisibility(View.VISIBLE);
+                tvEmptyAvisos.setVisibility(View.VISIBLE);
+                rvAvisos.setVisibility(View.GONE);
+            }
         }else{
+            tvTitleAvisos.setVisibility(View.VISIBLE);
             tvEmptyAvisos.setVisibility(View.GONE);
             rvAvisos.setVisibility(View.VISIBLE);
         }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ public class MedicamentosFragment extends Fragment {
     private FloatingActionButton fab;
     private MaterialToolbar tbTitleMeds;
     private LinearLayout layoutFormMeds;
+    private TextView tvMedsEmpty;
 
     //Elementos lógicos
     String uid, uidSelf;
@@ -82,6 +84,7 @@ public class MedicamentosFragment extends Fragment {
         //Elementos diseño:
         progressMed = view.findViewById(R.id.progressMed);
         rvMed = view.findViewById(R.id.rvMedicamentos);
+        tvMedsEmpty = view.findViewById(R.id.tvMedsEmpty);
         fab = view.findViewById(R.id.fabAddMedicamento);
         tbTitleMeds = view.findViewById(R.id.topAppBarMeds);
         layoutFormMeds = view.findViewById(R.id.formLayoutMeds);
@@ -194,6 +197,14 @@ public class MedicamentosFragment extends Fragment {
         });
         rvMed.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMed.setAdapter(medAdapter);
+
+        if(lMed.isEmpty()){
+            tvMedsEmpty.setVisibility(View.VISIBLE);
+            rvMed.setVisibility(View.GONE);
+        }else{
+            tvMedsEmpty.setVisibility(View.GONE);
+            rvMed.setVisibility(View.VISIBLE);
+        }
     }
 
 
