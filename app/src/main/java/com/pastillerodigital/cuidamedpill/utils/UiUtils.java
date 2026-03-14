@@ -168,6 +168,66 @@ public class UiUtils {
         } else imageView.setImageDrawable(drawable);
     }
 
+    /**
+     * Obtiene bitmap del medicamento, sirve para mostrar el icono en las notificaciones
+     * @param context
+     * @param tipoMedStr
+     * @param colorSimb
+     * @return
+     */
+    public static android.graphics.Bitmap getMedicamentoBitmap(Context context, String tipoMedStr, String colorSimb) {
+        TipoMed tipoMed;
+        try {
+            tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
+        } catch (Exception e) {
+            tipoMed = TipoMed.CAPSULA;
+        }
+
+        Drawable drawable = ContextCompat.getDrawable(context, tipoMed.getDrawableRes());
+        if (drawable == null) return null;
+
+        // color
+        int color;
+        if (colorSimb != null && !colorSimb.isEmpty()) {
+            int resColor = context.getResources().getIdentifier(colorSimb, "color", context.getPackageName());
+            if (resColor != 0) {
+                color = ContextCompat.getColor(context, resColor);
+            } else {
+                color = ContextCompat.getColor(context, R.color.md_primary);
+            }
+        } else {
+            color = ContextCompat.getColor(context, R.color.md_primary);
+        }
+
+        drawable = drawable.mutate();
+        if (drawable instanceof LayerDrawable) {
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
+            try {
+                Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
+                if (capaColor != null) {
+                    capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                } else {
+                    // Si la capa coloreable no existe, aplica el color al drawable completo
+                    layerDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                }
+            } catch (Exception e) {
+                // fallback
+                layerDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+            drawable = layerDrawable;
+        } else {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
+
+        // Se convierte a Bitmap (necesario para RemoteViews)
+        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(100, 100, android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
 
 
 }

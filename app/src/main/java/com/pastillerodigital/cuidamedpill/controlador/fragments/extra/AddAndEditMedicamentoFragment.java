@@ -256,40 +256,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         );
 
         //Notificaciones
-        notisFragment = new NotificacionesFragment();
-        notisFragment.setModoEdicion(true);
-        notisFragment.setIsVer(false);
+        switchNotiGeneral.setChecked(true); // o false según el estado inicial
+        actualizarVistaNotificaciones(switchNotiGeneral.isChecked());
 
-        // Añadimos al contenedor, si existe
-        getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.containerNotificacionesMed, notisFragment)
-                .commitNow();
-
-        switchNotiGeneral.setChecked(true);
         switchNotiGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isNotiGeneral = isChecked;
-            if(isChecked){
-                tvNotiGeneralInfo.setVisibility(View.VISIBLE);
-                Fragment existing = getChildFragmentManager().findFragmentById(R.id.containerNotificacionesMed);
-                if(existing != null){
-                    getChildFragmentManager()
-                            .beginTransaction()
-                            .remove(existing)
-                            .commit();
-                }
-            }else{
-                tvNotiGeneralInfo.setVisibility(View.GONE);
-                notisFragment = new NotificacionesFragment();
-                notisFragment.setModoEdicion(true);
-                notisFragment.setIsVer(false);
-                getChildFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.containerNotificacionesMed, notisFragment)
-                        .commitNow();
-                if(medEdit != null && medEdit.getConfNoti() != null)notisFragment.cargarDatosEnPantalla(medEdit.getConfNoti());
-                else notisFragment.cargarConfiguracionPorDefecto();
-            }
+            actualizarVistaNotificaciones(isChecked);
         });
 
     }
@@ -333,7 +305,6 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
                 }
                 usr = data;
-
             }
 
             @Override
@@ -753,6 +724,39 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
+    }
+
+    private void actualizarVistaNotificaciones(boolean isNotiGeneral) {
+        tvNotiGeneralInfo.setVisibility(isNotiGeneral ? View.VISIBLE : View.GONE);
+        Fragment existing = getChildFragmentManager().findFragmentById(R.id.containerNotificacionesMed);
+
+        if (isNotiGeneral) {
+            // Si es notificación general, eliminamos cualquier fragmento de notificaciones
+            if (existing != null) {
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .remove(existing)
+                        .commitNow();
+            }
+        } else {
+            // Si NO es notificación general, añadimos el fragmento
+            if (existing == null) {
+                notisFragment = new NotificacionesFragment();
+                notisFragment.setModoEdicion(true);
+                notisFragment.setIsVer(false);
+
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerNotificacionesMed, notisFragment)
+                        .commitNow();
+
+                if (medEdit != null && medEdit.getConfNoti() != null) {
+                    notisFragment.cargarDatosEnPantalla(medEdit.getConfNoti());
+                } else {
+                    notisFragment.cargarConfiguracionPorDefecto();
+                }
+            }
+        }
     }
 
     //--------FUNCIONES PARA EL SIMBOLO Y COLOR DEL ICONO DEL MEDICAMENTO

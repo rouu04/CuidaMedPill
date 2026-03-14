@@ -6,18 +6,30 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.provider.Settings;
+import android.widget.ImageView;
+import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.activities.AlarmaMedicacionActivity;
+import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.UiUtils;
+import android.content.SharedPreferences;
 
 /**
  * Gestiona notificaciones, crea el canal y muesta la notificacion
@@ -85,13 +97,10 @@ public class NotificationHelper {
     }
 
     public static void mostrarNotificacion(Context context, String titulo, String mensaje, TipoNotificacion tipo,
-                                           String nombreMed, boolean antiprocrastinador, String idMed) {
-        // Android 13+ requiere permiso
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                // No hay permiso: no hacemos nada, o podrías loggear
-                return;
-            }
+                                           boolean antiprocrastinador, String idMed, String tipoMedStr, String colorSimb) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
 
         int notificationId = idMed.hashCode();
@@ -108,48 +117,49 @@ public class NotificationHelper {
                 channelId = CHANNEL_NORMAL;
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_pastilla_capsula)
-                .setContentTitle(titulo)
-                .setContentText(mensaje)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true);
-
         if (tipo == TipoNotificacion.ALARMA) {
             Intent intent = new Intent(context, AlarmaMedicacionActivity.class);
             intent.putExtra(Constantes.ARG_MEDID, idMed);
             intent.putExtra(Constantes.ARG_ANTIPROCRASTINADOR, antiprocrastinador);
-
-            // Flags para asegurar que la actividad se lance correctamente sobre otras
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(
-                    context,
-                    notificationId,
-                    intent,
+                    context, notificationId, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // 4. Construcción de la notificación
-            builder = new NotificationCompat.Builder(context, channelId)
-                    .setSmallIcon(R.drawable.ic_pastilla_capsula) // Asegúrate de que este recurso existe
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                    .setSmallIcon(R.drawable.ic_pastilla_capsula)
                     .setContentTitle(titulo)
                     .setContentText(mensaje)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setAutoCancel(true)
-                    .setOngoing(tipo == TipoNotificacion.ALARMA) // Evita que se borre deslizando si es alarma
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                    .setOngoing(true)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setFullScreenIntent(pendingIntent, true);
 
-            builder.setFullScreenIntent(pendingIntent, true);
+            context.startActivity(intent); // abrir actividad
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build());
+        } else {
+            RemoteViews customView = new RemoteViews(context.getPackageName(), R.layout.notificacion_personalizada);
+            customView.setTextViewText(R.id.titulo, titulo);
+            customView.setTextViewText(R.id.mensaje, mensaje);
 
-            // Lanzamos la actividad manualmente para asegurar la apertura inmediata
-            context.startActivity(intent);
+            // Se obtiene recurso directamente
+            android.graphics.Bitmap icono = UiUtils.getMedicamentoBitmap(context, tipoMedStr, colorSimb);
+            if (icono != null) {
+                customView.setImageViewBitmap(R.id.iconoMed, icono);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                    .setSmallIcon(R.drawable.ic_pastilla_capsula)
+                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                    .setCustomContentView(customView)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true);
+
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build());
         }
-
-        NotificationManagerCompat.from(context).notify(notificationId, builder.build());
     }
 }

@@ -35,10 +35,13 @@ public class NotificacionWorker extends Worker {
         String mensaje = getInputData().getString("mensaje");
         String tipoStr = getInputData().getString("tipoNotificacion");
         String nombreMed = getInputData().getString("nombreMed");
+        String uid = getInputData().getString("uid");
+        String tipoMedStr = getInputData().getString("tipoMed");
+        String colorSimb = getInputData().getString("colorSimb");
         boolean antipro = getInputData().getBoolean(Constantes.ARG_ANTIPROCRASTINADOR, false);
         long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
 
-        if (idMed == null || nombreMed == null) return Result.failure();
+        if (idMed == null || nombreMed == null || uid == null) return Result.failure();
 
         if (tipoStr == null) {
             tipoStr = TipoNotificacion.ESTANDAR.toString(); // valor por defecto
@@ -56,8 +59,7 @@ public class NotificacionWorker extends Worker {
             }
         }
 
-        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo, nombreMed,
-                antipro,idMed);
+        NotificationHelper.mostrarNotificacion(getApplicationContext(), titulo, mensaje, tipo, antipro,idMed, tipoMedStr, colorSimb);
 
         // AUTO-RECARGA
         if (tiempoProgramado > 0) {

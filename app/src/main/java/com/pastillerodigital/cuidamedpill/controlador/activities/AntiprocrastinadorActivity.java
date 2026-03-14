@@ -165,9 +165,10 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
                 "Hora de tu medicamento",
                 "Toca tomar tu " + med.getNombreMed(),
                 TipoNotificacion.ALARMA,
-                med.getNombreMed(),
                 true,    // antiprocrastinador
-                medId
+                medId,
+                med.getTipoMedStr(),
+                med.getColorSimb()
         );
 
         // Abrir la Activity de alarma (opcional, para que el usuario la vea)

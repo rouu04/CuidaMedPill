@@ -58,16 +58,15 @@ public class RecordatorioManager {
         TipoNotificacion tipo = TipoNotificacion.ESTANDAR;
         boolean antiproc = true;
 
+        SharedPreferences prefs = context.getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, Context.MODE_PRIVATE);
+        String idSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
+        String idUsuario = prefs.getString(Constantes.PERSIST_KEYUSERID, idSelf);
+        if (idUsuario == null) return;
+
 
         if (med.getConfNoti() != null && !med.getIsNotiGeneral()) {
-            programarConConfig(context, med, tiempoNotificacion, med.getConfNoti().getTipoNoti(), med.getConfNoti().isAntiprocrastinador());
+            programarConConfig(context, med, tiempoNotificacion, med.getConfNoti().getTipoNoti(), med.getConfNoti().isAntiprocrastinador(), idUsuario);
         } else{
-
-            SharedPreferences prefs = context.getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, Context.MODE_PRIVATE);
-            String idSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
-            String idUsuario = prefs.getString(Constantes.PERSIST_KEYUSERID, idSelf);
-            if (idUsuario == null) return;
-
             UsuarioDAO uDAO = new UsuarioDAO();
             uDAO.getBasic(idUsuario, new OnDataLoadedCallback<Usuario>() {
                 @Override
@@ -79,19 +78,19 @@ public class RecordatorioManager {
                         }
                     }
                     // luego programar la notificación normal
-                    programarConConfig(context, med, tiempoNotificacion, user.getConfNoti().getTipoNoti(), user.getConfNoti().isAntiprocrastinador());
+                    programarConConfig(context, med, tiempoNotificacion, user.getConfNoti().getTipoNoti(), user.getConfNoti().isAntiprocrastinador(), idUsuario);
                 }
 
                 @Override
                 public void onFailure(Exception e) {
                     // fallback a notificación normal
-                    programarConConfig(context, med, tiempoNotificacion, tipo, antiproc);
+                    programarConConfig(context, med, tiempoNotificacion, tipo, antiproc, null);
                 }
             });
         }
     }
     private static void programarConConfig(Context context, Medicamento med, long tiempoNotificacion,
-                                           TipoNotificacion tipo, boolean antiproc) {
+                                           TipoNotificacion tipo, boolean antiproc, String uid) {
         long delay = tiempoNotificacion - System.currentTimeMillis();
         if (delay <= 0) return;
 
@@ -103,6 +102,9 @@ public class RecordatorioManager {
                 .putString("mensaje", "Es momento de tomar: " + med.getNombreMed())
                 .putString("tipoNotificacion", tipo.toString())
                 .putBoolean("antiprocrastinador", antiproc)
+                .putString("tipoMed", med.getTipoMed().toString())
+                .putString("colorSimb", med.getColorSimb())
+                .putString("uid", uid)
                 .build();
 
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(NotificacionWorker.class)
