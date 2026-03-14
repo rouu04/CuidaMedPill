@@ -242,22 +242,15 @@ public class Medicamento implements Persistible {
         return !cad.after(limite); // caduca dentro de los próximos 7 días
     }
 
-    public boolean checkAndUpdateFinTratamiento(){
+    public boolean isFinTratamiento(Calendar fecha){
         if (fechaFin == null) return false;
 
-        Calendar hoy = Calendar.getInstance(); // Fecha actual
-        Utils.limpiarHora(hoy);
+        Utils.limpiarHora(fecha);
         Calendar fin = Utils.timestampToCalendar(fechaFin); // Fecha fin convertida a Calendar
         if (fin == null) return false;
         Utils.limpiarHora(fin);
 
-        if (!hoy.before(fin)) {
-            //todo mandar aviso pertinente?
-            fechaFin = null;
-            this.horario = null; //ya no se lo toma
-            return true;
-        }
-        return false;
+        return !fecha.before(fin);
     }
 
     public boolean esSemanaAFinTratamiento(){
@@ -315,13 +308,18 @@ public class Medicamento implements Persistible {
         List<Ingesta> resultado = new ArrayList<>();
         if (lIngestas == null || dia == null) return resultado;
 
+        Calendar diaLimpio = (Calendar) dia.clone();
+        Utils.limpiarHora(diaLimpio);
+
         for (Ingesta ing : lIngestas) {
             //Se tiene en cuenta las fechas programadas y las no programadas
             Timestamp fechaBase = (ing.getFechaProgramada() != null) ? ing.getFechaProgramada() : ing.getFechaIngesta();
             if (fechaBase != null) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(fechaBase.toDate());
-                if (Utils.mismoDia(cal, dia)) resultado.add(ing);
+                Utils.limpiarHora(cal);
+
+                if (Utils.mismoDia(cal, diaLimpio)) resultado.add(ing);
             }
         }
         return resultado;
@@ -402,30 +400,28 @@ public class Medicamento implements Persistible {
     public List<Ingesta> generarIngestasFecha(Calendar fecha, Object tipoDiaObj){
         List<Ingesta> existentes = getIngestasPorDia(fecha);
         List<Ingesta> resultado = new ArrayList<>();
-        if(existentes != null) resultado.addAll(existentes);
+        List<Timestamp> horasProgramadas = new ArrayList<>();
 
+        if(existentes != null) resultado.addAll(existentes);
         if(horario == null) return resultado;
-        List<Timestamp> horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(fechaInicio));
+
+        if(fechaFin == null || !isFinTratamiento(fecha)){
+            horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(fechaInicio));
+        }
+
         if(horasProgramadas == null || horasProgramadas.isEmpty()) return resultado;
 
         for(Timestamp horaProg : horasProgramadas){
             Ingesta existente = buscarIngesta(existentes, horaProg);
 
-            if(existente != null){
-                resultado.add(existente);
-                continue;
-            }
+            if(existente != null) continue;
 
             // Determinar estado según tipo día
             String tipoDia = tipoDiaObj.toString();
             String estado;
 
-            if(tipoDia.contains("PASADO")){
-                estado = EstadoIngesta.OLVIDO.toString();
-            }
-            else{
-                estado = EstadoIngesta.PENDIENTE.toString();
-            }
+            if(tipoDia.contains("PASADO")) estado = EstadoIngesta.OLVIDO.toString();
+            else estado = EstadoIngesta.PENDIENTE.toString();
 
             Ingesta nueva = new Ingesta(horaProg, null, estado, this, null);
             lIngestas.add(nueva);

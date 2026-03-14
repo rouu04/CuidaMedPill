@@ -85,6 +85,10 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
         });
     }
 
+    /**
+     * Hace get del medicamento haciendo get a su vez de las ingestas de cada medicamento.
+     * @param callback
+     */
     public void getListConIngestas(OnDataLoadedCallback<List<Medicamento>> callback){
         getListBasic(new OnDataLoadedCallback<List<Medicamento>>() {// Primero get todos los medicamentos
             @Override
@@ -98,17 +102,6 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                 int[] cont = {0}; // contador de callbacks completados
 
                 for (Medicamento med : medicamentos) {
-                    if (med.getHorario() == null) {
-                        // No tiene horario, asignamos lista vacía y seguimos
-                        med.setlIngestas(new ArrayList<>());
-                        resultado.add(med);
-                        cont[0]++;
-                        if (cont[0] == medicamentos.size()) {
-                            callback.onSuccess(resultado);
-                        }
-                        continue;
-                    }
-
                     IngestaDAO ingDAO = new IngestaDAO(uid, med.getId());
                     ingDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
                         @Override
@@ -140,4 +133,12 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
         });
     }
 
+    public void updateFinTratamientoFinalizado(Medicamento med){
+        getCollection()
+                .document(med.getId())
+                .update(
+                        Constantes.MED_FECHAFIN, null,
+                        Constantes.MED_HORARIO, null
+                );
+    }
 }

@@ -58,7 +58,6 @@ public class CalendarioFragment extends Fragment {
     private String uid;
     private String uidSelf;
     private Modo modo;
-    private boolean vistaSemanal = false;
     private Calendar fechaSeleccionada = Calendar.getInstance();
 
     private enum TipoDia {
@@ -190,7 +189,9 @@ public class CalendarioFragment extends Fragment {
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
                 for(Medicamento med: data){
-                    if(!med.checkAndUpdateFinTratamiento()) listaCompleta.add(med);
+                    //if(med.getHorario() == null || !med.isFinTratamiento(Calendar.getInstance()))
+                    if(med.isFinTratamiento(Calendar.getInstance())) medDAO.updateFinTratamientoFinalizado(med);
+                    listaCompleta.add(med);
                 }
                 actualizarPuntosCalendario(); //colorea puntos calendario
                 actualizarTextoFecha();
@@ -232,6 +233,7 @@ public class CalendarioFragment extends Fragment {
         // Ordenar alfabéticamente por nombre del medicamento
         listaFiltrada.sort((m1, m2) -> m1.getNombreMed().compareToIgnoreCase(m2.getNombreMed()));
         adapter.setFechaSeleccionada(fecha);
+        adapter.notifyDataSetChanged();
     }
 
     private void actualizarPuntosCalendario() {

@@ -174,6 +174,7 @@ public class HomeFragment extends Fragment {
                 lMedTodos.addAll(medicamentos);
                 AvisoManager.comprobarAvisosGeneral(getContext(), usr, medicamentos);
                 escucharAvisos();
+                gestionarFinTratamientoMeds(); //importante que se haga después de comprobar avisos
 
                 lMedHorario.clear();
                 for (Medicamento med : medicamentos) {
@@ -237,7 +238,7 @@ public class HomeFragment extends Fragment {
 
         for(Medicamento med: lMedHorario){
             if (med.getHorario() == null) continue;
-            if(!med.checkAndUpdateFinTratamiento()){
+            if(!med.isFinTratamiento(Calendar.getInstance())){
                 ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
                 ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
             }
@@ -682,6 +683,12 @@ public class HomeFragment extends Fragment {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
+    }
+
+    private void gestionarFinTratamientoMeds(){
+        for(Medicamento med: lMedTodos){
+            if(med.isFinTratamiento(Calendar.getInstance())) medDAO.updateFinTratamientoFinalizado(med);
+        }
     }
 
 
