@@ -3,12 +3,34 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
     <group
         android:pivotX="12"
         android:pivotY="12"
         android:rotation="45">
+
+        <!-- Relleno parte superior -->
         <path
-            android:fillColor="@color/md_blanco"
-            android:pathData="M12,4C9.79,4 8,5.79 8,8V12H16V8C16,5.79 14.21,4 12,4Z" />
+            android:fillColor="#FFFFFF"
+            android:pathData="M8,12 V8 A4,4 0 0,1 16,8 V12 Z"/>
+
+        <!-- Contorno completo corregido -->
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"
+            android:strokeLineJoin="round"
+            android:strokeLineCap="round"
+            android:pathData="M8,12 V8 A4,4 0 0,1 16,8 V12 V16
+                              C16,18.21 14.21,20 12,20
+                              C9.79,20 8,18.21 8,16 Z"/>
+
+        <!-- Línea divisoria -->
+        <path
+            android:strokeColor="#000000"
+            android:strokeWidth="1"
+            android:strokeLineCap="round"
+            android:pathData="M8,12 H16"/>
+
     </group>
 </vector>

@@ -1,8 +1,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/ic_med_pastilla_capsula_superior"
-        android:drawable="@drawable/ic_med_pastilla_capsula_superior" />
+
     <item
         android:id="@+id/ic_med_pastilla_capsula_inferior"
         android:drawable="@drawable/ic_med_pastilla_capsula_inferior" />
+    <item
+        android:id="@+id/ic_med_pastilla_capsula_superior"
+        android:drawable="@drawable/ic_med_pastilla_capsula_superior" />
+
 </layer-list>
