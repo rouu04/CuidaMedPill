@@ -33,6 +33,7 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
+import com.pastillerodigital.cuidamedpill.modelo.dao.AvisoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
@@ -711,9 +712,15 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 if(modo != Modo.SUPERVISOR){
                     RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
                     RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                    AvisoDAO aDAO = new AvisoDAO(uid);
+                    aDAO.eliminarAvisosMedicamento(med.getId());
                     AvisoManager.comprobarAvisos(getContext(), usr, med);
                 }
-                else AvisoManager.comprobarAvisos(getContext(), usr, med);
+                else {
+                    AvisoDAO aDAO = new AvisoDAO(uid);
+                    aDAO.eliminarAvisosMedicamento(med.getId());
+                    AvisoManager.comprobarAvisos(getContext(), usr, med);
+                }
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();

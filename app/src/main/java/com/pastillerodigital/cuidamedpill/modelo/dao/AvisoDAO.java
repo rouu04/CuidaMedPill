@@ -87,49 +87,6 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                 .addOnFailureListener(callback::onFailure);
     }
 
-    /**
-     * Marca un aviso como leído
-     */
-    public void marcarComoLeido(String avisoId, OnOperationCallback callback) {
-        getCollection()
-                .document(avisoId)
-                .update("leido", true)
-                .addOnSuccessListener(v -> callback.onSuccess())
-                .addOnFailureListener(callback::onFailure);
-    }
-
-    /**
-     * Crea o actualiza un aviso evitando duplicados para el mismo medicamento y tipo.
-     * Si existe uno no leído se actualiza, si no se crea uno nuevo.
-     */
-    public void gestionarAvisoExistente(Aviso aviso, OnOperationCallback callback){
-        getCollection()
-                .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, aviso.getTipoAvisoStr())
-                .whereEqualTo(Constantes.AVISO_MEDID, aviso.getMedId())
-                .whereEqualTo(Constantes.AVISO_LEIDO, false)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(query -> {
-                    if(!query.isEmpty()){
-
-                        DocumentSnapshot doc = query.getDocuments().get(0);
-                        aviso.setId(doc.getId());
-                        aviso.setFechaCreacion(doc.getTimestamp(Constantes.AVISO_FECHACREACION));
-
-                        //todo revisar si hace falta
-                        getCollection()
-                                .document(doc.getId())
-                                .set(aviso)   // actualiza
-                                .addOnSuccessListener(v -> callback.onSuccess())
-                                .addOnFailureListener(callback::onFailure);
-
-                    } else {
-                        add(aviso, callback); // crea
-                    }
-
-                })
-                .addOnFailureListener(callback::onFailure);
-    }
 
     public void getAvisoPendiente(Aviso aviso, OnDataLoadedCallback<Aviso> callback){
         getCollection()
@@ -174,6 +131,19 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                     }
 
                     callback.onSuccess(lista);
+                });
+    }
+
+    public void eliminarAvisosMedicamento(String medId){
+        db.collection("usuarios")
+                .document(uid)
+                .collection("avisos")
+                .whereEqualTo("medId", medId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    for(DocumentSnapshot doc : query){
+                        doc.getReference().delete();
+                    }
                 });
     }
 }

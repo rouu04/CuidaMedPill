@@ -33,7 +33,7 @@ public class AvisoManager {
         }
 
         // COMPRA
-        if(conf.isAvisoCompra() && 0 >= med.getnMedRestantes() && med.getnMedRestantes() <= 5){
+        if(conf.isAvisoCompra() && 0 <= med.getnMedRestantes() && med.getnMedRestantes() <= 5){
             Aviso aviso = AvisoFactory.crearAvisoCompra(med);
             gestionarAviso(context, aDAO, aviso);
         }
@@ -98,15 +98,10 @@ public class AvisoManager {
                 .addOnSuccessListener(query -> {
 
                     for (DocumentSnapshot doc : query.getDocuments()) {
-
                         Aviso aviso = doc.toObject(Aviso.class);
-
                         if(aviso == null) continue;
-
                         aviso.setId(doc.getId());
-
                         AvisoNotificacionHelper.mostrarAviso(context, aviso);
-
                         doc.getReference().update("notiMostrada", true);
                     }
 

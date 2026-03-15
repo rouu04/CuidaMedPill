@@ -2,6 +2,7 @@ package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,23 +190,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Exception e) {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
-            }
-        });
-    }
-
-    private void cargarAvisosNoLeidos(){
-        aDAO.getNoLeidos(new OnDataLoadedCallback<List<Aviso>>() {
-            @Override
-            public void onSuccess(List<Aviso> data) {
-                listaAvisos.clear();
-                listaAvisos.addAll(data);
-                avisosAdapter.notifyDataSetChanged();
-                isVistaNoAvisos();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
             }
         });
     }
@@ -443,6 +427,11 @@ public class HomeFragment extends Fragment {
 
 
         btnSi.setOnClickListener(v -> {
+            if (fechaProgramada != null) {
+                String tag = "aviso_tutores_" + med.getId() + "_" + fechaProgramada.toDate().getTime();
+                androidx.work.WorkManager.getInstance(requireContext()).cancelUniqueWork(tag);
+            }
+
             Calendar ahora = Calendar.getInstance();
             Timestamp fechaIngesta = new Timestamp(ahora.getTime());
 

@@ -2,8 +2,10 @@ package com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -39,7 +41,19 @@ public class RecordatorioManager {
         for (int i = 0; i < 7; i++) { // Programamos por ejemplo los próximos 7 días
             List<Timestamp> horas = med.getFechaHorasDia(hoy);
             for (Timestamp ts : horas) {
-                long tiempo = ts.toDate().getTime();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(ts.toDate());
+                // Ajustamos a la hora local del dispositivo
+                Calendar tiempoLocal = Calendar.getInstance();
+                tiempoLocal.set(Calendar.YEAR, hoy.get(Calendar.YEAR));
+                tiempoLocal.set(Calendar.MONTH, hoy.get(Calendar.MONTH));
+                tiempoLocal.set(Calendar.DAY_OF_MONTH, hoy.get(Calendar.DAY_OF_MONTH));
+                tiempoLocal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+                tiempoLocal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+                tiempoLocal.set(Calendar.SECOND, 0);
+                tiempoLocal.set(Calendar.MILLISECOND, 0);
+
+                long tiempo = tiempoLocal.getTimeInMillis();
                 if (tiempo > System.currentTimeMillis()) {
                     programarRecordatorio(context, med, tiempo);
                 }
@@ -57,37 +71,39 @@ public class RecordatorioManager {
     public static void programarRecordatorio(Context context, Medicamento med, long tiempoNotificacion) {
         TipoNotificacion tipo = TipoNotificacion.ESTANDAR;
         boolean antiproc = true;
+        Log.d("WORKER_AVISO", "En programar recordatorio");
 
         SharedPreferences prefs = context.getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, Context.MODE_PRIVATE);
         String idSelf = prefs.getString(Constantes.PERSIST_KEYUSERSELFID, null);
         String idUsuario = prefs.getString(Constantes.PERSIST_KEYUSERID, idSelf);
         if (idUsuario == null) return;
 
-
-        if (med.getConfNoti() != null && !med.getIsNotiGeneral()) {
-            programarConConfig(context, med, tiempoNotificacion, med.getConfNoti().getTipoNoti(), med.getConfNoti().isAntiprocrastinador(), idUsuario);
-        } else{
-            UsuarioDAO uDAO = new UsuarioDAO();
-            uDAO.getBasic(idUsuario, new OnDataLoadedCallback<Usuario>() {
-                @Override
-                public void onSuccess(Usuario user) {
-                    if(user instanceof UsuarioAsistido){
-                        UsuarioAsistido asistido = (UsuarioAsistido) user;
-                        if(asistido.getConfNoti().isAvisoTutoresOlvido()){
-                            programarAvisoTutoreSiNoRegistra(context, asistido, med, tiempoNotificacion);
-                        }
+        UsuarioDAO uDAO = new UsuarioDAO();
+        uDAO.getBasic(idUsuario, new OnDataLoadedCallback<Usuario>() {
+            @Override
+            public void onSuccess(Usuario user) {
+                if(user instanceof UsuarioAsistido){
+                    UsuarioAsistido asistido = (UsuarioAsistido) user;
+                    if(asistido.getConfNoti().isAvisoTutoresOlvido()){
+                        Log.d("WORKER_AVISO", "Antes programar");
+                        programarAvisoTutoreSiNoRegistra(context, asistido, med, tiempoNotificacion);
                     }
-                    // luego programar la notificación normal
+                }
+
+                if (med.getConfNoti() != null && !med.getIsNotiGeneral()) {
+                    programarConConfig(context, med, tiempoNotificacion, med.getConfNoti().getTipoNoti(), med.getConfNoti().isAntiprocrastinador(), idUsuario);
+                }
+                else{
                     programarConConfig(context, med, tiempoNotificacion, user.getConfNoti().getTipoNoti(), user.getConfNoti().isAntiprocrastinador(), idUsuario);
                 }
+            }
 
-                @Override
-                public void onFailure(Exception e) {
-                    // fallback a notificación normal
-                    programarConConfig(context, med, tiempoNotificacion, tipo, antiproc, null);
-                }
-            });
-        }
+            @Override
+            public void onFailure(Exception e) {
+                // fallback a notificación normal
+                programarConConfig(context, med, tiempoNotificacion, tipo, antiproc, null);
+            }
+        });
     }
     private static void programarConConfig(Context context, Medicamento med, long tiempoNotificacion,
                                            TipoNotificacion tipo, boolean antiproc, String uid) {
@@ -140,22 +156,35 @@ public class RecordatorioManager {
         }
     }
 
+    /**
+     *
+     * @param context
+     * @param asistido
+     * @param med
+     * @param tiempoNotificacion hora exacta en la que el asistido debe tomarse la medicación
+     */
     private static void programarAvisoTutoreSiNoRegistra(Context context, UsuarioAsistido asistido, Medicamento med, long tiempoNotificacion) {
         if (!asistido.getConfNoti().isAvisoTutoresOlvido()) return;
 
         List<String> tutores = asistido.getIdUsrTutoresAsig();
         if (tutores == null || tutores.isEmpty()) return;
 
-        long delay = tiempoNotificacion + 90 * 60 * 1000 - System.currentTimeMillis(); // 1.5h
+        long tiempoAviso = tiempoNotificacion + 60 * 1000; //1 mins, cuando disparará el aviso
+        long delay = tiempoAviso - System.currentTimeMillis();
         if (delay <= 0) return;
+        Log.d("WORKER_AVISO", "Antes data programar tutor");
+
 
         Data data = new Data.Builder()
                 .putString("idAsistido", asistido.getId())
                 .putString("nombreMed", med.getNombreMed())
                 .putStringArray("tutores", tutores.toArray(new String[0]))
+                .putLong("tiempoProgramado", tiempoNotificacion)
+                .putStringArray("tutores", tutores.toArray(new String[0]))
+                .putString("medId", med.getId())
                 .build();
 
-        String tag = "aviso_tutores_" + med.getId() + "_" + asistido.getId();
+        String tag = "aviso_tutores_" + med.getId() + "_" + tiempoNotificacion;
 
         androidx.work.OneTimeWorkRequest request = new androidx.work.OneTimeWorkRequest.Builder(AvisoTutorWorker.class)
                 .setInitialDelay(delay, java.util.concurrent.TimeUnit.MILLISECONDS)
@@ -163,10 +192,9 @@ public class RecordatorioManager {
                 .addTag(tag)
                 .build();
 
+
         androidx.work.WorkManager.getInstance(context).enqueue(request);
 
-        // Guardar el tag para poder cancelarlo más tarde si se registra la ingesta
-        med.addWorkTag(tag); // suponiendo que agregamos un ArrayList<String> en Medicamento para estos tags
     }
 
     public static void sincronizarRecordatorios(Context context, String uid) {
