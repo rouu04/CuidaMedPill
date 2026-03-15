@@ -32,6 +32,7 @@ public class AvisoTutorWorker extends Worker {
         String idAsistido = getInputData().getString("idAsistido");
         String nombreMed = getInputData().getString("nombreMed");
         String medId = getInputData().getString("medId");
+        String uidSelf = getInputData().getString("uidSelf");
         long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
 
         String[] tutoresArray = getInputData().getStringArray("tutores");
@@ -40,12 +41,12 @@ public class AvisoTutorWorker extends Worker {
         List<String> tutores = Arrays.asList(tutoresArray);
 
         // Verificar si el asistido no registró la medicación y avisar a los tutores
-        verificarTomaNoRegistrada(idAsistido, medId, nombreMed, tiempoProgramado, tutores);
+        verificarTomaNoRegistrada(idAsistido, medId, uidSelf, nombreMed, tiempoProgramado, tutores);
 
         return Result.success();
     }
 
-    private void verificarTomaNoRegistrada(String idAsistido, String medId, String nombreMed, long tiempoProgramado, List<String> tutores) {
+    private void verificarTomaNoRegistrada(String idAsistido, String medId, String uidSelf, String nombreMed, long tiempoProgramado, List<String> tutores) {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -67,8 +68,10 @@ public class AvisoTutorWorker extends Worker {
 
             if (!snapshot.isEmpty()) {
                 // Ya existe ingesta → no avisar
+                Log.d("WORKER_AVISO", "Existe");
                 return;
             }
+            Log.d("WORKER_AVISO", "No existe " + tiempoProgramado);
 
             // Formatear la hora de la toma programada
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -76,20 +79,6 @@ public class AvisoTutorWorker extends Worker {
 
             // Iterar sobre cada tutor
             for (String tutorId : tutores) {
-
-                // Verificar si ya existe un aviso OLVIDOASISTIDO para este medicamento
-                QuerySnapshot avisosExistentes = Tasks.await(
-                        db.collection("usuarios")
-                                .document(tutorId)
-                                .collection("avisos")
-                                .whereEqualTo("medId", medId)
-                                .whereEqualTo("tipoAviso", TipoAviso.OLVIDOASISTIDO.toString())
-                                .get()
-                );
-
-                if (!avisosExistentes.isEmpty()) {
-                    continue; // Ya hay un aviso → no duplicar
-                }
 
                 // Crear aviso
                 Aviso aviso = new Aviso(
@@ -108,8 +97,10 @@ public class AvisoTutorWorker extends Worker {
                         .collection("avisos")
                         .add(aviso);
 
-                // Mostrar notificación local al tutor
-                AvisoNotificacionHelper.mostrarAviso(getApplicationContext(), aviso);
+                // Mostrar notificación local al tutor (1 notificación por dispositivo)
+                if (tutorId.equals(uidSelf)) {
+                    AvisoNotificacionHelper.mostrarAviso(getApplicationContext(), aviso);
+                }
             }
 
         } catch (Exception e) {

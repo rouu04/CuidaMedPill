@@ -11,7 +11,6 @@
         android:id="@+id/iconoMed"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/ic_pastilla_capsula"
         android:contentDescription="Icono medicamento"
         android:layout_marginEnd="12dp" />
 

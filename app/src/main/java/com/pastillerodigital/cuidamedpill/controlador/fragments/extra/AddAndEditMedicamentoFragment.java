@@ -709,18 +709,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.edit(med, new OnOperationCallback() {
             @Override
             public void onSuccess() { // Medicamento actualizado, volvemos atrás
-                if(modo != Modo.SUPERVISOR){
-                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
-                    RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
-                    AvisoDAO aDAO = new AvisoDAO(uid);
-                    aDAO.eliminarAvisosMedicamento(med.getId());
-                    AvisoManager.comprobarAvisos(getContext(), usr, med);
-                }
-                else {
-                    AvisoDAO aDAO = new AvisoDAO(uid);
-                    aDAO.eliminarAvisosMedicamento(med.getId());
-                    AvisoManager.comprobarAvisos(getContext(), usr, med);
-                }
+                RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
+                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                AvisoDAO aDAO = new AvisoDAO(uid);
+                aDAO.eliminarAvisosMedicamento(med.getId());
+                AvisoManager.comprobarAvisos(getContext(), usr, med);
+
                 requireActivity()
                         .getSupportFragmentManager()
                         .popBackStack();

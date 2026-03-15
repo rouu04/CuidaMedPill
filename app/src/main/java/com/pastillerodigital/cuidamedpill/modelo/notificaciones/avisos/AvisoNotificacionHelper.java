@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -55,6 +56,9 @@ public class AvisoNotificacionHelper {
             }
         });
 
-        NotificationManagerCompat.from(context).notify((int)System.currentTimeMillis(), builder.build());
+        Log.d("WORKER_AVISO", "Mostrar noti");
+
+        int notificationId = (aviso.getuDestId() + aviso.getMedId()).hashCode();
+        NotificationManagerCompat.from(context).notify(notificationId, builder.build());
     }
 }

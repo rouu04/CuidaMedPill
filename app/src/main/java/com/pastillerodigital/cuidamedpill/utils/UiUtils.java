@@ -3,7 +3,10 @@ package com.pastillerodigital.cuidamedpill.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.View;
@@ -175,7 +178,7 @@ public class UiUtils {
      * @param colorSimb
      * @return
      */
-    public static android.graphics.Bitmap getMedicamentoBitmap(Context context, String tipoMedStr, String colorSimb) {
+    public static Bitmap getMedicamentoBitmap(Context context, String tipoMedStr, String colorSimb) {
         TipoMed tipoMed;
         try {
             tipoMed = TipoMed.tipoMedFromString(tipoMedStr);
@@ -183,45 +186,44 @@ public class UiUtils {
             tipoMed = TipoMed.CAPSULA;
         }
 
+        // 1. Cargar el drawable y mutarlo inmediatamente
         Drawable drawable = ContextCompat.getDrawable(context, tipoMed.getDrawableRes());
         if (drawable == null) return null;
+        drawable = drawable.mutate();
 
-        // color
+        // 2. Obtener el color
         int color;
         if (colorSimb != null && !colorSimb.isEmpty()) {
             int resColor = context.getResources().getIdentifier(colorSimb, "color", context.getPackageName());
-            if (resColor != 0) {
-                color = ContextCompat.getColor(context, resColor);
-            } else {
-                color = ContextCompat.getColor(context, R.color.md_primary);
-            }
+            color = (resColor != 0) ? ContextCompat.getColor(context, resColor) : ContextCompat.getColor(context, R.color.md_primary);
         } else {
             color = ContextCompat.getColor(context, R.color.md_primary);
         }
 
-        drawable = drawable.mutate();
+        // 3. Aplicar el tinte según el tipo de drawable
         if (drawable instanceof LayerDrawable) {
-            LayerDrawable layerDrawable = (LayerDrawable) drawable;
-            try {
-                Drawable capaColor = layerDrawable.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
-                if (capaColor != null) {
-                    capaColor.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-                } else {
-                    // Si la capa coloreable no existe, aplica el color al drawable completo
-                    layerDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-                }
-            } catch (Exception e) {
-                // fallback
-                layerDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            LayerDrawable ld = (LayerDrawable) drawable;
+            Drawable capaColoreable = ld.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
+
+            if (capaColoreable != null) {
+                // Envolvemos la capa para aplicar el tinte de forma compatible
+                Drawable wrapped = androidx.core.graphics.drawable.DrawableCompat.wrap(capaColoreable.mutate());
+                androidx.core.graphics.drawable.DrawableCompat.setTint(wrapped, color);
+                androidx.core.graphics.drawable.DrawableCompat.setTintMode(wrapped, android.graphics.PorterDuff.Mode.SRC_IN);
+            } else {
+                // Si no encuentra la capa, teñimos tod*o el conjunto por seguridad
+                androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, color);
             }
-            drawable = layerDrawable;
         } else {
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            // Para drawables simples (como GOTAS que no es un list)
+            androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, color);
         }
 
-        // Se convierte a Bitmap (necesario para RemoteViews)
-        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(100, 100, android.graphics.Bitmap.Config.ARGB_8888);
-        android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+        // 4. "Baking": Dibujar el resultado en un Bitmap físico
+        int size = (int) (48 * context.getResources().getDisplayMetrics().density);
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
 
