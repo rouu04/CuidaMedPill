@@ -273,11 +273,13 @@ public class Medicamento implements Persistible {
 
 
     //---------------INGESTAS
+
     /**
      *Devuelve true si hay alguna ingesta programada o registrada para el dia dado
      * @param fechaSeleccionada
      * @return
      */
+    /*
     public boolean hayIngestaDia(Calendar fechaSeleccionada) {
         if (fechaSeleccionada == null) return false;
 
@@ -294,6 +296,38 @@ public class Medicamento implements Persistible {
             List<Timestamp> horas = horario.getFechaHorasDia(fechaSeleccionada,
                     (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio): null);
             return !horas.isEmpty();
+        }
+
+        return false;
+    }
+
+     */
+
+    public boolean hayIngestaDia(Calendar fechaSeleccionada) {
+        if (fechaSeleccionada == null) return false;
+
+        // Recorremos las ingestas existentes
+        for (Ingesta ing : lIngestas) {
+            Timestamp sel = ing.getFechaProgramada();
+            if(sel == null) sel = ing.getFechaIngesta();
+
+            if (sel != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(sel.toDate());
+                Utils.limpiarHora(cal);
+                if (Utils.mismoDia(cal, fechaSeleccionada)) {
+                    return true;
+                }
+            }
+        }
+
+        // También revisamos las ingestas futuras previstas por el horario
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy);
+        if (horario != null && fechaSeleccionada.after(hoy)) {
+            List<Timestamp> horas = horario.getFechaHorasDia(fechaSeleccionada, (fechaInicio != null) ? Utils.timestampToCalendar(fechaInicio) : null);
+            // Si hay horas programadas para ese día y aún no hay ingestas registradas
+            if (!horas.isEmpty()) return true;
         }
 
         return false;

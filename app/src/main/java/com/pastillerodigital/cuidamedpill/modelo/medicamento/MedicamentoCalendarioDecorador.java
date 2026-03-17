@@ -24,7 +24,7 @@ public class MedicamentoCalendarioDecorador implements DayViewDecorator {
         cal.set(day.getYear(), day.getMonth() - 1, day.getDay());
 
         for (Medicamento med : medicamentos) {
-            if (med.getHorario() != null && med.hayIngestaDia(cal)) {
+            if (med.hayIngestaDia(cal)) {
                 return true;
             }
         }

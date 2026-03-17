@@ -15,12 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.chip.Chip;
+import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.controlador.adapters.MedicamentoCalendarioAdapter;
 import com.pastillerodigital.cuidamedpill.controlador.fragments.extra.MedicamentoDetalleFragment;
+import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
+import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
@@ -190,10 +194,11 @@ public class CalendarioFragment extends Fragment {
             public void onSuccess(List<Medicamento> data) {
                 listaCompleta.clear();
                 for(Medicamento med: data){
-                    //if(med.getHorario() == null || !med.isFinTratamiento(Calendar.getInstance()))
                     if(med.isFinTratamiento(Calendar.getInstance())) medDAO.updateFinTratamientoFinalizado(med);
                     listaCompleta.add(med);
                 }
+                marcarIngestasPasadasComoOlvido();
+
                 actualizarPuntosCalendario(); //colorea puntos calendario
                 actualizarTextoFecha();
                 filtrarPorFecha(fechaSeleccionada); //carga las pastillas del día seleccionado (inicializado a hoy) sin tener que darle
@@ -220,13 +225,54 @@ public class CalendarioFragment extends Fragment {
         });
     }
 
+    private void marcarIngestasPasadasComoOlvido() {
+        Calendar hoy = Calendar.getInstance();
+        Utils.limpiarHora(hoy); // Solo queremos comparar días, no horas
+
+        for (Medicamento med : listaCompleta) {
+            if (med.getlIngestas() == null) continue;
+
+            for (Ingesta ing : med.getlIngestas()) {
+                Timestamp ts = ing.getFechaProgramada();
+                if (ts == null) continue;
+
+                Calendar fechaIng = Calendar.getInstance();
+                fechaIng.setTime(ts.toDate());
+                Utils.limpiarHora(fechaIng);
+
+                // Solo ingestas del pasado
+                if (fechaIng.before(hoy)) {
+                    // Si estaba pendiente, marcar como olvido
+                    if (EstadoIngesta.PENDIENTE.equals(ing.getEstadoIngesta())) {
+                        ing.setEstadoIngesta(EstadoIngesta.OLVIDO);
+                        ing.setEstadoIngestaStr(EstadoIngesta.OLVIDO.toString());
+
+                        // Guardar cambio en Firebase
+                        IngestaDAO ingDAO = new IngestaDAO(uid, med.getId());
+                        ingDAO.edit(ing, new OnOperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
 
     private void filtrarPorFecha(Calendar fecha){
         listaFiltrada.clear();
         TipoDia tipoDia = clasificarDia(fecha);
 
         for(Medicamento med : listaCompleta){
-            List<Ingesta> resultado = med.generarIngestasFecha(fecha, tipoDia);
+            List<Ingesta> resultado = new ArrayList<>();
+            if(tipoDia == TipoDia.PRESENTE || tipoDia == TipoDia.PASADO) resultado = med.getIngestasPorDia(fecha);
+            else resultado = med.generarIngestasFecha(fecha, tipoDia);
 
             if(!resultado.isEmpty())listaFiltrada.add(med);
         }

@@ -34,14 +34,17 @@ import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.dao.AvisoDAO;
+import com.pastillerodigital.cuidamedpill.modelo.dao.IngestaDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.MedicamentoDAO;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnDataLoadedCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.dao.UsuarioDAO;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoIntervalo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
+import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.Hora;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia;
@@ -715,9 +718,52 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 aDAO.eliminarAvisosMedicamento(med.getId());
                 AvisoManager.comprobarAvisos(getContext(), usr, med);
 
-                requireActivity()
-                        .getSupportFragmentManager()
-                        .popBackStack();
+                deleteIngIncoherentes();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void deleteIngIncoherentes() {
+        if (medEdit == null || medEdit.getId() == null) return; // nada que borrar
+
+        IngestaDAO ingDAO = new IngestaDAO(uid, medEdit.getId());
+
+        ingDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
+            @Override
+            public void onSuccess(List<Ingesta> ingestas) {
+                if (ingestas == null || ingestas.isEmpty()) return;
+
+                //solo las pendientes
+                List<Ingesta> pendientes = new ArrayList<>();
+                for (Ingesta ing : ingestas) {
+                    if (ing.getEstadoIngesta() == EstadoIngesta.PENDIENTE) {
+                        pendientes.add(ing);
+                    }
+                }
+
+                if (pendientes.isEmpty()) return;
+
+                // Borrar cada ingesta pendiente
+                for (Ingesta ingPend : pendientes) {
+                    ingDAO.delete(ingPend.getId(), new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            requireActivity()
+                                    .getSupportFragmentManager()
+                                    .popBackStack();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(requireActivity());
+                        }
+                    });
+                }
             }
 
             @Override

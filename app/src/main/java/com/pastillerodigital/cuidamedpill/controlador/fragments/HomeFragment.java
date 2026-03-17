@@ -228,6 +228,8 @@ public class HomeFragment extends Fragment {
             }
         }
 
+        updateIngestasPendientesDAO();
+
         ordenarFechaHora(ingPendientes);
         medHoyAdapter.update(ingPendientes);
         isVistaNoMedsHoy();
@@ -268,6 +270,51 @@ public class HomeFragment extends Fragment {
                 UiUtils.mostrarErrorYReiniciar(requireActivity());
             }
         });
+    }
+
+    private void updateIngestasPendientesDAO(){
+        for (Ingesta ing : ingPendientes) {
+            if (ing.getFechaProgramada() == null) continue;
+            Medicamento med = ing.getMed();
+            if (med == null) continue;
+
+            IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
+
+            //ingestas actuales del medicamento
+            ingestaDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
+                @Override
+                public void onSuccess(List<Ingesta> listaExistente) {
+                    boolean yaExiste = false;
+                    for (Ingesta existente : listaExistente) {
+                        if (existente.getFechaProgramada() != null && existente.getFechaProgramada().equals(ing.getFechaProgramada()) &&
+                                EstadoIngesta.PENDIENTE.equals(existente.getEstadoIngesta())) {
+                            yaExiste = true;
+                            break;
+                        }
+                    }
+
+                    if (!yaExiste) {
+                        // Solo añadimos si no existe
+                        Ingesta ingPendiente = new Ingesta(ing.getFechaProgramada(), null, EstadoIngesta.PENDIENTE.toString(), med, "");
+
+                        ingestaDAO.add(ingPendiente, new OnOperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    // opcional: manejar error
+                }
+            });
+        }
     }
 
     private void setUpRecyclerView(){
