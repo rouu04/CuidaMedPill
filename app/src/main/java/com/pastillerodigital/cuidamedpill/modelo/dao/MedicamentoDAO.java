@@ -53,8 +53,7 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                             }
                         });
                     }
-
-                    callback.onSuccess(med);
+                    else callback.onSuccess(med);
                 })
                 .addOnFailureListener(callback::onFailure);
     }

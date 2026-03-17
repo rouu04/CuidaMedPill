@@ -118,8 +118,8 @@ public class HomeFragment extends Fragment {
         rvAvisos = view.findViewById(R.id.rvAvisosHome);
 
         mostrarCarga();
-        setUpRecyclerView();
         leerArgsYConsec();
+        setUpRecyclerView();
         setButtonListeners();
 
         cargarMedsYConIngestas();
@@ -342,7 +342,7 @@ public class HomeFragment extends Fragment {
         //Adapter avisos
 
         rvAvisos.setLayoutManager(new LinearLayoutManager(getContext()));
-        avisosAdapter = new AvisosAdapter(listaAvisos, new AvisosAdapter.OnAvisoClickListener() {
+        avisosAdapter = new AvisosAdapter(listaAvisos, uid, new AvisosAdapter.OnAvisoClickListener() {
             @Override
             public void onIgnorar(Aviso aviso) {
                 aviso.setLeido(true);

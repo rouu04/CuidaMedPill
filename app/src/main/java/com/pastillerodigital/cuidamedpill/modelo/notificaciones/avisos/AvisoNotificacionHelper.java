@@ -56,7 +56,6 @@ public class AvisoNotificacionHelper {
             }
         });
 
-        Log.d("WORKER_AVISO", "Mostrar noti");
 
         int notificationId = (aviso.getuDestId() + aviso.getMedId()).hashCode();
         NotificationManagerCompat.from(context).notify(notificationId, builder.build());

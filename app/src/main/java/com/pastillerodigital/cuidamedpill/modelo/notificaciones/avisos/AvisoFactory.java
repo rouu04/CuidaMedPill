@@ -7,8 +7,8 @@ public class AvisoFactory {
 
     public static Aviso crearAvisoCaducidad(Medicamento med) {
         return new Aviso(TipoAviso.CADUCIDAD,
-                "Medicamento caducado",
-                "El medicamento " + med.getNombreMed() + " ha caducado.",
+                "Medicamento va a caducar",
+                "El medicamento " + med.getNombreMed() + " está a punto de caducar",
                 med.getId()
         );
     }
@@ -34,7 +34,7 @@ public class AvisoFactory {
     public static Aviso crearAvisoFinTratamiento(Medicamento med) {
         return new Aviso(
                 TipoAviso.FINTRATAMIENTO,
-                "Tratamiento finalizado",
+                "Tratamiento va a finalizar",
                 "El tratamiento de " + med.getNombreMed() + " va a terminar en una semana",
                 med.getId()
         );
