@@ -14,7 +14,6 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -246,6 +245,7 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
     }
 
     private void callaAlarma() {
+
         try {
             // 1. CANCELAR LA NOTIFICACIÓN DEL SISTEMA (EL "FANTASMA")
             if (med != null) {
@@ -274,6 +274,14 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("Alarma", "Error al callar: " + e.getMessage());
         }
+
+         /*
+
+        Intent stopIntent = new Intent(this, AlarmaService.class);
+        stopIntent.setAction(AlarmaService.ACTION_STOP);
+        startService(stopIntent);
+
+          */
     }
 
     private void cerrarAlarmaYVolverHome() {

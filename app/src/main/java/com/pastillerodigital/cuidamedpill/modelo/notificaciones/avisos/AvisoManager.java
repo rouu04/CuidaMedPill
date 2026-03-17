@@ -23,6 +23,7 @@ public class AvisoManager {
 
     public static void comprobarAvisos(Context context, Usuario usuario, Medicamento med){
         ConfNoti conf = usuario.getConfNoti();
+        if(!med.getIsNotiGeneral() && med.getConfNoti() != null) conf = med.getConfNoti();
         if(conf == null) return;
         AvisoDAO aDAO = new AvisoDAO(usuario.getId());
 

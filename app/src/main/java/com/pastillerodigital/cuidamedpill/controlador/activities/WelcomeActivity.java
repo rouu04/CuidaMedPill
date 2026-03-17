@@ -138,6 +138,7 @@ public class WelcomeActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit(); //editor necesario para modificar archivo preferencias
         editor.putString(Constantes.PERSIST_KEYUSERSELFID, u.getId());
+        editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
         Modo modo = Modo.ESTANDAR;
         if(u.getTipoUsuario().equals(TipoUsuario.ASISTIDO)){
             modo = Modo.ASISTIDO;

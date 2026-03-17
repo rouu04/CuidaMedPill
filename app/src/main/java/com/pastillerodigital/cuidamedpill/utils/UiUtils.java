@@ -203,20 +203,20 @@ public class UiUtils {
         // 3. Aplicar el tinte según el tipo de drawable
         if (drawable instanceof LayerDrawable) {
             LayerDrawable ld = (LayerDrawable) drawable;
-            Drawable capaColoreable = ld.findDrawableByLayerId(tipoMed.getDrawableResColoreable());
 
-            if (capaColoreable != null) {
-                // Envolvemos la capa para aplicar el tinte de forma compatible
-                Drawable wrapped = androidx.core.graphics.drawable.DrawableCompat.wrap(capaColoreable.mutate());
-                androidx.core.graphics.drawable.DrawableCompat.setTint(wrapped, color);
-                androidx.core.graphics.drawable.DrawableCompat.setTintMode(wrapped, android.graphics.PorterDuff.Mode.SRC_IN);
-            } else {
-                // Si no encuentra la capa, teñimos tod*o el conjunto por seguridad
-                androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, color);
-            }
-        } else {
-            // Para drawables simples (como GOTAS que no es un list)
-            androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, color);
+            Drawable base = ld.getDrawable(1); // fija (segunda capa)
+            Drawable colorLayer = ld.getDrawable(0); // coloreable (primera capa)
+
+            //mutamos ambas
+            base = base.mutate();
+            colorLayer = colorLayer.mutate();
+
+            // aplicar color SOLO a la capa coloreable
+            colorLayer.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+            // recomponer
+            Drawable[] layers = new Drawable[]{colorLayer, base};
+            drawable = new LayerDrawable(layers);
         }
 
         // 4. "Baking": Dibujar el resultado en un Bitmap físico

@@ -263,7 +263,9 @@ public class CalendarioFragment extends Fragment {
 
         if(sel.after(hoy)) return TipoDia.FUTURO;
 
-        if(sel.equals(hoy) || sel.equals(ayer))
+        //if(sel.equals(hoy) || sel.equals(ayer))
+            //return TipoDia.PRESENTE;
+        if(sel.equals(hoy))
             return TipoDia.PRESENTE;
 
         return TipoDia.PASADO;

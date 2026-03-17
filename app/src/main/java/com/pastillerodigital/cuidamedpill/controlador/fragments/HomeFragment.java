@@ -223,7 +223,7 @@ public class HomeFragment extends Fragment {
         for(Medicamento med: lMedHorario){
             if (med.getHorario() == null) continue;
             if(!med.isFinTratamiento(Calendar.getInstance())){
-                ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
+                //ingPendientes.addAll(med.getIngestasPendientesDia(ayer, med.getFechaHorasDia(ayer)));
                 ingPendientes.addAll(med.getIngestasPendientesDia(hoy, med.getFechaHorasDia(hoy)));
             }
         }

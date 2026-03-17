@@ -350,6 +350,7 @@ public class RegistroActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constantes.PERSIST_KEYUSERSELFID, u.getId());
+        editor.putString(Constantes.PERSIST_KEYUSERID, u.getId());
         editor.putString(Constantes.PERSIST_KEYMODO, modo.toString());
         editor.putBoolean(Constantes.PERSIST_KEYSESIONACTIVA, true);
         editor.apply();

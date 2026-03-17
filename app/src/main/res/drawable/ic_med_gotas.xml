@@ -4,7 +4,7 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:fillColor="@color/md_primary"
+        android:fillColor="#FFFFFF"
         android:id="@+id/ic_med_gotas"
         android:pathData="M12,2c2,4 6,6 6,10a6,6 0 1,1 -12,0c0,-4 4,-6 6,-10z"/>
 </vector>

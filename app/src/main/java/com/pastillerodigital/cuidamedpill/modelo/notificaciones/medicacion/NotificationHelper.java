@@ -70,8 +70,7 @@ public class NotificationHelper {
             );
             alarmaChannel.setDescription("Alarmas importantes");
             alarmaChannel.enableVibration(true);
-            alarmaChannel.setSound(Settings.System.DEFAULT_ALARM_ALERT_URI,
-                    new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build());
+            alarmaChannel.setSound(Settings.System.DEFAULT_ALARM_ALERT_URI, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build());
             notificationManager.createNotificationChannel(alarmaChannel);
 
             // Canal SILENCIOSO
@@ -156,6 +155,8 @@ public class NotificationHelper {
                     .setSmallIcon(R.drawable.ic_pastilla_capsula)
                     .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                     .setCustomContentView(customView)
+                    .setColor(ContextCompat.getColor(context, R.color.md_primary))
+                    .setColorized(true)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
