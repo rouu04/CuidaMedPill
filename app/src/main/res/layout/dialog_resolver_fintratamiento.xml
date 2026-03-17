@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- Icono + Nombre del medicamento -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,9 +40,11 @@
             android:layout_height="wrap_content"
             android:text="Nombre medicamento"
             android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:layout_marginStart="12dp"/>
     </LinearLayout>
 
+    <!-- Pregunta sobre fin de tratamiento -->
     <TextView
         android:id="@+id/tvPreguntaFinTratamiento"
         android:layout_width="wrap_content"
@@ -49,18 +52,30 @@
         android:text="¿El tratamiento ha terminado?"
         android:layout_marginTop="16dp"/>
 
+    <!-- Fecha seleccionada / actual -->
     <TextView
-        android:id="@+id/tvNuevaFecha"
+        android:id="@+id/tvFechaFinTrat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Extender tratamiento hasta:"
+        android:text="Sin fecha seleccionada"
+        android:textStyle="bold"
         android:layout_marginTop="12dp"/>
 
+    <!-- Botón para seleccionar fecha -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSeleccionarFechaFin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seleccionar nueva fecha"
+        android:text="Seleccionar fecha"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Botón para quitar fecha -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnQuitarFechaFin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quitar fecha"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_marginTop="8dp"/>
 

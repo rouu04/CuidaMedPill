@@ -674,39 +674,57 @@ public class HomeFragment extends Fragment {
 
         ImageView imgTipo = view.findViewById(R.id.imgTipoMed);
         TextView tvNombre = view.findViewById(R.id.tvNombreMed);
+        TextView tvFecha = view.findViewById(R.id.tvFechaFinTrat);
         MaterialButton btnFecha = view.findViewById(R.id.btnSeleccionarFechaFin);
+        MaterialButton btnQuitar = view.findViewById(R.id.btnQuitarFechaFin);
 
         Medicamento med = buscarMedicamento(aviso.getMedId());
+        if (med == null) return;
 
-        if(med == null) return;
         tvNombre.setText(med.getNombreMed());
         TipoMed tipo = TipoMed.tipoMedFromString(med.getTipoMedStr());
         UiUtils.setDrawableTipoMed(getContext(), imgTipo, tipo, med.getColorSimb());
 
         Calendar nuevaFecha = Calendar.getInstance();
-        btnFecha.setOnClickListener(v -> {
-            DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year, month, day) -> {
-                        nuevaFecha.set(year, month, day);
-                        },
-                        nuevaFecha.get(Calendar.YEAR),
-                        nuevaFecha.get(Calendar.MONTH),
-                        nuevaFecha.get(Calendar.DAY_OF_MONTH)
-            );
+        if (med.getFechaFin() != null) {
+            nuevaFecha.setTime(med.getFechaFin().toDate());
+            tvFecha.setText(Utils.calendarToString(nuevaFecha));
+        } else {
+            tvFecha.setText("Sin fecha seleccionada");
+        }
 
+        btnFecha.setOnClickListener(v -> {
+            DatePickerDialog picker = new DatePickerDialog(getContext(),
+                    (view1, year, month, day) -> {
+                        nuevaFecha.set(year, month, day);
+                        tvFecha.setText(Utils.calendarToString(nuevaFecha));
+                    },
+                    nuevaFecha.get(Calendar.YEAR),
+                    nuevaFecha.get(Calendar.MONTH),
+                    nuevaFecha.get(Calendar.DAY_OF_MONTH)
+            );
             picker.show();
         });
 
-        new MaterialAlertDialogBuilder(getContext())
+        btnQuitar.setOnClickListener(v -> {
+            tvFecha.setText("Sin fecha seleccionada");
+            nuevaFecha.clear();
+        });
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
                 .setView(view)
                 .setPositiveButton("Guardar", (d, w) -> {
-
-                    if(nuevaFecha.isSet(Calendar.YEAR)){
+                    if (nuevaFecha.isSet(Calendar.YEAR)) {
                         med.setFechaFin(new Timestamp(nuevaFecha.getTime()));
-                        editaMedAviso(med, aviso);
+                    } else {
+                        med.setFechaFin(null);
                     }
+                    editaMedAviso(med, aviso);
                 })
                 .setNegativeButton("Cancelar", null)
-                .show();
+                .create();
+
+        dialog.show();
     }
 
 
