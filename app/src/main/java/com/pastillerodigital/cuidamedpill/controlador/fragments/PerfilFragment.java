@@ -553,7 +553,10 @@ public class PerfilFragment extends Fragment{
                 }
             });
         }
-        else setVistaModo("");
+        else {
+            uid = uidSelf;
+            setVistaModo("");
+        }
     }
 
     /**

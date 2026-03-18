@@ -74,12 +74,25 @@ public class RecordatorioManager {
         uDAO.getBasic(idUsuario, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario user) {
-                if(user instanceof UsuarioAsistido){
-                    UsuarioAsistido asistido = (UsuarioAsistido) user;
-                    if(asistido.getConfNoti().isAvisoTutoresOlvido()){
-                        programarAvisoTutoreSiNoRegistra(context, asistido, idSelf, med, tiempoNotificacion);
+                MedicamentoDAO medDAO = new MedicamentoDAO(idUsuario);
+                medDAO.esMedicamentoDeUsuario(med.getId(), new OnDataLoadedCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean esPropio) {
+                        if (esPropio) {
+                            if(user instanceof UsuarioAsistido){
+                                UsuarioAsistido asistido = (UsuarioAsistido) user;
+                                if(asistido.getConfNoti().isAvisoTutoresOlvido()){
+                                    programarAvisoTutoreSiNoRegistra(context, asistido, idSelf, med, tiempoNotificacion);
+                                }
+                            }
+                        }
                     }
-                }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                    }
+                });
+
 
                 if(modo != Modo.SUPERVISOR){
                     if (med.getConfNoti() != null && !med.getIsNotiGeneral()) {
@@ -92,8 +105,7 @@ public class RecordatorioManager {
             }
 
             @Override
-            public void onFailure(Exception e) {
-                // fallback a notificación normal
+            public void onFailure(Exception e) { //notificacion normal
                 programarConConfig(context, med, tiempoNotificacion, tipo, antiproc, null);
             }
         });
@@ -158,7 +170,6 @@ public class RecordatorioManager {
      */
     private static void programarAvisoTutoreSiNoRegistra(Context context, UsuarioAsistido asistido, String uidSelf, Medicamento med, long tiempoNotificacion) {
         if (!asistido.getConfNoti().isAvisoTutoresOlvido()) return;
-        Log.d("WORKER_AVISO", "En programar si no registra");
 
         List<String> tutores = asistido.getIdUsrTutoresAsig();
         if (tutores == null || tutores.isEmpty()) return;

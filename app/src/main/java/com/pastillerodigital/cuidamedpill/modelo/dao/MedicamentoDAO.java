@@ -140,4 +140,21 @@ public class MedicamentoDAO extends AbstractDAO<Medicamento> {
                         Constantes.MED_HORARIO, null
                 );
     }
+
+    public void esMedicamentoDeUsuario(String medId, OnDataLoadedCallback<Boolean> callback) {
+        getCollection()
+                .document(medId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        callback.onSuccess(true); // El medicamento pertenece al usuario
+                    } else {
+                        callback.onSuccess(false); // No pertenece
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    callback.onFailure(e);
+                });
+    }
 }

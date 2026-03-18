@@ -50,6 +50,7 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -489,41 +490,10 @@ public class HomeFragment extends Fragment {
             }
 
             Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
-            IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
 
-            ingestaDAO.add(ingesta, new OnOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    //puede haber medicamentos con horario que tengan ingestas fuera de horario
+            if(fechaProgramada != null) editIngesta(ingesta, med, fechaProgramada);
+            else addIngesta(ingesta, med, fechaIngesta);
 
-                    med.ingestaTomada(ingesta); //actualiza sig ingesta y resta med
-                    medDAO.edit(med, new OnOperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            if(med.getHorario() == null || fechaProgramada == null) AvisoManager.comprobarAvisos(getContext(), usr, med);
-                            else{
-                                // Recargar ingestas pendientes
-                                mostrarCarga();
-                                cargarMedsYConIngestas();
-                                medHoyAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            UiUtils.mostrarErrorYReiniciar(requireActivity());
-                        }
-                    });
-
-
-
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    UiUtils.mostrarErrorYReiniciar(requireActivity());
-                }
-            });
             dialog.dismiss();
         });
 
@@ -532,6 +502,76 @@ public class HomeFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    private void addIngesta(Ingesta ingesta, Medicamento med, Timestamp fechaProgramada){
+        IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
+
+        ingestaDAO.add(ingesta, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                //puede haber medicamentos con horario que tengan ingestas fuera de horario
+
+                med.ingestaTomada(ingesta); //actualiza sig ingesta y resta med
+                medDAO.edit(med, new OnOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if(med.getHorario() == null || fechaProgramada == null) AvisoManager.comprobarAvisos(getContext(), usr, med);
+                        else{
+                            // Recargar ingestas pendientes
+                            mostrarCarga();
+                            cargarMedsYConIngestas();
+                            medHoyAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
+    }
+
+    private void editIngesta(Ingesta ingesta, Medicamento med, Timestamp fechaProgramada){
+        IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
+
+        ingestaDAO.edit(ingesta, new OnOperationCallback() {
+            @Override
+            public void onSuccess() {
+                //puede haber medicamentos con horario que tengan ingestas fuera de horario
+
+                med.ingestaTomada(ingesta); //actualiza sig ingesta y resta med
+                medDAO.edit(med, new OnOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if(med.getHorario() == null || fechaProgramada == null) AvisoManager.comprobarAvisos(getContext(), usr, med);
+                        else{
+                            // Recargar ingestas pendientes
+                            mostrarCarga();
+                            cargarMedsYConIngestas();
+                            medHoyAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        UiUtils.mostrarErrorYReiniciar(requireActivity());
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                UiUtils.mostrarErrorYReiniciar(requireActivity());
+            }
+        });
     }
 
     private EstadoIngesta calcularEstadoIngesta(Timestamp fechaProgramada){

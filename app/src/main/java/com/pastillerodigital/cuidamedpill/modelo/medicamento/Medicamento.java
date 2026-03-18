@@ -370,7 +370,7 @@ public class Medicamento implements Persistible {
         //si la sig ingesta es en el futuro, no debería aparecer.
         if(getHorario() != null && getHorario().getSigIngesta() != null){
             Calendar sigIngCal = Utils.timestampToCalendar(getHorario().getSigIngesta());
-            if(!Utils.mismoDia(dia, sigIngCal)) return new ArrayList<>();
+            if(sigIngCal.after(dia) && !Utils.mismoDia(dia, sigIngCal)) return new ArrayList<>();
         }
 
         List<Ingesta> ingestasExistentes = getIngestasPorDia(dia);

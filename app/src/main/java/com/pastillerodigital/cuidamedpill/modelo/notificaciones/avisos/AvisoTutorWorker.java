@@ -8,8 +8,11 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +54,7 @@ public class AvisoTutorWorker extends Worker {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             // Margen de 2 minutos
-            long margen = 2 * 60 * 1000; //lo que decide si la toma fue programada o no
+            long margen = 2 * 60 * 1000; //lo que decide si la toma fue tomada o no
             //verificará si hay alguna ingesta registrada entre esas horas
 
             // Consultar si existe registro de ingesta dentro del margen
@@ -66,12 +69,18 @@ public class AvisoTutorWorker extends Worker {
                             .get()
             );
 
+            Log.d("WORKER_AVISO", "Existe?");
             if (!snapshot.isEmpty()) {
-                // Ya existe ingesta → no avisar
-                Log.d("WORKER_AVISO", "Existe");
-                return;
+                for (QueryDocumentSnapshot document : snapshot) {
+                    // Acceder a un campo específico por su nombre
+                    String estado = document.getString("estadoIngestaStr");
+
+                    if (EstadoIngesta.TOMADA.toString().equals(estado)) {
+                        return;
+                    }
+                }
             }
-            Log.d("WORKER_AVISO", "No existe " + tiempoProgramado);
+            Log.d("WORKER_AVISO", "No existe");
 
             // Formatear la hora de la toma programada
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
