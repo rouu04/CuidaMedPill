@@ -30,12 +30,12 @@ public class AvisoTutorWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("WORKER_AVISO", "EN WORKER");
 
         String idAsistido = getInputData().getString("idAsistido");
         String nombreMed = getInputData().getString("nombreMed");
         String medId = getInputData().getString("medId");
         String uidSelf = getInputData().getString("uidSelf");
+        String aliasU = getInputData().getString("aliasU");
         long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
 
         String[] tutoresArray = getInputData().getStringArray("tutores");
@@ -44,12 +44,12 @@ public class AvisoTutorWorker extends Worker {
         List<String> tutores = Arrays.asList(tutoresArray);
 
         // Verificar si el asistido no registró la medicación y avisar a los tutores
-        verificarTomaNoRegistrada(idAsistido, medId, uidSelf, nombreMed, tiempoProgramado, tutores);
+        verificarTomaNoRegistrada(idAsistido, medId, uidSelf, nombreMed, tiempoProgramado, tutores, aliasU);
 
         return Result.success();
     }
 
-    private void verificarTomaNoRegistrada(String idAsistido, String medId, String uidSelf, String nombreMed, long tiempoProgramado, List<String> tutores) {
+    private void verificarTomaNoRegistrada(String idAsistido, String medId, String uidSelf, String nombreMed, long tiempoProgramado, List<String> tutores, String aliasU) {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -69,18 +69,14 @@ public class AvisoTutorWorker extends Worker {
                             .get()
             );
 
-            Log.d("WORKER_AVISO", "Existe?");
             if (!snapshot.isEmpty()) {
                 for (QueryDocumentSnapshot document : snapshot) {
-                    // Acceder a un campo específico por su nombre
                     String estado = document.getString("estadoIngestaStr");
-
                     if (EstadoIngesta.TOMADA.toString().equals(estado)) {
                         return;
                     }
                 }
             }
-            Log.d("WORKER_AVISO", "No existe");
 
             // Formatear la hora de la toma programada
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -90,10 +86,9 @@ public class AvisoTutorWorker extends Worker {
             for (String tutorId : tutores) {
 
                 // Crear aviso
-                Aviso aviso = new Aviso(
-                        TipoAviso.OLVIDOASISTIDO,
-                        "Toma olvidada",
-                        "El asistido no registró la medicación " + nombreMed + " (" + fechaAviso + ")",
+                Aviso aviso = new Aviso(TipoAviso.OLVIDOASISTIDO,
+                        "Olvido de: " + aliasU,
+                        aliasU+ " no registró la medicación " + nombreMed + " (" + fechaAviso + ")",
                         medId
                 );
 

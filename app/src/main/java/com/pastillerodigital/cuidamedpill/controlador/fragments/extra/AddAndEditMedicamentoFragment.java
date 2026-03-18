@@ -456,12 +456,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         if(horarioActivo){
             if(!validacionesHorario(intervaloNumStr, sigTomaStr)) return;
             sigToma = aplicarPrimeraHora(sigToma, listaHoras); //guarda la hora de la sig toma
-            horario = new Horario(
-                    tipoIntervaloSel.toString(),
-                    intervaloNum,
-                    listaHoras,
-                    sigToma
-            );
+            horario = new Horario(tipoIntervaloSel.toString(), intervaloNum, listaHoras, sigToma);
         }
 
         Timestamp fechaInicio;
@@ -744,7 +739,11 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     }
                 }
 
-                if (pendientes.isEmpty()) return;
+                if (pendientes.isEmpty()) {
+                    requireActivity()
+                            .getSupportFragmentManager()
+                            .popBackStack();
+                }
 
                 // Borrar cada ingesta pendiente
                 for (Ingesta ingPend : pendientes) {

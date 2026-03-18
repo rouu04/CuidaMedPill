@@ -448,7 +448,8 @@ public class Medicamento implements Persistible {
 
 
         if(fechaFin == null || !isFinTratamiento(fecha)){
-            horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(fechaInicio));
+            //todo si hay problemas revisar
+            horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(horario.getSigIngesta()));
         }
 
         if(horasProgramadas == null || horasProgramadas.isEmpty()) return resultado;

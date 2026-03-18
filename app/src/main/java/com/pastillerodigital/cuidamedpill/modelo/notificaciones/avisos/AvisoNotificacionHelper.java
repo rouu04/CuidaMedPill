@@ -23,7 +23,7 @@ public class AvisoNotificacionHelper {
     public static void mostrarAviso(Context context, Aviso aviso){
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_AVISOS)
-                    .setSmallIcon(R.drawable.ic_warning)
+                    .setSmallIcon(R.drawable.ic_pastilla_capsula)
                     .setContentTitle(aviso.getTitulo())
                     .setContentText(aviso.getMensaje())
                     .setPriority(NotificationCompat.PRIORITY_HIGH)

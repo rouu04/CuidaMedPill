@@ -186,6 +186,7 @@ public class RecordatorioManager {
                 .putLong("tiempoProgramado", tiempoNotificacion)
                 .putString("medId", med.getId())
                 .putString("uidSelf", uidSelf)
+                .putString("aliasU", asistido.getAliasU())
                 .build();
 
         String tag = "aviso_tutores_" + med.getId() + "_" + tiempoNotificacion;

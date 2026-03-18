@@ -67,9 +67,11 @@ public class AvisosAdapter extends RecyclerView.Adapter<AvisosAdapter.AvisoVH> {
         //Icono med
         holder.imgIcono.setVisibility(View.GONE);
         holder.cardView.setVisibility(View.GONE);
+        holder.btnResolver.setVisibility(View.GONE);
         if(aviso.getTipoAviso() != TipoAviso.OLVIDOASISTIDO){
             holder.imgIcono.setVisibility(View.VISIBLE);
             holder.cardView.setVisibility(View.VISIBLE);
+            holder.btnResolver.setVisibility(View.VISIBLE);
 
             if (medicamentosCache.containsKey(medId)) {
                 Medicamento med = medicamentosCache.get(medId);
@@ -94,6 +96,9 @@ public class AvisosAdapter extends RecyclerView.Adapter<AvisosAdapter.AvisoVH> {
                 });
 
             }
+        }
+        else{
+
         }
 
 

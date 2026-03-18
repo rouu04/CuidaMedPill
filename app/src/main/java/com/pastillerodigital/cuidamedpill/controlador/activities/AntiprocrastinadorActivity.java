@@ -188,28 +188,65 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
     }
 
     private void registrarIngesta(){
-        // Determinar estado de ingesta según retraso
         EstadoIngesta estado;
-        if (fechaProgramada == null) {
-            estado = EstadoIngesta.NO_PROGRAMADA;
-        } else {
-            long diffMinutos = (fechaIngesta.toDate().getTime() - fechaProgramada.toDate().getTime()) / 60000;
-            if (diffMinutos <= Constantes.MINS_RETRASO) estado = EstadoIngesta.TOMADA;
-            else estado = EstadoIngesta.RETRASO;
-        }
+        long diffMinutos = (fechaIngesta.toDate().getTime() - fechaProgramada.toDate().getTime()) / 60000;
+        if (diffMinutos <= Constantes.MINS_RETRASO) estado = EstadoIngesta.TOMADA;
+        else estado = EstadoIngesta.RETRASO;
 
-        Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, "");
-
-        // Guardar en la base de datos
         IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
-        ingestaDAO.add(ingesta, new OnOperationCallback() {
-            @Override
-            public void onSuccess() {
-                // Actualizar ingestas locales del medicamento
-                if (med != null) med.ingestaTomada(ingesta);
 
-                // Mensaje corto opcional
-                UiUtils.mostrarConfirmacion(AntiprocrastinadorActivity.this, "Ingesta registrada");
+        ingestaDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
+            @Override
+            public void onSuccess(List<Ingesta> lista) {
+
+                Ingesta existente = null;
+
+                for (Ingesta ing : lista) {
+                    if (ing.getFechaProgramada() != null &&
+                            ing.getFechaProgramada().equals(fechaProgramada)) {
+
+                        existente = ing;
+                        break;
+                    }
+                }
+
+                if (existente != null) {
+                    existente.setFechaIngesta(fechaIngesta);
+                    existente.setEstadoIngesta(estado);
+                    existente.setEstadoIngestaStr(estado.toString());
+
+                    final Ingesta ingFinal = existente;
+                    ingestaDAO.edit(existente, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (med != null) {
+                                med.ingestaTomada(ingFinal); //solo deja usar finales
+                            }
+                            UiUtils.mostrarConfirmacion(AntiprocrastinadorActivity.this, "Ingesta registrada");
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(AntiprocrastinadorActivity.this);
+                        }
+                    });
+
+                } else {
+                    //fallback
+                    Ingesta nueva = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, "");
+
+                    ingestaDAO.add(nueva, new OnOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (med != null) med.ingestaTomada(nueva);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            UiUtils.mostrarErrorYReiniciar(AntiprocrastinadorActivity.this);
+                        }
+                    });
+                }
             }
 
             @Override

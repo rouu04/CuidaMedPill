@@ -296,11 +296,13 @@ public class HomeFragment extends Fragment {
 
                     if (!yaExiste) {
                         // Solo añadimos si no existe
-                        Ingesta ingPendiente = new Ingesta(ing.getFechaProgramada(), null, EstadoIngesta.PENDIENTE.toString(), med, "");
+                        ing.setEstadoIngesta(EstadoIngesta.PENDIENTE);
+                        ing.setEstadoIngestaStr(EstadoIngesta.PENDIENTE.toString());
 
-                        ingestaDAO.add(ingPendiente, new OnOperationCallback() {
+                        ingestaDAO.add(ing, new OnOperationCallback() {
                             @Override
                             public void onSuccess() {
+
                             }
 
                             @Override
@@ -312,7 +314,6 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void onFailure(Exception e) {
-                    // opcional: manejar error
                 }
             });
         }
@@ -489,10 +490,17 @@ public class HomeFragment extends Fragment {
                 nota = etNotasDialog.getText().toString().trim();
             }
 
-            Ingesta ingesta = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
+            if (ing != null) {
+                ing.setFechaIngesta(fechaIngesta);
+                ing.setEstadoIngesta(estado);
+                ing.setEstadoIngestaStr(estado.toString());
+                ing.setNotas(nota);
 
-            if(fechaProgramada != null) editIngesta(ingesta, med, fechaProgramada);
-            else addIngesta(ingesta, med, fechaIngesta);
+                editIngesta(ing, med, fechaProgramada);
+            } else {
+                Ingesta nueva = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
+                addIngesta(nueva, med, fechaIngesta);
+            }
 
             dialog.dismiss();
         });

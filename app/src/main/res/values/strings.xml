@@ -59,7 +59,7 @@
     <string name="text_title_med_detalles">Detalles del medicamento</string>
 
     <string name="text_hint_med_opcionales">Para guardar un medicamento, sólo es necesario un nombre</string>
-    <string name="text_hint_med_horario">Cada cuantos "intervalos", cuantos medicamentos (cada 2 días 1.5 pastillas)</string>
+    <string name="text_hint_med_horario">Cada cuantos "intervalos" (cada 2 días)</string>
 
     <string name="contdesc_med_simb">Símbolo medicamento</string>
 
