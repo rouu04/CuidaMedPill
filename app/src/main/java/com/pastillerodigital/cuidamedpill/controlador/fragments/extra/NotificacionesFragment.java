@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.pastillerodigital.cuidamedpill.R;
-import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 
@@ -34,7 +33,7 @@ public class NotificacionesFragment extends Fragment {
     private TextView tvTitulo;
 
     private ConfNoti originalConf; // Para restaurar si se cancela
-    private boolean modoEdicion = false, asist = false, isVer = true;
+    private boolean modoEdicion = false, asist = false, mostrarTitulo = true;
 
     public NotificacionesFragment() {
         // Constructor vacío requerido
@@ -61,7 +60,7 @@ public class NotificacionesFragment extends Fragment {
         layoutAvisoTutores = view.findViewById(R.id.layoutAvisoTutores);
 
         setVistasModoEdicion(modoEdicion);
-        if(!isVer) tvTitulo.setVisibility(View.GONE);
+        if(!mostrarTitulo) tvTitulo.setVisibility(View.GONE);
     }
 
     // El padre llama a esto para pasarle los datos
@@ -113,8 +112,8 @@ public class NotificacionesFragment extends Fragment {
         this.modoEdicion = modoEdicion;
     }
 
-    public void setIsVer(boolean isVer){
-        this.isVer = isVer;
+    public void setMostrarTitulo(boolean isVer){
+        this.mostrarTitulo = isVer;
     }
 
     public void setAsistido(boolean asistido) {

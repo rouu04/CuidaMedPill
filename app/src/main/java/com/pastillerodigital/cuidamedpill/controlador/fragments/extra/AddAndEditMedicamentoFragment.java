@@ -793,7 +793,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             if (existing == null) {
                 notisFragment = new NotificacionesFragment();
                 notisFragment.setModoEdicion(true);
-                notisFragment.setIsVer(false);
+                notisFragment.setMostrarTitulo(false);
 
                 getChildFragmentManager()
                         .beginTransaction()

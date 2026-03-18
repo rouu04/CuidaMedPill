@@ -38,12 +38,12 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_general">
 
-                <!-- Icono y nombre -->
+                <!-- Icono arriba centrado -->
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
+                    android:gravity="center_horizontal">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardTipoMedDet"
@@ -65,14 +65,15 @@
                             android:contentDescription="@string/contdesc_med_simb"/>
                     </com.google.android.material.card.MaterialCardView>
 
+                    <!-- Nombre debajo -->
                     <TextView
                         android:id="@+id/tvNombreMedDetalle"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/margin_start"
+                        android:layout_marginTop="@dimen/margin_top_element"
                         android:textStyle="bold"
                         android:textColor="@color/md_primary_dark"
+                        android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
                 </LinearLayout>
 
@@ -170,6 +171,7 @@
 
                     <LinearLayout
                         android:orientation="horizontal"
+                        android:id="@+id/layoutFechaCad"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -193,6 +195,7 @@
 
                     <LinearLayout
                         android:orientation="horizontal"
+                        android:id="@+id/layoutFechaFin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp">
@@ -217,6 +220,7 @@
 
                     <LinearLayout
                         android:orientation="horizontal"
+                        android:id="@+id/layoutRestantes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_top_element">
@@ -245,6 +249,7 @@
                         android:layout_marginTop="6dp">
 
                         <TextView
+                            android:id="@+id/tvNotasText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hint_med_notasMed"

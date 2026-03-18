@@ -126,7 +126,7 @@ public class AddAndEditUsuarioFragment extends Fragment {
         //Notificaciones
         notisFragment = new NotificacionesFragment();
         notisFragment.setModoEdicion(true);
-        notisFragment.setIsVer(false);
+        notisFragment.setMostrarTitulo(false);
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(R.id.containerNotificacionesPerfil, notisFragment)

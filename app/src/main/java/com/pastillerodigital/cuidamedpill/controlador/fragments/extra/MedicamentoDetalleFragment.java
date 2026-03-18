@@ -46,7 +46,7 @@ public class MedicamentoDetalleFragment extends Fragment {
     private ChipGroup chipGroupHoras;
     private LinearLayout layoutFormMedDetalle;
     private MaterialButton btnEditar, btnEliminar;
-    private View progressMedDetalle;
+    private View progressMedDetalle, layoutFechaCad, layoutFechaFin, layoutRestantes, layoutNotas;;
     private LinearLayout layoutFormNotificaciones, layoutFormOpciones;
     private NotificacionesFragment notisFragment;
 
@@ -99,6 +99,11 @@ public class MedicamentoDetalleFragment extends Fragment {
         tvFechaFin = view.findViewById(R.id.tvFechaFin);
         tvRestantes = view.findViewById(R.id.tvRestantes);
         tvNotas = view.findViewById(R.id.tvNotas);
+
+        layoutFechaCad = view.findViewById(R.id.layoutFechaCad);
+        layoutFechaFin = view.findViewById(R.id.layoutFechaFin);
+        layoutRestantes = view.findViewById(R.id.layoutRestantes);
+        layoutNotas = view.findViewById(R.id.tvNotasText);
 
         btnEditar = view.findViewById(R.id.btnEditar);
         btnEliminar = view.findViewById(R.id.btnEliminar);
@@ -214,10 +219,20 @@ public class MedicamentoDetalleFragment extends Fragment {
     }
 
     private void fillView(){
-        mostrarSiHayContenido(tvFechaCad, medicamento.getFechaCad() != null ? Utils.timestampToString(medicamento.getFechaCad()) : null);
-        mostrarSiHayContenido(tvFechaFin, medicamento.getFechaFin() != null ? Utils.timestampToString(medicamento.getFechaFin()) : null);
-        mostrarSiHayContenido(tvRestantes, medicamento.getnMedRestantes());
-        mostrarSiHayContenido(tvNotas, medicamento.getNotasMed());
+        mostrarFilaSiHayContenido(layoutFechaCad, tvFechaCad, medicamento.getFechaCad() != null ?
+                Utils.timestampToString(medicamento.getFechaCad()) : null);
+        mostrarFilaSiHayContenido(layoutFechaFin, tvFechaFin, medicamento.getFechaFin() != null ?
+                Utils.timestampToString(medicamento.getFechaFin()) : null);
+        mostrarFilaSiHayContenido(layoutRestantes, tvRestantes, medicamento.getnMedRestantes());
+
+        //Si las notas están vacías no se muestran
+        String notas = medicamento.getNotasMed();
+        if (notas != null && !notas.isEmpty()) {
+            tvNotas.setText(notas);
+            layoutNotas.setVisibility(View.VISIBLE);
+        } else {
+            layoutNotas.setVisibility(View.GONE);
+        }
 
         tvNombre.setText(medicamento.getNombreMed());
 
@@ -266,6 +281,7 @@ public class MedicamentoDetalleFragment extends Fragment {
             tvNotiGeneralInfo.setVisibility(View.GONE);
 
             notisFragment = new NotificacionesFragment();
+            notisFragment.setMostrarTitulo(false);
             getChildFragmentManager()
                     .beginTransaction()
                     .replace(R.id.containerNotificacionesMed, notisFragment)
@@ -335,6 +351,32 @@ public class MedicamentoDetalleFragment extends Fragment {
             }
             // siempre mostrar la vista
             view.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void mostrarFilaSiHayContenido(View fila, TextView tv, Object contenido) {
+        boolean tieneContenido = false;
+
+        if (contenido instanceof String) {
+            String texto = (String) contenido;
+            tieneContenido = texto != null && !texto.isEmpty();
+            if (tieneContenido) tv.setText(texto);
+
+        } else if (contenido instanceof Integer) {
+            int valor = (Integer) contenido;
+            tieneContenido = valor >= 0 && valor != -1;
+            if (tieneContenido) tv.setText(String.valueOf(valor));
+
+        } else if (contenido != null) {
+            tieneContenido = true;
+            tv.setText(contenido.toString());
+        }
+
+        if (modo == Modo.ASISTIDO) {
+            fila.setVisibility(tieneContenido ? View.VISIBLE : View.GONE);
+        } else {
+            fila.setVisibility(View.VISIBLE);
+            if (!tieneContenido) tv.setText("-");
         }
     }
 }

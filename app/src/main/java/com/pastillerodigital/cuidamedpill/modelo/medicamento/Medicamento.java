@@ -367,6 +367,12 @@ public class Medicamento implements Persistible {
      * @return
      */
     public List<Ingesta> getIngestasPendientesDia(Calendar dia, List<Timestamp> horasProgramadas) {
+        //si la sig ingesta es en el futuro, no debería aparecer.
+        if(getHorario() != null && getHorario().getSigIngesta() != null){
+            Calendar sigIngCal = Utils.timestampToCalendar(getHorario().getSigIngesta());
+            if(!Utils.mismoDia(dia, sigIngCal)) return new ArrayList<>();
+        }
+
         List<Ingesta> ingestasExistentes = getIngestasPorDia(dia);
 
         List<Ingesta> pendientes = new ArrayList<>();
@@ -440,6 +446,7 @@ public class Medicamento implements Persistible {
         if(existentes != null) resultado.addAll(existentes);
         if(horario == null) return resultado;
 
+
         if(fechaFin == null || !isFinTratamiento(fecha)){
             horasProgramadas = horario.getFechaHorasDia(fecha, Utils.timestampToCalendar(fechaInicio));
         }
@@ -459,8 +466,20 @@ public class Medicamento implements Persistible {
             else estado = EstadoIngesta.PENDIENTE.toString();
 
             Ingesta nueva = new Ingesta(horaProg, null, estado, this, null);
-            lIngestas.add(nueva);
-            resultado.add(nueva);
+
+            if(getHorario() != null && getHorario().getSigIngesta() != null){
+                if(tipoDia.contains("PASADO")){
+                    lIngestas.add(nueva);
+                    resultado.add(nueva);
+                }
+                else {
+                    Calendar sigIngCal = Utils.timestampToCalendar(getHorario().getSigIngesta());
+                    if(fecha.after(sigIngCal) || Utils.mismoDia(fecha, sigIngCal)){
+                        lIngestas.add(nueva);
+                        resultado.add(nueva);
+                    }
+                }
+            }
         }
 
         return resultado;
