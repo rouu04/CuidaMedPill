@@ -8,6 +8,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -85,11 +86,27 @@ public class AvisoTutorWorker extends Worker {
             // Iterar sobre cada tutor
             for (String tutorId : tutores) {
 
+                QuerySnapshot existing = Tasks.await(
+                        db.collection("usuarios")
+                                .document(tutorId)
+                                .collection("avisos")
+                                .whereEqualTo("medId", medId)
+                                .whereEqualTo("uOrigId", idAsistido)
+                                .whereEqualTo("tipoAviso", TipoAviso.OLVIDOASISTIDO.toString())
+                                .whereEqualTo("fechaProgramada", new Date(tiempoProgramado))
+                                .get()
+                );
+
+                if (!existing.isEmpty()) {
+                    continue; // ya existe
+                }
+
                 // Crear aviso
                 Aviso aviso = new Aviso(TipoAviso.OLVIDOASISTIDO,
                         "Olvido de: " + aliasU,
                         aliasU+ " no registró la medicación " + nombreMed + " (" + fechaAviso + ")",
-                        medId
+                        medId,
+                        new Timestamp(new Date(tiempoProgramado))
                 );
 
                 aviso.setuDestId(tutorId);

@@ -1,13 +1,9 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
-import android.content.Context;
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
-import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.Aviso;
-import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoNotificacionHelper;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.ArrayList;
@@ -82,7 +78,7 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
                         Aviso aviso = docToObj(doc);
                         if (aviso != null) lista.add(aviso);
                     }
-                    lista.sort(Comparator.comparing(Aviso::getFechaCreacion));
+                    lista.sort(Comparator.comparing(Aviso::getFechaProgramada));
                     callback.onSuccess(lista);
                 })
                 .addOnFailureListener(callback::onFailure);

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EMomentoDia;
+import com.pastillerodigital.cuidamedpill.modelo.enumerados.Modo;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoMed;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
@@ -40,10 +41,12 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
 
     private List<Ingesta> lista;
     private OnClickListener listener;
+    private Modo modo;
 
-    public IngestasAdapter(List<Ingesta> lista, OnClickListener listener) {
+    public IngestasAdapter(List<Ingesta> lista, Modo modo, OnClickListener listener) {
         this.lista = lista;
         this.listener = listener;
+        this.modo = modo;
     }
 
     @NonNull
@@ -59,6 +62,16 @@ public class IngestasAdapter extends RecyclerView.Adapter<IngestasAdapter.ViewHo
         Medicamento med = ing.getMed();
 
         holder.tvNombre.setText(med.getNombreMed());
+
+        //Botón más accesible para asistidos
+        if (modo == Modo.ASISTIDO) {
+            holder.btnCheck.setText(holder.itemView.getContext().getString(R.string.ya_tomado));
+            holder.btnCheck.setIcon(null);
+        } else {
+            holder.btnCheck.setText("");
+            holder.btnCheck.setIcon(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_tick));
+        }
+
         // Hora
         if (ing.getFechaProgramada() != null) {
             StringBuilder sbHora = new StringBuilder();

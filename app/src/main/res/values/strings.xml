@@ -83,10 +83,20 @@
     <!-- HOME-->
     <string name="text_title_home">Inicio</string>
     <string name="text_title_home_avisos">Avisos</string>
+    <string name="text_title_home_avisos_asist"> Dale a resolver el aviso si cambiaste la situación</string>
     <string name="text_title_home_meds">Medicamentos a tomar hoy</string>
+    <string name="text_hint_home_meds_asist"> Si ya te has tomado una medicina, pulsa su botón para registrarlo</string>
     <string name="button_home_add_ingesta_noprogram">No programado</string>
     <string name="text_title_nombre">Nombre</string>
     <string name="hint_home_add_nota">Añadir nota opcional</string>
+
+    <string name="text_hint_home_noprogram_asist">¿Te has tomado un medicamento que no aparece en la lista?
+        Registralo en "No programado"</string>
+
+    <string name="text_hint_meds_asist">Para ver detalles de un medicamento, pulsa sobre él</string>
+    <string name="text_hint_cal_asist"> Pulsa en un día con un punto verde para ver registros de medicamentos de ese día</string>
+
+    <string name="ya_tomado">YA TOMADO</string>
 
 
     <string name="text_title_cal">Tu calendario</string>

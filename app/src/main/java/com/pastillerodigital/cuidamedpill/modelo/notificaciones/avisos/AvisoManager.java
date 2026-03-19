@@ -2,6 +2,7 @@ package com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos;
 
 import android.content.Context;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pastillerodigital.cuidamedpill.modelo.dao.AvisoDAO;
@@ -29,19 +30,19 @@ public class AvisoManager {
 
         // CADUCIDAD
         if(conf.isAvisoCaducidad() && med.esSemanaACaducado()){
-            Aviso aviso = AvisoFactory.crearAvisoCaducidad(med);
+            Aviso aviso = AvisoFactory.crearAvisoCaducidad(med, Timestamp.now());
             gestionarAviso(context, aDAO, aviso);
         }
 
         // COMPRA
         if(conf.isAvisoCompra() && 0 <= med.getnMedRestantes() && med.getnMedRestantes() <= 5){
-            Aviso aviso = AvisoFactory.crearAvisoCompra(med);
+            Aviso aviso = AvisoFactory.crearAvisoCompra(med, Timestamp.now());
             gestionarAviso(context, aDAO, aviso);
         }
 
         // FIN TRATAMIENTO
         if(conf.isAvisoFinTratamiento() && med.esSemanaAFinTratamiento()){
-            Aviso aviso = AvisoFactory.crearAvisoFinTratamiento(med);
+            Aviso aviso = AvisoFactory.crearAvisoFinTratamiento(med, Timestamp.now());
             aviso.setuDestId(usuario.getId());
             gestionarAviso(context, aDAO, aviso);
         }

@@ -47,7 +47,7 @@ public class CalendarioFragment extends Fragment {
 
     private MaterialCalendarView calendarView;
     private RecyclerView rvMedicamentos;
-    private TextView tvFecha, tvDiaEmpty;
+    private TextView tvFecha, tvDiaEmpty, tvHintCalAsist;
     private MaterialToolbar tbTtitleCal;
     private Chip chipVistaSemanal;
 
@@ -104,6 +104,7 @@ public class CalendarioFragment extends Fragment {
         tvDiaEmpty = view.findViewById(R.id.tvDiaEmpty);
         tbTtitleCal = view.findViewById(R.id.topAppBarCal);
         chipVistaSemanal = view.findViewById(R.id.chipVistaSemanal);
+        tvHintCalAsist = view.findViewById(R.id.tvHintCalAsist);
 
         configCalDefault();
         lecturaArgumentosYConsec();
@@ -155,6 +156,13 @@ public class CalendarioFragment extends Fragment {
             }
             else{
                 tbTtitleCal.setTitle(Mensajes.CAL_TITLE);
+            }
+
+            if(modo == Modo.ASISTIDO){
+                tvHintCalAsist.setVisibility(View.VISIBLE);
+            }
+            else{
+                tvHintCalAsist.setVisibility(View.GONE);
             }
         }
     }

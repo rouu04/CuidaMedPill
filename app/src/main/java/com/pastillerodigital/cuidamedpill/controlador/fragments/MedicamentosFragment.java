@@ -41,7 +41,7 @@ public class MedicamentosFragment extends Fragment {
     private FloatingActionButton fab;
     private MaterialToolbar tbTitleMeds;
     private LinearLayout layoutFormMeds;
-    private TextView tvMedsEmpty;
+    private TextView tvMedsEmpty, tvHintMedsAsist;
 
     //Elementos lógicos
     String uid, uidSelf;
@@ -89,6 +89,8 @@ public class MedicamentosFragment extends Fragment {
         tbTitleMeds = view.findViewById(R.id.topAppBarMeds);
         layoutFormMeds = view.findViewById(R.id.formLayoutMeds);
 
+        tvHintMedsAsist = view.findViewById(R.id.tvHintMedsAsist);
+
         //Lógica:
         mostrarCarga();
 
@@ -115,6 +117,10 @@ public class MedicamentosFragment extends Fragment {
             }
             else{
                 cargaUsr();
+            }
+
+            if(modo == Modo.ASISTIDO){
+                tvHintMedsAsist.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -201,7 +207,9 @@ public class MedicamentosFragment extends Fragment {
         if(lMed.isEmpty()){
             tvMedsEmpty.setVisibility(View.VISIBLE);
             rvMed.setVisibility(View.GONE);
+            tvHintMedsAsist.setVisibility(View.GONE);
         }else{
+            if(modo == Modo.ASISTIDO) tvHintMedsAsist.setVisibility(View.VISIBLE);
             tvMedsEmpty.setVisibility(View.GONE);
             rvMed.setVisibility(View.VISIBLE);
         }

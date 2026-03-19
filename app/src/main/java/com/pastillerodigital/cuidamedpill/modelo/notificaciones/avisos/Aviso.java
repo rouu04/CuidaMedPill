@@ -12,7 +12,7 @@ public class Aviso implements Persistible {
     private String tipoAvisoStr;
     private String titulo;
     private String mensaje;
-    private Timestamp fechaCreacion;
+    private Timestamp fechaProgramada;
     private boolean leido;
     private boolean notiMostrada;
     private String medId;
@@ -30,13 +30,13 @@ public class Aviso implements Persistible {
 
     public Aviso() {}// Necesario para Firebase
 
-    public Aviso(TipoAviso tipo, String titulo, String mensaje, String medicamentoId) {
+    public Aviso(TipoAviso tipo, String titulo, String mensaje, String medicamentoId, Timestamp fecha) {
 
         this.tipoAvisoStr = tipo.toString();
         this.tipoAviso = tipo;
         this.titulo = titulo;
         this.mensaje = mensaje;
-        this.fechaCreacion = Timestamp.now();
+        this.fechaProgramada = fecha;
         this.leido = false;
         this.notiMostrada = false;
         this.medId = medicamentoId;
@@ -75,8 +75,8 @@ public class Aviso implements Persistible {
         return mensaje;
     }
 
-    public Timestamp getFechaCreacion() {
-        return fechaCreacion;
+    public Timestamp getFechaProgramada() {
+        return fechaProgramada;
     }
 
     public void setTitulo(String titulo) {
@@ -87,8 +87,8 @@ public class Aviso implements Persistible {
         this.mensaje = mensaje;
     }
 
-    public void setFechaCreacion(Timestamp fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFechaProgramada(Timestamp fechaProgramada) {
+        this.fechaProgramada = fechaProgramada;
     }
 
     public void setMedId(String medId) {
@@ -154,7 +154,7 @@ public class Aviso implements Persistible {
         aviso.uOrigId = doc.getString(Constantes.AVISO_UORIGID);
 
         Timestamp fecha = doc.getTimestamp(Constantes.AVISO_FECHACREACION);
-        aviso.fechaCreacion = (fecha != null) ? fecha : Timestamp.now();
+        aviso.fechaProgramada = (fecha != null) ? fecha : Timestamp.now();
 
         Boolean leido = doc.getBoolean(Constantes.AVISO_LEIDO);
         aviso.leido = (leido != null) ? leido : false;

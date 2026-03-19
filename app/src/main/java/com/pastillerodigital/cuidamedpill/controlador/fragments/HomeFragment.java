@@ -59,7 +59,8 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private RecyclerView rvMedicamentosHoy, rvAvisos;
-    private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy, tvEmptyAvisos, tvEmptyMedsHoy;
+    private TextView tvTitleHome, tvTitleAvisos, tvMedsHoy, tvEmptyAvisos, tvEmptyMedsHoy,
+            tvHintAvisosAsist, tvHintMedsAsist, tvHintNoProgramAsist;
     private ExtendedFloatingActionButton fab;
     private View progressHome;
     private LinearLayout layoutFormHome;
@@ -118,6 +119,10 @@ public class HomeFragment extends Fragment {
         tvEmptyMedsHoy = view.findViewById(R.id.tvEmptyMedsHoy);
         rvAvisos = view.findViewById(R.id.rvAvisosHome);
 
+        tvHintAvisosAsist = view.findViewById(R.id.tvHintAvisosAsist);
+        tvHintMedsAsist = view.findViewById(R.id.tvHintMedsHomeAsist);
+        tvHintNoProgramAsist = view.findViewById(R.id.tvHintNoProgramAsist);
+
         mostrarCarga();
         leerArgsYConsec();
         setUpRecyclerView();
@@ -139,12 +144,27 @@ public class HomeFragment extends Fragment {
             uDAO = new UsuarioDAO();
             aDAO = new AvisoDAO(uid);
 
-            if(modo != Modo.SUPERVISOR){
-                tvTitleHome.setText(Mensajes.HOME_TITLE);
-                tvTitleAvisos.setText(Mensajes.HOME_TITLE_AVISOS);
-                tvMedsHoy.setText(Mensajes.HOME_MEDS_HOY);
-            }
+            setVistaModo();
             cargaUsr();
+        }
+    }
+
+    private void setVistaModo(){
+        if(modo != Modo.SUPERVISOR){
+            tvTitleHome.setText(Mensajes.HOME_TITLE);
+            tvTitleAvisos.setText(Mensajes.HOME_TITLE_AVISOS);
+            tvMedsHoy.setText(Mensajes.HOME_MEDS_HOY);
+        }
+
+        if(modo == Modo.ASISTIDO){
+            tvHintAvisosAsist.setVisibility(View.VISIBLE);
+            tvHintMedsAsist.setVisibility(View.VISIBLE);
+            tvHintNoProgramAsist.setVisibility(View.VISIBLE); //todo ocultar si no hay meds
+        }
+        else{
+            tvHintAvisosAsist.setVisibility(View.GONE);
+            tvHintMedsAsist.setVisibility(View.GONE);
+            tvHintNoProgramAsist.setVisibility(View.GONE);
         }
     }
 
@@ -174,6 +194,13 @@ public class HomeFragment extends Fragment {
             public void onSuccess(List<Medicamento> medicamentos) {
                 lMedTodos.clear();
                 lMedTodos.addAll(medicamentos);
+
+                if(lMedTodos.isEmpty()){
+                    fab.setVisibility(View.GONE);
+                    tvHintNoProgramAsist.setVisibility(View.GONE);
+                }
+                else fab.setVisibility(View.VISIBLE);
+
                 AvisoManager.comprobarAvisosGeneral(getContext(), usr, medicamentos);
                 escucharAvisos();
                 gestionarFinTratamientoMeds(); //importante que se haga después de comprobar avisos
@@ -320,7 +347,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpRecyclerView(){
-        medHoyAdapter = new IngestasAdapter(ingPendientes, new IngestasAdapter.OnClickListener() {
+        medHoyAdapter = new IngestasAdapter(ingPendientes, modo, new IngestasAdapter.OnClickListener() {
             @Override
             public void onItemClick(Ingesta item) {
                 MedicamentoDetalleFragment detalleFragment = MedicamentoDetalleFragment.newInstance(item.getMed().getId(),uid, uidSelf, modo);
@@ -402,7 +429,13 @@ public class HomeFragment extends Fragment {
         if(ingPendientes.isEmpty()){
             tvEmptyMedsHoy.setVisibility(View.VISIBLE);
             rvMedicamentosHoy.setVisibility(View.GONE);
+            if(modo == Modo.ASISTIDO){
+                tvHintMedsAsist.setVisibility(View.GONE);
+            }
         }else{
+            if(modo == Modo.ASISTIDO){
+                tvHintMedsAsist.setVisibility(View.VISIBLE);
+            }
             tvEmptyMedsHoy.setVisibility(View.GONE);
             rvMedicamentosHoy.setVisibility(View.VISIBLE);
         }
@@ -413,6 +446,7 @@ public class HomeFragment extends Fragment {
             if(modo == Modo.ASISTIDO){ //ocultamos sección de avisos vacíos
                 tvTitleAvisos.setVisibility(View.GONE);
                 tvEmptyAvisos.setVisibility(View.GONE);
+                tvHintAvisosAsist.setVisibility(View.GONE);
                 rvAvisos.setVisibility(View.GONE);
             }else{
                 tvTitleAvisos.setVisibility(View.VISIBLE);
@@ -420,6 +454,7 @@ public class HomeFragment extends Fragment {
                 rvAvisos.setVisibility(View.GONE);
             }
         }else{
+            if(modo == Modo.ASISTIDO) tvHintAvisosAsist.setVisibility(View.VISIBLE);
             tvTitleAvisos.setVisibility(View.VISIBLE);
             tvEmptyAvisos.setVisibility(View.GONE);
             rvAvisos.setVisibility(View.VISIBLE);
@@ -595,7 +630,7 @@ public class HomeFragment extends Fragment {
         TextView tvTitle = dialogView.findViewById(R.id.tvTituloSelMedHome);
 
         String titulo = "";
-        if(modo == Modo.SUPERVISOR)titulo = Mensajes.HOME_SELMED_TITULO;
+        if(modo != Modo.SUPERVISOR)titulo = Mensajes.HOME_SELMED_TITULO;
         else titulo = String.format(Mensajes.HOME_SELMED_TITULO_SUPERVISOR, uAlias);
         tvTitle.setText(titulo);
 
