@@ -36,12 +36,9 @@ import android.content.SharedPreferences;
  */
 public class NotificationHelper {
 
-    public static final String CHANNEL_ID = "canal_medicacion"; //identificador del canal
+    //identificador del canal
     //tiene que ser el mimsmo que el que usa notification worker
-    public static final String CHANNEL_NORMAL = "canal_normal";
-    public static final String CHANNEL_ALARMA = "canal_alarma";
-    public static final String CHANNEL_SILENCIOSO = "canal_silencioso";
-    public static final String CHANNEL_AVISOS = "canal_avisos";
+
 
     /**
      * Crea canal, llamado en main al iniciar app
@@ -53,44 +50,44 @@ public class NotificationHelper {
 
             // Canal NORMAL
             NotificationChannel normalChannel = new NotificationChannel(
-                    CHANNEL_NORMAL,
-                    "Recordatorios normales",
+                    Constantes.CHANNEL_NORMAL,
+                    Constantes.CHANNEL_NAME_NORMAL,
                     NotificationManager.IMPORTANCE_HIGH
             );
-            normalChannel.setDescription("Recordatorios estándar");
+            normalChannel.setDescription(Constantes.CHANNEL_NAME_NORMAL);
             normalChannel.enableVibration(true);
             normalChannel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, null);
             notificationManager.createNotificationChannel(normalChannel);
 
             // Canal ALARMA
             NotificationChannel alarmaChannel = new NotificationChannel(
-                    CHANNEL_ALARMA,
-                    "Alarmas de medicación",
+                    Constantes.CHANNEL_ALARMA,
+                    Constantes.CHANNEL_NAME_ALARMA,
                     NotificationManager.IMPORTANCE_HIGH
             );
-            alarmaChannel.setDescription("Alarmas importantes");
+            alarmaChannel.setDescription(Constantes.CHANNEL_DESC_ALARMA);
             alarmaChannel.enableVibration(true);
             alarmaChannel.setSound(Settings.System.DEFAULT_ALARM_ALERT_URI, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build());
             notificationManager.createNotificationChannel(alarmaChannel);
 
             // Canal SILENCIOSO
             NotificationChannel silenciosoChannel = new NotificationChannel(
-                    CHANNEL_SILENCIOSO,
-                    "Recordatorios silenciosos",
+                    Constantes.CHANNEL_SILENCIOSO,
+                    Constantes.CHANNEL_NAME_SILENCIOSO,
                     NotificationManager.IMPORTANCE_LOW
             );
-            silenciosoChannel.setDescription("Sin sonido ni vibración");
+            silenciosoChannel.setDescription(Constantes.CHANNEL_DESC_SILENCIOSO);
             silenciosoChannel.setSound(null, null);
             silenciosoChannel.enableVibration(false);
             notificationManager.createNotificationChannel(silenciosoChannel);
 
             //CANAL AVISOS
             NotificationChannel avisoChannel = new NotificationChannel(
-                    CHANNEL_AVISOS,
-                    "Avisos del sistema",
+                    Constantes.CHANNEL_AVISOS,
+                    Constantes.CHANNEL_NAME_AVISOS,
                     NotificationManager.IMPORTANCE_HIGH
             );
-            avisoChannel.setDescription("Avisos importantes del sistema");
+            avisoChannel.setDescription(Constantes.CHANNEL_NAME_AVISOS);
             notificationManager.createNotificationChannel(avisoChannel);
         }
     }
@@ -107,13 +104,13 @@ public class NotificationHelper {
         String channelId;
         switch (tipo) {
             case ALARMA:
-                channelId = CHANNEL_ALARMA;
+                channelId = Constantes.CHANNEL_ALARMA;
                 break;
             case SILENCIOSA:
-                channelId = CHANNEL_SILENCIOSO;
+                channelId = Constantes.CHANNEL_SILENCIOSO;
                 break;
             default:
-                channelId = CHANNEL_NORMAL;
+                channelId = Constantes.CHANNEL_NORMAL;
         }
 
         if (tipo == TipoNotificacion.ALARMA) {

@@ -116,6 +116,11 @@ public class Mensajes {
     public static final String HOME_SELMED_TITULO= "Selecciona el medicamento no programado tomado";
     public static final String HOME_SELMED_TITULO_SUPERVISOR= "Selecciona el medicamento de %s no programado tomado";
 
+    //NOTIFICACIONES
+    public static final String NOTI_HORAMED = "Hora de tu medicación";
+    public static final String NOTI_TOMARMED = "Es momento de tomar %s";
+
+
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";
 

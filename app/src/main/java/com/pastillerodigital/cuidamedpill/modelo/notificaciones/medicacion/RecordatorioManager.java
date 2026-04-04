@@ -24,6 +24,7 @@ import com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos.AvisoTuto
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.util.Calendar;
 import java.util.List;
@@ -116,16 +117,16 @@ public class RecordatorioManager {
         if (delay <= 0) return;
 
         Data data = new Data.Builder()
-                .putString("idMed", med.getId())
-                .putString("nombreMed", med.getNombreMed())
-                .putLong("tiempoProgramado", tiempoNotificacion)
-                .putString("titulo", "Hora de tomar: " + med.getNombreMed())
-                .putString("mensaje", "Pulse para registrar ingesta")
-                .putString("tipoNotificacion", tipo.toString())
-                .putBoolean("antiprocrastinador", antiproc)
-                .putString("tipoMed", med.getTipoMed().toString())
-                .putString("colorSimb", med.getColorSimb())
-                .putString("uid", uid)
+                .putString(Constantes.NOTI_INPUT_IDMED, med.getId())
+                .putString(Constantes.NOTI_INPUT_NOMBRE_MED, med.getNombreMed())
+                .putLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, tiempoNotificacion)
+                .putString(Constantes.NOTI_INPUT_TITULO, String.format(Mensajes.NOTI_TOMARMED, med.getNombreMed()))
+                .putString(Constantes.NOTI_INPUT_MENSAJE, "Pulse para registrar ingesta")
+                .putString(Constantes.NOTI_INPUT_TIPO_NOTIFICACION, tipo.toString())
+                .putBoolean(Constantes.ARG_ANTIPROCRASTINADOR, antiproc)
+                .putString(Constantes.NOTI_INPUT_TIPO_MED, med.getTipoMed().toString())
+                .putString(Constantes.NOTI_INPUT_COLOR_SIMB, med.getColorSimb())
+                .putString(Constantes.NOTI_INPUT_UID, uid)
                 .build();
 
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(NotificacionWorker.class)
@@ -180,16 +181,16 @@ public class RecordatorioManager {
 
 
         Data data = new Data.Builder()
-                .putString("idAsistido", asistido.getId())
-                .putString("nombreMed", med.getNombreMed())
-                .putStringArray("tutores", tutores.toArray(new String[0]))
-                .putLong("tiempoProgramado", tiempoNotificacion)
-                .putString("medId", med.getId())
-                .putString("uidSelf", uidSelf)
-                .putString("aliasU", asistido.getAliasU())
+                .putString(Constantes.NOTI_INPUT_ID_ASISTIDO, asistido.getId())
+                .putString(Constantes.NOTI_INPUT_NOMBRE_MED, med.getNombreMed())
+                .putStringArray(Constantes.NOTI_INPUT_TUTORES, tutores.toArray(new String[0]))
+                .putLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, tiempoNotificacion)
+                .putString(Constantes.ARG_MEDID, med.getId())
+                .putString(Constantes.ARG_UIDSELF, uidSelf)
+                .putString(Constantes.USUARIO_ALIAS, asistido.getAliasU())
                 .build();
 
-        String tag = "aviso_tutores_" + med.getId() + "_" + tiempoNotificacion;
+        String tag = Constantes.NOTI_TAG_AVISOTUTORES + med.getId() + "_" + tiempoNotificacion;
 
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(AvisoTutorWorker.class)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
@@ -205,9 +206,9 @@ public class RecordatorioManager {
 
     public static void sincronizarRecordatorios(Context context, String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("usuarios")
+        db.collection(Constantes.COLLECTION_USUARIOS)
                 .document(uid)
-                .collection("medicamentos")
+                .collection(Constantes.COLLECTION_MEDICAMENTOS)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {

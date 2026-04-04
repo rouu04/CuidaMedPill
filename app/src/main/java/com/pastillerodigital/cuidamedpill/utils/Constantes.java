@@ -158,6 +158,35 @@ public class Constantes {
     public static final String ARG_MEDID = "medId";
     public static final String ARG_ANTIPROCRASTINADOR= "antiprocrastinador";
 
+    //NOTIFICACIONES
+    public static final String NOTI_INPUT_IDMED = "idMed";
+    public static final String NOTI_INPUT_TITULO = "titulo";
+    public static final String NOTI_INPUT_MENSAJE = "mensaje";
+    public static final String NOTI_INPUT_TIPO_NOTIFICACION = "tipoNotificacion";
+    public static final String NOTI_INPUT_NOMBRE_MED = "nombreMed";
+    public static final String NOTI_INPUT_UID = "uid";
+    public static final String NOTI_INPUT_TIPO_MED = "tipoMed";
+    public static final String NOTI_INPUT_COLOR_SIMB = "colorSimb";
+    public static final String NOTI_INPUT_TIEMPO_PROGRAMADO = "tiempoProgramado";
+    public static final String NOTI_INPUT_ID_ASISTIDO = "idAsistido";
+    public static final String NOTI_INPUT_TUTORES = "tutores";
+
+    public static final String NOTI_TAG_AVISOTUTORES = "aviso_tutores_";
+
+        //canales
+    public static final String CHANNEL_NORMAL = "canal_normal";
+    public static final String CHANNEL_ALARMA = "canal_alarma";
+    public static final String CHANNEL_SILENCIOSO = "canal_silencioso";
+    public static final String CHANNEL_AVISOS = "canal_avisos";
+
+    public static final String CHANNEL_NAME_NORMAL = "Recordatorios normales";
+    public static final String CHANNEL_NAME_ALARMA = "Alarma de medicacion";
+    public static final String CHANNEL_DESC_ALARMA = "Alarmas importantes";
+    public static final String CHANNEL_NAME_SILENCIOSO = "Recordatorios silenciosos";
+    public static final String CHANNEL_DESC_SILENCIOSO = "Sin sonido ni vibracion";
+    public static final String CHANNEL_NAME_AVISOS = "Avisos";
+
+
     //SIMBOLOS MEDICAMENTOS
     public static final int RES_IC_MED_CREMA_LIST = R.drawable.ic_med_crema_list;
     public static final int RES_IC_MED_CREMA_COLOR = R.id.ic_med_crema_color;
@@ -186,5 +215,8 @@ public class Constantes {
     public static final String RES_TIPO = "drawable";
     public static final String PICKER_TIME = "TIME_PICKER";
     public static final String COLOR = "color";
+
+    //NÚMEROS
     public static final Integer MINS_RETRASO = 90;
+    public static final Long UNA_SEMANA_MILLS = 7L * 24 * 60 * 60 * 1000;
 }

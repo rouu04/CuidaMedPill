@@ -12,6 +12,7 @@ import androidx.work.WorkerParameters;
 
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 /**
  * Clase que realmente muestra la notificación cuando llega la hora
@@ -30,16 +31,16 @@ public class NotificacionWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        String idMed = getInputData().getString("idMed");
-        String titulo = getInputData().getString("titulo");
-        String mensaje = getInputData().getString("mensaje");
-        String tipoStr = getInputData().getString("tipoNotificacion");
-        String nombreMed = getInputData().getString("nombreMed");
-        String uid = getInputData().getString("uid");
-        String tipoMedStr = getInputData().getString("tipoMed");
-        String colorSimb = getInputData().getString("colorSimb");
+        String idMed = getInputData().getString(Constantes.NOTI_INPUT_IDMED);
+        String titulo = getInputData().getString(Constantes.NOTI_INPUT_TITULO);
+        String mensaje = getInputData().getString(Constantes.NOTI_INPUT_MENSAJE);
+        String tipoStr = getInputData().getString(Constantes.NOTI_INPUT_TIPO_NOTIFICACION);
+        String nombreMed = getInputData().getString(Constantes.NOTI_INPUT_NOMBRE_MED);
+        String uid = getInputData().getString(Constantes.NOTI_INPUT_UID);
+        String tipoMedStr = getInputData().getString(Constantes.NOTI_INPUT_TIPO_MED);
+        String colorSimb = getInputData().getString(Constantes.NOTI_INPUT_COLOR_SIMB);
         boolean antipro = getInputData().getBoolean(Constantes.ARG_ANTIPROCRASTINADOR, false);
-        long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
+        long tiempoProgramado = getInputData().getLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, 0);
 
         if (idMed == null || nombreMed == null || uid == null) return Result.failure();
 
@@ -63,7 +64,7 @@ public class NotificacionWorker extends Worker {
 
         // AUTO-RECARGA
         if (tiempoProgramado > 0) {
-            long unaSemanaEnMillis = 7L * 24 * 60 * 60 * 1000;
+            long unaSemanaEnMillis = Constantes.UNA_SEMANA_MILLS;
             long proximaSemana = tiempoProgramado + unaSemanaEnMillis;
 
             // Reprogramamos usando una versión ligera del manager
@@ -83,19 +84,19 @@ public class NotificacionWorker extends Worker {
         if (delay <= 0) return;
 
         Data data = new Data.Builder()
-                .putString("idMed", id)
-                .putString("nombreMed", nombre)
-                .putLong("tiempoProgramado", proximoTiempo)
-                .putString("titulo", "Hora de tu medicación")
-                .putString("mensaje", "Es momento de tomar: " + nombre)
-                .putString("tipoNotificacion", tipo.toString())
-                .putBoolean("antiprocrastinador", anti)
+                .putString(Constantes.NOTI_INPUT_IDMED, id)
+                .putString(Constantes.NOTI_INPUT_NOMBRE_MED, nombre)
+                .putLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, proximoTiempo)
+                .putString(Constantes.NOTI_INPUT_TITULO, Mensajes.NOTI_HORAMED)
+                .putString(Constantes.NOTI_INPUT_MENSAJE, String.format(Mensajes.NOTI_TOMARMED, nombre))
+                .putString(Constantes.NOTI_INPUT_TIPO_NOTIFICACION, tipo.toString())
+                .putBoolean(Constantes.ARG_ANTIPROCRASTINADOR, anti)
                 .build();
 
         androidx.work.OneTimeWorkRequest request = new androidx.work.OneTimeWorkRequest.Builder(NotificacionWorker.class)
                 .setInitialDelay(delay, java.util.concurrent.TimeUnit.MILLISECONDS)
                 .setInputData(data)
-                .addTag(id) // Vital para poder cancelarlo si el usuario borra el medicamento
+                .addTag(id) // para poder cancelarlo si el usuario borra el medicamento
                 .build();
 
         androidx.work.WorkManager.getInstance(getApplicationContext()).enqueue(request);
