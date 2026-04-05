@@ -25,6 +25,7 @@ import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.UsuarioAsistido;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
 import com.pastillerodigital.cuidamedpill.utils.Mensajes;
+import com.pastillerodigital.cuidamedpill.utils.Utils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -42,15 +43,16 @@ public class RecordatorioManager {
 
         cancelarRecordatoriosMedicamento(context, med);
 
+        Calendar next = Utils.timestampToCalendar(med.getHorario().getSigIngesta());
         for (int i = 0; i < 7; i++) { // Programamos por ejemplo los próximos 7 días
-            List<Timestamp> horas = med.getFechaHorasDia(hoy);
+            List<Timestamp> horas = med.getFechaHorasDia(next);
             for (Timestamp ts : horas) {
                 long tiempo = ts.toDate().getTime();
                 if (tiempo > System.currentTimeMillis()) {
                     programarRecordatorio(context, med, tiempo);
                 }
             }
-            hoy.add(Calendar.DAY_OF_MONTH, 1);
+            med.getHorario().avanzarIntervalo(next);
         }
     }
 

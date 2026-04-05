@@ -15,6 +15,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.EstadoIngesta;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -32,14 +34,14 @@ public class AvisoTutorWorker extends Worker {
     @Override
     public Result doWork() {
 
-        String idAsistido = getInputData().getString("idAsistido");
-        String nombreMed = getInputData().getString("nombreMed");
-        String medId = getInputData().getString("medId");
-        String uidSelf = getInputData().getString("uidSelf");
-        String aliasU = getInputData().getString("aliasU");
-        long tiempoProgramado = getInputData().getLong("tiempoProgramado", 0);
+        String idAsistido = getInputData().getString(Constantes.NOTI_INPUT_ID_ASISTIDO);
+        String nombreMed = getInputData().getString(Constantes.NOTI_INPUT_NOMBRE_MED);
+        String medId = getInputData().getString(Constantes.NOTI_INPUT_IDMED);
+        String uidSelf = getInputData().getString(Constantes.ARG_UIDSELF);
+        String aliasU = getInputData().getString(Constantes.NOTI_INPUT_ALIAS_USUARIO);
+        long tiempoProgramado = getInputData().getLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, 0);
 
-        String[] tutoresArray = getInputData().getStringArray("tutores");
+        String[] tutoresArray = getInputData().getStringArray(Constantes.NOTI_INPUT_TUTORES_ARRAY);
         if (tutoresArray == null) return Result.failure();
 
         List<String> tutores = Arrays.asList(tutoresArray);
@@ -60,19 +62,19 @@ public class AvisoTutorWorker extends Worker {
 
             // Consultar si existe registro de ingesta dentro del margen
             QuerySnapshot snapshot = Tasks.await(
-                    db.collection("usuarios")
+                    db.collection(Constantes.COLLECTION_USUARIOS)
                             .document(idAsistido)
-                            .collection("medicamentos")
+                            .collection(Constantes.COLLECTION_MEDICAMENTOS)
                             .document(medId)
-                            .collection("ingestas")
-                            .whereGreaterThan("fechaProgramada", new Date(tiempoProgramado - margen))
-                            .whereLessThan("fechaProgramada", new Date(tiempoProgramado + margen))
+                            .collection(Constantes.COLLECTION_INGESTAS)
+                            .whereGreaterThan(Constantes.ING_FECHAPROGRAMADA, new Date(tiempoProgramado - margen))
+                            .whereLessThan(Constantes.ING_FECHAPROGRAMADA, new Date(tiempoProgramado + margen))
                             .get()
             );
 
             if (!snapshot.isEmpty()) {
                 for (QueryDocumentSnapshot document : snapshot) {
-                    String estado = document.getString("estadoIngestaStr");
+                    String estado = document.getString(Constantes.ING_ESTADOINGESTASTR);
                     if (EstadoIngesta.TOMADA.toString().equals(estado)) {
                         return;
                     }
@@ -87,13 +89,13 @@ public class AvisoTutorWorker extends Worker {
             for (String tutorId : tutores) {
 
                 QuerySnapshot existing = Tasks.await(
-                        db.collection("usuarios")
+                        db.collection(Constantes.COLLECTION_USUARIOS)
                                 .document(tutorId)
-                                .collection("avisos")
-                                .whereEqualTo("medId", medId)
-                                .whereEqualTo("uOrigId", idAsistido)
-                                .whereEqualTo("tipoAviso", TipoAviso.OLVIDOASISTIDO.toString())
-                                .whereEqualTo("fechaProgramada", new Date(tiempoProgramado))
+                                .collection(Constantes.COLLECTION_AVISOS)
+                                .whereEqualTo(Constantes.AVISO_MEDID, medId)
+                                .whereEqualTo(Constantes.AVISO_UORIGID, idAsistido)
+                                .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, TipoAviso.OLVIDOASISTIDO.toString())
+                                .whereEqualTo(Constantes.AVISO_FECHAPROGRAMADA, new Date(tiempoProgramado))
                                 .get()
                 );
 
@@ -102,9 +104,10 @@ public class AvisoTutorWorker extends Worker {
                 }
 
                 // Crear aviso
-                Aviso aviso = new Aviso(TipoAviso.OLVIDOASISTIDO,
-                        "Olvido de: " + aliasU,
-                        aliasU+ " no registró la medicación " + nombreMed + " (" + fechaAviso + ")",
+                Aviso aviso = new Aviso(
+                        TipoAviso.OLVIDOASISTIDO,
+                        String.format(Mensajes.AVISO_TITULO_OLVIDO_ASISTIDO, aliasU),
+                        String.format(Mensajes.AVISO_MSG_OLVIDO_ASISTIDO, aliasU, nombreMed, fechaAviso),
                         medId,
                         new Timestamp(new Date(tiempoProgramado))
                 );
@@ -113,9 +116,9 @@ public class AvisoTutorWorker extends Worker {
                 aviso.setuOrigId(idAsistido);
 
                 // Guardar en Firestore
-                db.collection("usuarios")
+                db.collection(Constantes.COLLECTION_USUARIOS)
                         .document(tutorId)
-                        .collection("avisos")
+                        .collection(Constantes.COLLECTION_AVISOS)
                         .add(aviso);
 
                 // Mostrar notificación local al tutor (1 notificación por dispositivo)

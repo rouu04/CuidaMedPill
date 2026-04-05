@@ -2,7 +2,6 @@ package com.pastillerodigital.cuidamedpill.controlador.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,6 @@ import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -532,9 +530,9 @@ public class HomeFragment extends Fragment {
                 ing.setNotas(nota);
 
                 editIngesta(ing, med, fechaProgramada);
-            } else {
+            } else { //nueva ingesta
                 Ingesta nueva = new Ingesta(fechaProgramada, fechaIngesta, estado.toString(), med, nota);
-                addIngesta(nueva, med, fechaIngesta);
+                addIngestaNoProgramada(nueva, med);
             }
 
             dialog.dismiss();
@@ -547,7 +545,7 @@ public class HomeFragment extends Fragment {
         dialog.show();
     }
 
-    private void addIngesta(Ingesta ingesta, Medicamento med, Timestamp fechaProgramada){
+    private void addIngestaNoProgramada(Ingesta ingesta, Medicamento med){
         IngestaDAO ingestaDAO = new IngestaDAO(uid, med.getId());
 
         ingestaDAO.add(ingesta, new OnOperationCallback() {
@@ -555,12 +553,13 @@ public class HomeFragment extends Fragment {
             public void onSuccess() {
                 //puede haber medicamentos con horario que tengan ingestas fuera de horario
 
-                med.ingestaTomada(ingesta); //actualiza sig ingesta y resta med
+                //Restamos unidades a mano, no cambiamos la siguiente toma porque esta fue no programada
+                if(med.getnMedRestantes() != -1) med.setnMedRestantes(med.getnMedRestantes() - 1);
                 medDAO.edit(med, new OnOperationCallback() {
                     @Override
                     public void onSuccess() {
-                        if(med.getHorario() == null || fechaProgramada == null) AvisoManager.comprobarAvisos(getContext(), usr, med);
-                        else{
+                        AvisoManager.comprobarAvisos(getContext(), usr, med);
+                        if(med.getHorario() != null){
                             // Recargar ingestas pendientes
                             mostrarCarga();
                             cargarMedsYConIngestas();

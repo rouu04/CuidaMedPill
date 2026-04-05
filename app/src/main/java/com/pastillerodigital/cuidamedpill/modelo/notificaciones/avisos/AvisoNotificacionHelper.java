@@ -18,11 +18,10 @@ import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class AvisoNotificacionHelper {
 
-    public static final String CHANNEL_AVISOS = "canal_avisos";
 
     public static void mostrarAviso(Context context, Aviso aviso){
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_AVISOS)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constantes.CHANNEL_AVISOS)
                     .setSmallIcon(R.drawable.ic_pastilla_capsula)
                     .setContentTitle(aviso.getTitulo())
                     .setContentText(aviso.getMensaje())
@@ -46,14 +45,10 @@ public class AvisoNotificacionHelper {
         aviso.setNotiMostrada(true);
         aDAO.edit(aviso, new OnOperationCallback() {
             @Override
-            public void onSuccess() {
-
-            }
+            public void onSuccess() {}
 
             @Override
-            public void onFailure(Exception e) {
-
-            }
+            public void onFailure(Exception e) {}
         });
 
 

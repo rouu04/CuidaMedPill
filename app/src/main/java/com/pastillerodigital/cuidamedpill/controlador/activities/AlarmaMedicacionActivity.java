@@ -94,7 +94,6 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
         btnTomado.setOnClickListener(v -> {
             callaAlarma();
             registrarIngesta();
-            cerrarAlarmaYVolverHome();
         });
 
         btnVoyAhora.setOnClickListener(v -> {
@@ -178,8 +177,18 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                         public void onSuccess() {
                             if (med != null) {
                                 med.ingestaTomada(ingFinal); //solo deja usar finales
+                                medDAO.edit(med, new OnOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        cerrarAlarmaYVolverHome();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        UiUtils.mostrarErrorYReiniciar(AlarmaMedicacionActivity.this);
+                                    }
+                                });
                             }
-                            UiUtils.mostrarConfirmacion(AlarmaMedicacionActivity.this, "Ingesta registrada");
                         }
 
                         @Override
@@ -195,7 +204,20 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                     ingestaDAO.add(nueva, new OnOperationCallback() {
                         @Override
                         public void onSuccess() {
-                            if (med != null) med.ingestaTomada(nueva);
+                            if (med != null){
+                                med.ingestaTomada(nueva);
+                                medDAO.edit(med, new OnOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        cerrarAlarmaYVolverHome();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        UiUtils.mostrarErrorYReiniciar(AlarmaMedicacionActivity.this);
+                                    }
+                                });
+                            }
                         }
 
                         @Override

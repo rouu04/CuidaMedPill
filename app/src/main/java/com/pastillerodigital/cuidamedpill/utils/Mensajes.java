@@ -120,6 +120,19 @@ public class Mensajes {
     public static final String NOTI_HORAMED = "Hora de tu medicación";
     public static final String NOTI_TOMARMED = "Es momento de tomar %s";
 
+    //AVISOS
+    public static final String AVISO_TITULO_CADUCIDAD = "Medicamento va a caducar";
+    public static final String AVISO_MSG_CADUCIDAD = "El medicamento %s está a punto de caducar";
+    public static final String AVISO_TITULO_COMPRA = "Pocas unidades restantes";
+    public static final String AVISO_MSG_COMPRA = "Quedan pocas unidades de %s";
+    public static final String AVISO_TITULO_OLVIDO = "Toma olvidada";
+    public static final String AVISO_MSG_OLVIDO = "Has olvidado una toma de %s";
+    public static final String AVISO_TITULO_FIN_TRATAMIENTO = "Tratamiento va a finalizar";
+    public static final String AVISO_MSG_FIN_TRATAMIENTO = "El tratamiento de %s va a terminar en una semana";
+    //AVISOS OLVIDO ASISTIDO
+    public static final String AVISO_TITULO_OLVIDO_ASISTIDO = "Olvido de: %s";
+    public static final String AVISO_MSG_OLVIDO_ASISTIDO = "%s no registró la medicación %s (%s)";
+
 
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";

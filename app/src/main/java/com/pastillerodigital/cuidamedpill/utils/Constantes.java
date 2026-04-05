@@ -54,7 +54,7 @@ public class Constantes {
     public static final String AVISO_TIPOAVISOSTR = "tipoAvisoStr";
     public static final String AVISO_TITULO = "titulo";
     public static final String AVISO_MENSAJE = "mensaje";
-    public static final String AVISO_FECHACREACION = "fechaCreacion";
+    public static final String AVISO_FECHAPROGRAMADA = "fechaProgramada";
     public static final String AVISO_LEIDO = "leido";
     public static final String AVISO_NOTIMOSTRADA = "notiMostrada";
     public static final String AVISO_MEDID = "medId";
@@ -170,8 +170,9 @@ public class Constantes {
     public static final String NOTI_INPUT_TIEMPO_PROGRAMADO = "tiempoProgramado";
     public static final String NOTI_INPUT_ID_ASISTIDO = "idAsistido";
     public static final String NOTI_INPUT_TUTORES = "tutores";
-
     public static final String NOTI_TAG_AVISOTUTORES = "aviso_tutores_";
+    public static final String NOTI_INPUT_ALIAS_USUARIO = "aliasU";
+    public static final String NOTI_INPUT_TUTORES_ARRAY = "tutores";
 
         //canales
     public static final String CHANNEL_NORMAL = "canal_normal";

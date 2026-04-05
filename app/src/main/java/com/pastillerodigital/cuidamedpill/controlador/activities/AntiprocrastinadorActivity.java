@@ -84,9 +84,6 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
     private void setButtonListeners(){
         btnConfirmar.setOnClickListener(v -> {
             registrarIngesta();
-            cancelarTimer();
-            volverHome();
-            finish();
         });
 
         btnIgnorar.setOnClickListener(v -> {
@@ -221,8 +218,20 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
                         public void onSuccess() {
                             if (med != null) {
                                 med.ingestaTomada(ingFinal); //solo deja usar finales
+                                medDAO.edit(med, new OnOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        cancelarTimer();
+                                        volverHome();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        UiUtils.mostrarErrorYReiniciar(AntiprocrastinadorActivity.this);
+                                    }
+                                });
                             }
-                            UiUtils.mostrarConfirmacion(AntiprocrastinadorActivity.this, "Ingesta registrada");
                         }
 
                         @Override
@@ -238,7 +247,23 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
                     ingestaDAO.add(nueva, new OnOperationCallback() {
                         @Override
                         public void onSuccess() {
-                            if (med != null) med.ingestaTomada(nueva);
+                            if (med != null){
+                                med.ingestaTomada(nueva);
+                                medDAO.edit(med, new OnOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        cancelarTimer();
+                                        volverHome();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        UiUtils.mostrarErrorYReiniciar(AntiprocrastinadorActivity.this);
+                                    }
+                                });
+                            }
+
                         }
 
                         @Override

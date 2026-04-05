@@ -153,7 +153,7 @@ public class Aviso implements Persistible {
         aviso.uDestId = doc.getString(Constantes.AVISO_UDESTID);
         aviso.uOrigId = doc.getString(Constantes.AVISO_UORIGID);
 
-        Timestamp fecha = doc.getTimestamp(Constantes.AVISO_FECHACREACION);
+        Timestamp fecha = doc.getTimestamp(Constantes.AVISO_FECHAPROGRAMADA);
         aviso.fechaProgramada = (fecha != null) ? fecha : Timestamp.now();
 
         Boolean leido = doc.getBoolean(Constantes.AVISO_LEIDO);

@@ -3,13 +3,15 @@ package com.pastillerodigital.cuidamedpill.modelo.notificaciones.avisos;
 import com.google.firebase.Timestamp;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoAviso;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 
 public class AvisoFactory {
 
     public static Aviso crearAvisoCaducidad(Medicamento med, Timestamp fecha) {
-        return new Aviso(TipoAviso.CADUCIDAD,
-                "Medicamento va a caducar",
-                "El medicamento " + med.getNombreMed() + " está a punto de caducar",
+        return new Aviso(
+                TipoAviso.CADUCIDAD,
+                Mensajes.AVISO_TITULO_CADUCIDAD,
+                String.format(Mensajes.AVISO_MSG_CADUCIDAD, med.getNombreMed()),
                 med.getId(),
                 fecha
         );
@@ -18,8 +20,8 @@ public class AvisoFactory {
     public static Aviso crearAvisoCompra(Medicamento med, Timestamp fecha) {
         return new Aviso(
                 TipoAviso.COMPRA,
-                "Pocas unidades restantes",
-                "Quedan pocas unidades de " + med.getNombreMed(),
+                Mensajes.AVISO_TITULO_COMPRA,
+                String.format(Mensajes.AVISO_MSG_COMPRA, med.getNombreMed()),
                 med.getId(),
                 fecha
         );
@@ -28,8 +30,8 @@ public class AvisoFactory {
     public static Aviso crearAvisoOlvido(Medicamento med, Timestamp fecha) {
         return new Aviso(
                 TipoAviso.OLVIDOASISTIDO,
-                "Toma olvidada",
-                "Has olvidado una toma de " + med.getNombreMed(),
+                Mensajes.AVISO_TITULO_OLVIDO,
+                String.format(Mensajes.AVISO_MSG_OLVIDO, med.getNombreMed()),
                 med.getId(),
                 fecha
         );
@@ -38,8 +40,8 @@ public class AvisoFactory {
     public static Aviso crearAvisoFinTratamiento(Medicamento med, Timestamp fecha) {
         return new Aviso(
                 TipoAviso.FINTRATAMIENTO,
-                "Tratamiento va a finalizar",
-                "El tratamiento de " + med.getNombreMed() + " va a terminar en una semana",
+                Mensajes.AVISO_TITULO_FIN_TRATAMIENTO,
+                String.format(Mensajes.AVISO_MSG_FIN_TRATAMIENTO, med.getNombreMed()),
                 med.getId(),
                 fecha
         );

@@ -11,6 +11,7 @@ import com.pastillerodigital.cuidamedpill.modelo.dao.OnOperationCallback;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.ConfNoti;
 import com.pastillerodigital.cuidamedpill.modelo.usuario.Usuario;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 import java.util.List;
 
@@ -92,10 +93,10 @@ public class AvisoManager {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("usuarios")
+        db.collection(Constantes.COLLECTION_USUARIOS)
                 .document(uid)
-                .collection("avisos")
-                .whereEqualTo("notiMostrada", false)
+                .collection(Constantes.COLLECTION_AVISOS)
+                .whereEqualTo(Constantes.AVISO_NOTIMOSTRADA, false)
                 .get()
                 .addOnSuccessListener(query -> {
 
@@ -104,7 +105,7 @@ public class AvisoManager {
                         if(aviso == null) continue;
                         aviso.setId(doc.getId());
                         AvisoNotificacionHelper.mostrarAviso(context, aviso);
-                        doc.getReference().update("notiMostrada", true);
+                        doc.getReference().update(Constantes.AVISO_NOTIMOSTRADA, true);
                     }
 
                 })
