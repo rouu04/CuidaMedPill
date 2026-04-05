@@ -123,7 +123,7 @@ public class RecordatorioManager {
                 .putString(Constantes.NOTI_INPUT_NOMBRE_MED, med.getNombreMed())
                 .putLong(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, tiempoNotificacion)
                 .putString(Constantes.NOTI_INPUT_TITULO, String.format(Mensajes.NOTI_TOMARMED, med.getNombreMed()))
-                .putString(Constantes.NOTI_INPUT_MENSAJE, "Pulse para registrar ingesta")
+                .putString(Constantes.NOTI_INPUT_MENSAJE, Mensajes.ING_TOMAR)
                 .putString(Constantes.NOTI_INPUT_TIPO_NOTIFICACION, tipo.toString())
                 .putBoolean(Constantes.ARG_ANTIPROCRASTINADOR, antiproc)
                 .putString(Constantes.NOTI_INPUT_TIPO_MED, med.getTipoMed().toString())

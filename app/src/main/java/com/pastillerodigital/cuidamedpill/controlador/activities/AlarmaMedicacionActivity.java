@@ -104,7 +104,7 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                         AlarmaMedicacionActivity.this,
                         AntiprocrastinadorActivity.class
                 );
-                intent.putExtra("nombreMed", med.getNombreMed());
+                intent.putExtra(Constantes.ARG_NOMBREMED, med.getNombreMed());
                 intent.putExtra(Constantes.ARG_MEDID, med.getId());
                 startActivity(intent);
 
@@ -297,8 +297,7 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                 (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
         if (keyguardManager != null) {
-            KeyguardManager.KeyguardLock keyguardLock =
-                    keyguardManager.newKeyguardLock("MedicationAlarm");
+            KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock(Constantes.KEYGUARDLOCK);
             keyguardLock.disableKeyguard();
         }
     }
@@ -328,19 +327,8 @@ public class AlarmaMedicacionActivity extends AppCompatActivity {
                 mediaPlayer.reset();
                 mediaPlayer.release();
                 mediaPlayer = null;
-                Log.d("Alarma", "Sistema y Actividad silenciados");
             }
-        } catch (Exception e) {
-            Log.e("Alarma", "Error al callar: " + e.getMessage());
-        }
-
-         /*
-
-        Intent stopIntent = new Intent(this, AlarmaService.class);
-        stopIntent.setAction(AlarmaService.ACTION_STOP);
-        startService(stopIntent);
-
-          */
+        } catch (Exception e) {}
     }
 
     private void cerrarAlarmaYVolverHome() {

@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_surface"
-    android:padding="24dp">
+    android:padding="@dimen/padding_general">
 
     <!-- Imagen del medicamento -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardMedicamentoAlarma"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
+        android:layout_width="@dimen/size_image_big_width"
+        android:layout_height="@dimen/size_image_big_height"
+        app:cardCornerRadius="@dimen/cardview_default_radius"
+        app:cardElevation="@dimen/card_elevation"
         app:cardBackgroundColor="@color/md_surface"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,27 +33,24 @@
         android:id="@+id/txtMedicamento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Paracetamol"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
+        android:textColor="@color/md_primary"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         app:layout_constraintTop_toBottomOf="@id/cardMedicamentoAlarma"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
     <!-- Hora programada -->
     <TextView
         android:id="@+id/txtFechaProgramadaAlarma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hoy a las 22:00"
-        android:textSize="18sp"
-        android:textColor="#666666"
+        android:textColor="@color/md_on_surface"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintTop_toBottomOf="@id/txtMedicamento"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
     <!-- Botones abajo -->
     <LinearLayout
@@ -69,33 +66,33 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTomado"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Tomado"
-            android:textSize="18sp"
+            android:layout_height="@dimen/button_size_alarm"
+            android:text="@string/tomado"
             android:backgroundTint="@color/md_primary"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/md_blanco"
             style="@style/Widget.MaterialComponents.Button"
-            android:layout_marginBottom="16dp"/>
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVoyAhora"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Voy a tomarlo ahora"
-            android:textSize="18sp"
+            android:layout_height="@dimen/button_size_alarm"
+            android:text="@string/voy_tomarlo"
             android:backgroundTint="@color/md_blue"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/md_blanco"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             style="@style/Widget.MaterialComponents.Button"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNoTomado"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Ignorar"
-            android:textSize="18sp"
+            android:layout_height="@dimen/button_size_alarm"
+            android:text="@string/ignorar"
             android:backgroundTint="@color/md_error"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/md_blanco"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             style="@style/Widget.MaterialComponents.Button"/>
 
     </LinearLayout>

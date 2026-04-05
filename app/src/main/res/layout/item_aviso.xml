@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="@dimen/padding_general_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -23,18 +23,18 @@
             <!-- Card del icono -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardIconoAviso"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
+                android:layout_width="@dimen/size_image_tiny_width"
+                android:layout_height="@dimen/size_image_tiny_height"
+                app:cardCornerRadius="@dimen/card_cornerradious"
+                app:cardElevation="@dimen/card_elevation"
                 app:cardBackgroundColor="@color/md_surface">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgIconoAviso"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/size_image_icon_mini_width"
+                    android:layout_height="@dimen/size_image_icon_mini_height"
                     android:layout_gravity="center"
-                    android:contentDescription="icono medicamento"/>
+                    android:contentDescription="@string/icono_med"/>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Título -->
@@ -43,10 +43,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:text="Título del aviso"
+                android:layout_marginStart="@dimen/margin_start_element"
+                android:text="@string/text_hint_aviso_titulo"
                 android:textStyle="bold"
-                android:textSize="16sp"
+
+                app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="@color/md_primary_dark"/>
         </LinearLayout>
 
@@ -54,15 +55,14 @@
             android:id="@+id/tvMensajeAviso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mensaje opcional"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_marginTop="@dimen/margin_mini"
             android:textColor="@color/md_primary_dark"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/margin_top_element"
             android:orientation="horizontal"
             android:gravity="end">
 
@@ -70,7 +70,7 @@
                 android:id="@+id/btnIgnorar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ignorar"
+                android:text="@string/ignorar"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="@color/md_primary_dark"/>
 
@@ -78,10 +78,10 @@
                 android:id="@+id/btnResolver"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resolver"
+                android:text="@string/resolver"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/white"/>
+                android:layout_marginStart="@dimen/margin_start_element"
+                android:textColor="@color/md_blanco"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

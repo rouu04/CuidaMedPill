@@ -26,6 +26,7 @@ import com.pastillerodigital.cuidamedpill.modelo.medicamento.Ingesta;
 import com.pastillerodigital.cuidamedpill.modelo.medicamento.Medicamento;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.NotificationHelper;
 import com.pastillerodigital.cuidamedpill.utils.Constantes;
+import com.pastillerodigital.cuidamedpill.utils.Mensajes;
 import com.pastillerodigital.cuidamedpill.utils.UiUtils;
 import com.pastillerodigital.cuidamedpill.utils.Utils;
 
@@ -159,8 +160,8 @@ public class AntiprocrastinadorActivity extends AppCompatActivity {
         // Llamar a la notificación para que vuelva a sonar
         NotificationHelper.mostrarNotificacion(
                 this,
-                "Hora de tu medicamento",
-                "Toca tomar tu " + med.getNombreMed(),
+                Mensajes.NOTI_HORAMED,
+                String.format(Mensajes.NOTI_TOMARMED, med.getNombreMed()),
                 TipoNotificacion.ALARMA,
                 true,    // antiprocrastinador
                 medId,

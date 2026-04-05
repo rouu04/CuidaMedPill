@@ -156,6 +156,7 @@ public class Constantes {
     public static final String ARG_UIDSELF = "uidSelf";
     public static final String ARG_MODO = "Modo";
     public static final String ARG_MEDID = "medId";
+    public static final String ARG_NOMBREMED = "nombreMed";
     public static final String ARG_ANTIPROCRASTINADOR= "antiprocrastinador";
 
     //NOTIFICACIONES
@@ -216,6 +217,7 @@ public class Constantes {
     public static final String RES_TIPO = "drawable";
     public static final String PICKER_TIME = "TIME_PICKER";
     public static final String COLOR = "color";
+    public static final String KEYGUARDLOCK = "MedicationAlarm";
 
     //NÚMEROS
     public static final Integer MINS_RETRASO = 90;

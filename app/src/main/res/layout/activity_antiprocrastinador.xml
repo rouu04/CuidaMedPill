@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:padding="@dimen/padding_general"
     android:background="?android:attr/windowBackground">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardTimer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="32dp"
+        app:cardCornerRadius="@dimen/card_cornerradious"
         app:cardElevation="0dp"
         app:strokeWidth="1dp"
         app:strokeColor="#E0E0E0"
@@ -30,10 +30,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:indicatorSize="280dp"
-            app:trackThickness="16dp"
+            app:trackThickness="@dimen/padding_general_light"
             app:indicatorColor="@color/md_primary"
             app:trackColor="#F5F5F5"
-            app:trackCornerRadius="10dp"
+            app:trackCornerRadius="@dimen/card_cornerradious"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,16 +52,15 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgMedicamentoAntiproc"
-                android:layout_width="54dp"
-                android:layout_height="54dp"/>
+                android:layout_width="@dimen/size_image_mini_width"
+                android:layout_height="@dimen/size_image_mini_height"/>
 
             <TextView
                 android:id="@+id/txtTimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="03:00"
                 android:textStyle="bold"
-                android:textSize="48sp"
+                app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                 android:textColor="@color/md_primary"
                 android:includeFontPadding="false"/>
         </LinearLayout>
@@ -74,7 +73,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/margin_top_element"
         app:layout_constraintTop_toBottomOf="@id/cardTimer"
         app:layout_constraintBottom_toTopOf="@id/btnConfirmar"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="24sp"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         android:textColor="?android:attr/textColorPrimary"/>
 
     </LinearLayout>
@@ -94,23 +93,25 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnConfirmar"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:text="Ya me lo he tomado"
+        android:layout_height="@dimen/button_size_alarm"
+        android:text="@string/ya_tomado_formal"
         app:layout_constraintBottom_toTopOf="@id/btnIgnorar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="12dp"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_marginBottom="@dimen/margin_bottom_element"
         style="@style/Widget.MaterialComponents.Button"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnIgnorar"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:text="Ignorar"
+        android:layout_height="@dimen/button_size_alarm"
+        android:text="@string/ignorar"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp"/>
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

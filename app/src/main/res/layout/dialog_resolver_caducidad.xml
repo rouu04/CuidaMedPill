@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/padding_general">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,39 +36,39 @@
             android:id="@+id/tvNombreMedCad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre medicamento"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:text="@string/hint_med_nombremed"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvPreguntaCaducidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¿Cuándo caduca el siguiente medicamento?"
-        android:layout_marginTop="16dp"/>
+        android:text="@string/hint_med_fecha_caducidad"
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
     <TextView
         android:id="@+id/tvFechaCadCad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sin fecha seleccionada"
-        android:layout_marginTop="12dp"/>
+        android:text="@string/text_title_sinfechasel"
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSeleccionarFechaCad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seleccionar fecha"
+        android:text="@string/text_title_selfecha"
         style="@style/Widget.MaterialComponents.Button"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnQuitarFechaCad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Quitar fecha de caducidad"
+        android:text="@string/text_title_quitarfecha"
         style="@style/Widget.MaterialComponents.Button"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
 </LinearLayout>

@@ -101,6 +101,25 @@
 
     <string name="text_title_cal">Tu calendario</string>
 
+    <!-- Notificaciones, alarmas -->
+    <string name="tomado">Tomado</string>
+    <string name="voy_tomarlo">Voy a tomarlo ahora</string>
+    <string name="ignorar">Ignorar</string>
+    <string name="resolver">Resolver</string>
+    <string name="ya_tomado_formal">Ya me lo he tomado</string>
+    <string name="icono_med">Icono medicamento</string>
+
+    <string name="text_hint_aviso_titulo">Título del aviso</string>
+
+    <!-- Avisos-->
+    <string name="text_title_cuandocaduca">¿Cuándo caduca el siguiente medicamento?</string>
+    <string name="text_title_sinfechasel">Sin fecha seleccionada</string>
+    <string name="text_title_selfecha">Seleccionar fecha</string>
+    <string name="text_title_quitarfecha">Quitar fecha caducidad</string>
+    <string name="text_title_pocasunidades">Quedan pocas unidades. ¿Has comprado más?</string>
+    <string name="text_title_cantidadcomprada">Cantidad comprada</string>
+    <string name="text_title_tratamiento_terminado">¿El tratamiento ha terminado?</string>
+
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>
     <string name="material_timepicker_minute">Minuto</string>

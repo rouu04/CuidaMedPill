@@ -701,13 +701,13 @@ public class HomeFragment extends Fragment {
         });
 
         btnQuitar.setOnClickListener(v -> {
-            tvFecha.setText("Sin fecha de caducidad");
+            tvFecha.setText(Mensajes.AVISO_DIALOG_SIN_CADUCIDAD);
             nuevaFecha.clear();
         });
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
                 .setView(view)
-                .setPositiveButton("Guardar", (d, w) -> {
+                .setPositiveButton(Mensajes.BASIC_GUARDAR, (d, w) -> {
 
                     if(nuevaFecha.isSet(Calendar.YEAR)){
                         med.setFechaCad(new Timestamp(nuevaFecha.getTime()));
@@ -716,7 +716,7 @@ public class HomeFragment extends Fragment {
                     }
                     editaMedAviso(med, aviso);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
                 .create();
 
         dialog.show();
@@ -738,7 +738,7 @@ public class HomeFragment extends Fragment {
 
         new MaterialAlertDialogBuilder(getContext())
                 .setView(view)
-                .setPositiveButton("Guardar", (d, w) -> {
+                .setPositiveButton(Mensajes.BASIC_GUARDAR, (d, w) -> {
                     String texto = etCantidad.getText().toString().trim();
 
                     if(!texto.isEmpty()){
@@ -747,7 +747,7 @@ public class HomeFragment extends Fragment {
                         editaMedAviso(med, aviso);
                     }
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
                 .show();
     }
 
@@ -772,7 +772,7 @@ public class HomeFragment extends Fragment {
             nuevaFecha.setTime(med.getFechaFin().toDate());
             tvFecha.setText(Utils.calendarToString(nuevaFecha));
         } else {
-            tvFecha.setText("Sin fecha seleccionada");
+            tvFecha.setText(Mensajes.AVISO_DIALOG_SIN_FECHA);
         }
 
         btnFecha.setOnClickListener(v -> {
@@ -789,13 +789,13 @@ public class HomeFragment extends Fragment {
         });
 
         btnQuitar.setOnClickListener(v -> {
-            tvFecha.setText("Sin fecha seleccionada");
+            tvFecha.setText(Mensajes.AVISO_DIALOG_SIN_FECHA);
             nuevaFecha.clear();
         });
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
                 .setView(view)
-                .setPositiveButton("Guardar", (d, w) -> {
+                .setPositiveButton(Mensajes.BASIC_GUARDAR, (d, w) -> {
                     if (nuevaFecha.isSet(Calendar.YEAR)) {
                         med.setFechaFin(new Timestamp(nuevaFecha.getTime()));
                     } else {
@@ -803,7 +803,7 @@ public class HomeFragment extends Fragment {
                     }
                     editaMedAviso(med, aviso);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(Mensajes.BASIC_CANCELAR, null)
                 .create();
 
         dialog.show();

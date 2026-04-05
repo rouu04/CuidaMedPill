@@ -133,6 +133,14 @@ public class Mensajes {
     public static final String AVISO_TITULO_OLVIDO_ASISTIDO = "Olvido de: %s";
     public static final String AVISO_MSG_OLVIDO_ASISTIDO = "%s no registró la medicación %s (%s)";
 
+    //INGESTAS
+    public static final String ING_TOMAR = "Pulse para tomar ingesta";
+
+    //DIALOGOS AVISOS
+    public static final String AVISO_DIALOG_SIN_CADUCIDAD = "Sin fecha de caducidad";
+    public static final String AVISO_DIALOG_SIN_FECHA = "Sin fecha seleccionada";
+
+
 
     //------------EXCEPCIONES
     public static final String EX_EXISTE = "Error al comprobar existencia";
