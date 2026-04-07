@@ -1,7 +1,12 @@
 package com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.work.Data;
@@ -131,13 +136,67 @@ public class RecordatorioManager {
                 .putString(Constantes.NOTI_INPUT_UID, uid)
                 .build();
 
+        /*
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(NotificacionWorker.class)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .setInputData(data)
                 .addTag(med.getId())
                 .build();
 
-        WorkManager.getInstance(context).enqueue(request);
+         */
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, NotificacionReceiver.class);
+        int requestCode = (med.getId() + tiempoNotificacion).hashCode();
+        intent.setAction("NOTI_" + requestCode);
+
+        intent.putExtra(Constantes.NOTI_INPUT_IDMED, med.getId());
+        intent.putExtra(Constantes.NOTI_INPUT_NOMBRE_MED, med.getNombreMed());
+        intent.putExtra(Constantes.NOTI_INPUT_TIEMPO_PROGRAMADO, tiempoNotificacion);
+        intent.putExtra(Constantes.NOTI_INPUT_TITULO, String.format(Mensajes.NOTI_TOMARMED, med.getNombreMed()));
+        intent.putExtra(Constantes.NOTI_INPUT_MENSAJE, Mensajes.ING_TOMAR);
+        intent.putExtra(Constantes.NOTI_INPUT_TIPO_NOTIFICACION, tipo.toString());
+        intent.putExtra(Constantes.ARG_ANTIPROCRASTINADOR, antiproc);
+        intent.putExtra(Constantes.NOTI_INPUT_TIPO_MED, med.getTipoMed().toString());
+        intent.putExtra(Constantes.NOTI_INPUT_COLOR_SIMB, med.getColorSimb());
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                alarmManager.set(
+                        AlarmManager.RTC_WAKEUP,
+                        tiempoNotificacion,
+                        pendingIntent
+                );
+                return;
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    tiempoNotificacion,
+                    pendingIntent
+            );
+        } else {
+            alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    tiempoNotificacion,
+                    pendingIntent
+            );
+        }
+
+
+
+        //WorkManager.getInstance(context).enqueue(request);
     }
 
     /**
@@ -146,7 +205,34 @@ public class RecordatorioManager {
      * @param med
      */
     public static void cancelarRecordatoriosMedicamento(Context context, Medicamento med) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
+        //WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Calendar next = Utils.timestampToCalendar(med.getHorario().getSigIngesta());
+
+        for (int i = 0; i < 7; i++) {
+            List<Timestamp> horas = med.getFechaHorasDia(next);
+
+            for (Timestamp ts : horas) {
+                long tiempo = ts.toDate().getTime();
+
+                Intent intent = new Intent(context, NotificacionReceiver.class);
+                int requestCode = (med.getId() + tiempo).hashCode();
+                intent.setAction("NOTI_" + requestCode);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        context,
+                        requestCode,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
+
+                alarmManager.cancel(pendingIntent);
+            }
+
+            med.getHorario().avanzarIntervalo(next);
+        }
     }
 
     /**

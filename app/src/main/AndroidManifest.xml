@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- Permiso para vibración en las alarmas-->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Pantalla completa en alarmas-->
@@ -72,6 +73,10 @@
         <activity
             android:name=".controlador.activities.AntiprocrastinadorActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".modelo.notificaciones.medicacion.NotificacionReceiver"
+            android:exported="false"/>
 
     </application>
 

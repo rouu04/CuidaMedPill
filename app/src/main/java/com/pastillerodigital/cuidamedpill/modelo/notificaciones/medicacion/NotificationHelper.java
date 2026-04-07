@@ -135,7 +135,7 @@ public class NotificationHelper {
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setFullScreenIntent(pendingIntent, true);
 
-            context.startActivity(intent); // abrir actividad
+            //context.startActivity(intent); // abrir actividad
             NotificationManagerCompat.from(context).notify(notificationId, builder.build());
         } else {
             RemoteViews customView = new RemoteViews(context.getPackageName(), R.layout.notificacion_personalizada);
