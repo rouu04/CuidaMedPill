@@ -36,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_hint_cal_asist"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="?attr/titleColor"
                 android:paddingBottom="@dimen/padding_bottom"
                 android:layout_marginTop="@dimen/margin_top_element"/>
 
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:checkable="true"
                 android:layout_marginTop="@dimen/margin_top_element"
-                app:chipBackgroundColor="@color/md_surface"/>
+                app:chipBackgroundColor="@color/md_surface_dark"/>
 
             <!-- Calendario -->
             <com.google.android.material.card.MaterialCardView
@@ -75,9 +76,10 @@
                 android:id="@+id/tvDiaEmpty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No hay nada registrado para este día"
+                android:text="@string/text_title_cal_no_events"
                 android:gravity="center"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/titleColor"
                 android:visibility="gone"
                 android:padding="@dimen/padding_general_light"/>
 

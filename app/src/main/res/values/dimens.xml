@@ -62,6 +62,7 @@
     <dimen name="text_hint_size">13sp</dimen>
     <dimen name="text_secondary_button_size">11sp</dimen>
     <dimen name="text_value_size">16sp</dimen>
+    <dimen name="text_config_size">15sp</dimen>
 
     <dimen name="button_size_icon">48dp</dimen>
     <dimen name="button_size_alarm">64dp</dimen>

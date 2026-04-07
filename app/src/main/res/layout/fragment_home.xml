@@ -69,7 +69,7 @@
                 android:layout_marginTop="@dimen/margin_top"
                 android:text="@string/text_title_home_avisos"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/md_primary_dark"
+                android:textColor="?attr/titleColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_marginTop="@dimen/margin_top_element"
                 android:text="@string/text_title_home_avisos_asist"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="@color/md_primary_dark" />
+                android:textColor="?attr/titleColor" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAvisosHome"
@@ -93,11 +93,12 @@
                 android:id="@+id/tvEmptyAvisos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No hay avisos pendientes"
+                android:text="@string/text_title_no_pendientes"
                 android:textAlignment="center"
                 android:visibility="gone"
-                android:padding="16dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+                android:padding="@dimen/padding_general_light"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="?attr/titleColor"/>
 
             <TextView
                 android:id="@+id/tvMedsHoyHome"
@@ -106,7 +107,7 @@
                 android:layout_marginTop="@dimen/margin_top"
                 android:text="@string/text_title_home_meds"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/md_primary_dark"
+                android:textColor="?attr/titleColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -116,7 +117,7 @@
                 android:layout_marginTop="@dimen/margin_top_element"
                 android:text="@string/text_hint_home_meds_asist"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="@color/md_primary_dark" />
+                android:textColor="?attr/titleColor" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMedicamentosHoy"
@@ -130,10 +131,11 @@
                 android:id="@+id/tvEmptyMedsHoy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No hay medicamentos pendientes para hoy"
+                android:text="@string/text_title_no_meds_pendientes"
                 android:textAlignment="center"
                 android:visibility="gone"
-                android:padding="16dp"
+                android:padding="@dimen/padding_general_light"
+                android:textColor="?attr/titleColor"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 
             <TextView
@@ -143,7 +145,7 @@
                 android:layout_marginTop="@dimen/margin_top"
                 android:text="@string/text_hint_home_noprogram_asist"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="@color/md_primary_dark" />
+                android:textColor="?attr/titleColor" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

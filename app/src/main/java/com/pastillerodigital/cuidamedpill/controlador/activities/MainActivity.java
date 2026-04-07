@@ -71,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
         navInferior = findViewById(R.id.bottomNavigation);
         navInferior.setItemIconTintList(null);
 
+        /*
+        Menu menuColor = navInferior.getMenu();
+        MenuItem medicamentoItem = menuColor.findItem(R.id.nav_medicamentos);
+        medicamentoItem.setIcon(R.drawable.ic_pastilla_capsula); // sin tint
+
+         */
+
         // Cargamos sesión de sharedPreferences
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
 

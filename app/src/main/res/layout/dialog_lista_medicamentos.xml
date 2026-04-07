@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/tvTituloSelMedHome"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textColor="@color/md_primary_dark"
+        android:textColor="?attr/titleColor"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_width="match_parent"

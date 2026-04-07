@@ -7,6 +7,8 @@
     <color name="md_third">#03C8C5</color>
     <color name="md_blue">#03BFD5</color>
 
+    <color name="md_primary_disabled">#749594</color>
+
     <!--
     Favoritos:
     Principal: 0CA6BA , 0CBAB1 (+verde), 0CB7BA (like), 00A09D (+oscuro y con + color)
@@ -19,11 +21,13 @@
     <color name="md_surface">#B5F6EF</color> <!-- En los menús -->
     <color name="md_surface_light">#C8F4EF</color> <!-- En los menús -->
     <color name="md_surface_dark">#89F2E7</color> <!-- En los menús -->
+    <color name="md_surface_for_dark_mode">#79D7CD</color>
 
     <!-- Texto -->
     <color name="md_on_primary">#FFFFFF</color>
 
     <color name="md_on_background">#56615F</color>
+    <color name="md_on_background_for_dark">#B1C7C3</color>
     <color name="md_on_surface">#515152</color>
 
     <!-- Errores -->

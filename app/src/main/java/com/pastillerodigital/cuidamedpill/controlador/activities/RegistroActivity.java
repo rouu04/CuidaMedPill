@@ -56,7 +56,6 @@ public class RegistroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        borrarSesion();//todo borrar cuando esté echo el log out
         setContentView(R.layout.activity_registro);
 
         //Inicialización de componentes de diseño
@@ -356,11 +355,6 @@ public class RegistroActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    //todo borrar cuando ya esté puesto en el log out
-    private void borrarSesion(){
-        SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
-        prefs.edit().clear().apply();
-    }
 
     private void gotoMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);

@@ -49,7 +49,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hint_alias"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:textColor="?attr/titleColor"/>
 
                     <TextView
                         android:id="@+id/tvNombreUsuario"
@@ -57,7 +58,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/hint_nombreusr"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:textColor="?attr/titleSoftColor" />
 
                     <!-- TextView que muestra "Supervisando a: ..." -->
                     <TextView
@@ -66,7 +67,7 @@
                         android:layout_height="wrap_content"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textColor="?attr/titleSoftColor"
                         android:visibility="gone"
                         android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
@@ -90,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/hint_asist_asig"
                 android:textStyle="bold"
-                android:textColor="@color/md_primary_dark"
+                android:textColor="?attr/titleColor"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginBottom="@dimen/margin_bottom_element" />
 
@@ -98,9 +99,10 @@
                 android:id="@+id/tvAsistEmpty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No tienes ningún usuario asistido vinculado"
+                android:text="@string/text_title_no_asist"
                 android:gravity="center"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/titleColor"
                 android:visibility="gone"
                 android:padding="@dimen/padding_general_light"/>
 
@@ -137,7 +139,7 @@
                     android:layout_marginTop="@dimen/margin_elements_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/md_on_background"
+                    android:textColor="?attr/titleSoftColor"
                     android:textSize="@dimen/text_hint_size"/>
 
                 <!-- Botón cancelar -->
@@ -223,7 +225,7 @@
                 android:text="@string/text_title_opciones"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textStyle="bold"
-                android:textColor="@color/md_primary_dark"
+                android:textColor="?attr/titleColor"
                 android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
             <!-- BOTÓN EDITAR PERFIL -->

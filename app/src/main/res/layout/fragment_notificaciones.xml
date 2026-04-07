@@ -11,45 +11,46 @@
         android:id="@+id/tvTituloNotificaciones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Notificaciones"
+        android:text="@string/text_title_notis"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:textStyle="bold"
-        android:textColor="@color/md_primary_dark"
-        android:layout_marginBottom="12dp"/>
+        android:textColor="?attr/titleColor"
+        android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp">
+        app:cardCornerRadius="@dimen/card_cornerradious"
+        app:cardElevation="@dimen/card_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="@dimen/padding_general_light">
 
             <!-- Aviso caducidad -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="@dimen/padding_mini"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Aviso de caducidad"
+                    android:text="@string/text_title_aviso_cad"
                     android:textStyle="bold"
-                    android:textSize="15sp"/>
+                    android:textColor="?attr/titleColor"
+                    android:textSize="@dimen/text_config_size"/>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchAvisoCaducidad"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:useMaterialThemeColors="true"/>
+                    app:thumbTint="@color/md_surface"/>
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -61,21 +62,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="@dimen/padding_mini"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Aviso de compra"
+                    android:text="@string/text_title_aviso_compra"
+                    android:textColor="?attr/titleColor"
                     android:textStyle="bold"/>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchAvisoCompra"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:useMaterialThemeColors="true"/>
+                    app:thumbTint="@color/md_surface"/>
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -87,21 +89,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="@dimen/padding_mini"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Aviso fin tratamiento"
+                    android:text="@string/text_title_aviso_fintratamiento"
+                    android:textColor="?attr/titleColor"
                     android:textStyle="bold"/>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchFinTratamiento"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:useMaterialThemeColors="true"/>
+                    app:thumbTint="@color/md_surface"/>
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -120,39 +123,52 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Antiprocrastinador"
+                    android:text="@string/text_title_antiproc"
+                    android:textColor="?attr/titleColor"
                     android:textStyle="bold"/>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchAntiprocrastinador"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:useMaterialThemeColors="true"/>
+                    app:thumbTint="@color/md_surface"/>
             </LinearLayout>
+
+
 
             <!-- Aviso tutores olvido -->
             <LinearLayout
                 android:id="@+id/layoutAvisoTutores"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:gravity="center_vertical"
+                android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Aviso a tutores por olvido"
-                    android:textStyle="bold"
-                    android:textSize="15sp"/>
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchAvisoTutores"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:useMaterialThemeColors="true"/>
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/padding_mini"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/text_title_aviso_tutores_olvido"
+                        android:textColor="?attr/titleColor"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchAvisoTutores"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:thumbTint="@color/md_surface"/>
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -163,7 +179,7 @@
         android:id="@+id/spTipoNoti"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="@dimen/margin_top_element"/>
 
 
 </LinearLayout>

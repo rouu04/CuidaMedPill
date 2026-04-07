@@ -97,7 +97,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notificaciones"
+            android:text="@string/text_title_notis"
             android:textStyle="bold"
             android:textColor="@color/md_primary_dark"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -112,6 +112,7 @@
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button"
             android:text="@string/button_registro" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator

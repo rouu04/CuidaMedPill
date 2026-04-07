@@ -21,10 +21,11 @@
             android:id="@+id/topAppBarMedDetalle"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/md_primary_dark"
+            android:textColor="?attr/titleColor"
             android:textStyle="bold"
             app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:navigationIcon="@drawable/ic_flecha_atras"
+            app:navigationIconTint="?attr/titleColor"
             app:titleCentered="false"/>
 
         <ScrollView
@@ -72,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_top_element"
                         android:textStyle="bold"
-                        android:textColor="@color/md_primary_dark"
+                        android:textColor="?attr/titleColor"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
                 </LinearLayout>
@@ -85,7 +86,7 @@
                     android:text="@string/hint_med_horariotoggle"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:textStyle="bold"
-                    android:textColor="@color/md_primary_dark"
+                    android:textColor="?attr/titleColor"
                     android:layout_marginTop="@dimen/margin_top_element"/>
 
                 <!-- Intervalo -->
@@ -101,7 +102,7 @@
                         android:text="@string/hint_med_intervalo"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_value_size"
-                        android:textColor="@color/md_primary_dark"/>
+                        android:textColor="?attr/titleColor"/>
 
                     <TextView
                         android:id="@+id/tvIntervaloDet"
@@ -109,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/text_value_size"
                         android:layout_marginStart="@dimen/margin_start_element"
-                        android:textColor="@color/md_on_background"/>
+                        android:textColor="?attr/titleSoftColor"/>
                 </LinearLayout>
 
                 <!-- Sig toma -->
@@ -125,7 +126,7 @@
                         android:text="@string/hint_med_det_sigIngesta"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_value_size"
-                        android:textColor="@color/md_primary_dark"/>
+                        android:textColor="?attr/titleColor"/>
 
                     <TextView
                         android:id="@+id/tvSigTomaDet"
@@ -133,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_start_element"
                         android:textSize="@dimen/text_value_size"
-                        android:textColor="@color/md_on_background"/>
+                        android:textColor="?attr/titleSoftColor"/>
                 </LinearLayout>
 
                 <!-- Horas programadas -->
@@ -141,7 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hint_med_det_horasProgramadas"
-                    android:textColor="@color/md_primary_dark"
+                    android:textColor="?attr/titleColor"
                     android:textStyle="bold"
                     android:layout_marginTop="@dimen/margin_top_element"/>
 
@@ -159,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_title_med_detalles"
                     android:textStyle="bold"
-                    android:textColor="@color/md_primary_dark"
+                    android:textColor="?attr/titleColor"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:layout_marginTop="@dimen/margin_top"/>
 
@@ -181,7 +182,7 @@
                             android:text="@string/hint_med_fecha_caducidad"
                             android:textStyle="bold"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleColor"/>
 
                         <TextView
                             android:id="@+id/tvFechaCad"
@@ -189,7 +190,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleSoftColor"/>
 
                     </LinearLayout>
 
@@ -206,7 +207,7 @@
                             android:text="@string/hint_med_fecha_fintratamiento"
                             android:textStyle="bold"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleColor"/>
 
                         <TextView
                             android:id="@+id/tvFechaFin"
@@ -214,7 +215,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_start_element"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleSoftColor"/>
 
                     </LinearLayout>
 
@@ -231,7 +232,7 @@
                             android:text="@string/hint_med_restantes"
                             android:textStyle="bold"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleColor"/>
 
                         <TextView
                             android:id="@+id/tvRestantes"
@@ -239,7 +240,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_start_element"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleSoftColor"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -255,7 +256,7 @@
                             android:text="@string/hint_med_notasMed"
                             android:textStyle="bold"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleColor"/>
 
                         <TextView
                             android:id="@+id/tvNotas"
@@ -263,7 +264,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_start_element"
                             android:textSize="@dimen/text_value_size"
-                            android:textColor="@color/md_on_background"/>
+                            android:textColor="?attr/titleSoftColor"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -281,7 +282,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/hint_med_det_NotisMed"
                         android:textStyle="bold"
-                        android:textColor="@color/md_primary_dark"
+                        android:textColor="?attr/titleColor"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                         android:layout_marginTop="@dimen/margin_top"/>
 
@@ -290,8 +291,8 @@
                         android:id="@+id/tvNotiGeneralInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Este medicamento utiliza la configuración general definida en el perfil."
-                        android:layout_marginTop="8dp"/>
+                        android:text="@string/text_title_conf_perfil"
+                        android:layout_marginTop="@dimen/margin_top_element"/>
 
                     <!-- Contenedor del fragmento -->
                     <FrameLayout
@@ -314,7 +315,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_title_opciones"
                     android:textStyle="bold"
-                    android:textColor="@color/md_primary_dark"
+                    android:textColor="?attr/titleColor"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                     android:layout_marginTop="@dimen/margin_top"/>
 

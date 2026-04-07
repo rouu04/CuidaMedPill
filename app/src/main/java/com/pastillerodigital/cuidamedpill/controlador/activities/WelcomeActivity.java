@@ -43,7 +43,6 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        borrarSesion(); //todo borrar cuando esté log out
         setContentView(R.layout.activity_welcome); //carga layout correspondiente con los componentes
 
         // Componentes de diseño:
@@ -97,7 +96,6 @@ public class WelcomeActivity extends AppCompatActivity {
         progressIndicator.setVisibility(View.VISIBLE);
 
         //Verificamos que exite un usuario con ese nombre
-        //todo aclarar en layout que nombre de usuario no es alias
         usuarioDAO.getBasicWithParameter(Constantes.USUARIO_NOMBREUSUARIO, nombreUsuario, new OnDataLoadedCallback<Usuario>() {
             @Override
             public void onSuccess(Usuario usuario) {
@@ -168,10 +166,5 @@ public class WelcomeActivity extends AppCompatActivity {
         finish();
     }
 
-    //todo borrar cuando ya esté puesto en el log out
-    private void borrarSesion(){
-        SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
-        prefs.edit().clear().apply();
-    }
 
 }

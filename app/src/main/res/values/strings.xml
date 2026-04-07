@@ -51,6 +51,7 @@
     <string name="text_title_opciones">Opciones</string>
     <string name="text_title_edit">Editar perfil</string>
     <string name="text_hint_add_asist">Vincula un usuario asistido existente. Si el asistido no tiene cuenta, puedes registrarlo</string>
+    <string name="text_title_no_asist">No tienes ningún usuario asistido vinculado</string>
 
     <!-- MEDICAMENTOS -->
     <string name="text_title_meds">Tus medicamentos</string>
@@ -64,6 +65,7 @@
     <string name="contdesc_med_simb">Símbolo medicamento</string>
 
     <string name="hint_med_nombremed">Nombre medicamento</string>
+    <string name="hint_med_add_toma">Siguiente toma</string>
     <string name="hint_med_horariotoggle">Horario </string>
     <string name="hint_med_intervalo">Intervalo</string>
     <string name="hint_med_frecuencia">Cada cuantos intervalos</string>
@@ -95,13 +97,22 @@
 
     <string name="text_hint_meds_asist">Para ver detalles de un medicamento, pulsa sobre él</string>
     <string name="text_hint_cal_asist"> Pulsa en un día con un punto verde para ver registros de medicamentos de ese día</string>
+    <string name="text_title_no_meds_pendientes">No hay medicamentos pendientes para hoy</string>
 
     <string name="ya_tomado">YA TOMADO</string>
 
 
+    <!-- Calendario -->
     <string name="text_title_cal">Tu calendario</string>
+    <string name="text_title_cal_no_events">No hay nada registrado para este día</string>
 
     <!-- Notificaciones, alarmas -->
+    <string name="text_title_notis">Notificaciones</string>
+    <string name="text_title_notis_config_gen">Usar configuración general</string>
+    <string name="text_title_notis_usa_config_gen">Este medicamento usará la configuración de notificaciones definida en el perfil</string>
+
+    <string name="text_title_antiproc">Antiprocrastinador</string>
+
     <string name="tomado">Tomado</string>
     <string name="voy_tomarlo">Voy a tomarlo ahora</string>
     <string name="ignorar">Ignorar</string>
@@ -109,16 +120,24 @@
     <string name="ya_tomado_formal">Ya me lo he tomado</string>
     <string name="icono_med">Icono medicamento</string>
 
+    <string name="text_title_conf_perfil">Este medicamento utiliza la configuración general definida en el perfil.</string>
+
     <string name="text_hint_aviso_titulo">Título del aviso</string>
 
     <!-- Avisos-->
-    <string name="text_title_cuandocaduca">¿Cuándo caduca el siguiente medicamento?</string>
+    c
     <string name="text_title_sinfechasel">Sin fecha seleccionada</string>
     <string name="text_title_selfecha">Seleccionar fecha</string>
     <string name="text_title_quitarfecha">Quitar fecha caducidad</string>
     <string name="text_title_pocasunidades">Quedan pocas unidades. ¿Has comprado más?</string>
     <string name="text_title_cantidadcomprada">Cantidad comprada</string>
     <string name="text_title_tratamiento_terminado">¿El tratamiento ha terminado?</string>
+    <string name="text_title_no_pendientes">No hay avisos pendientes</string>
+
+    <string name="text_title_aviso_cad">Aviso de caducidad</string>
+    <string name="text_title_aviso_compra">Aviso de compra</string>
+    <string name="text_title_aviso_fintratamiento">Aviso fin tratamiento</string>
+    <string name="text_title_aviso_tutores_olvido">Aviso a tutores por olvido</string>
 
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>

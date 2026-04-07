@@ -99,6 +99,10 @@ public class CalendarioFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         calendarView = view.findViewById(R.id.calendarView);
+        calendarView.setWeekDayTextAppearance(R.style.WeekDayTextStyle);
+        calendarView.setDateTextAppearance(R.style.DayTextStyle);
+        calendarView.setHeaderTextAppearance(R.style.CalendarHeaderTextStyle);
+
         rvMedicamentos = view.findViewById(R.id.rvMedicamentosDia);
         tvFecha = view.findViewById(R.id.tvFechaSeleccionada);
         tvDiaEmpty = view.findViewById(R.id.tvDiaEmpty);

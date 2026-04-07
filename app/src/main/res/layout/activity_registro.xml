@@ -15,10 +15,11 @@
             android:id="@+id/topAppBarReg"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/md_primary_dark"
+            android:textColor="?attr/titleColor"
             android:textStyle="bold"
             app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:navigationIcon="@drawable/ic_flecha_atras"
+            app:navigationIconTint="?attr/titleColor"
             app:titleCentered="false"/>
 <ScrollView
     android:layout_width="match_parent"
@@ -142,7 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_elements_layout"
-                android:textColor="@color/md_on_background"
+                android:textColor="?attr/titleSoftColor"
                 android:text="@string/text_selecciona_tipousr"
                 android:textStyle="bold"/>
         </LinearLayout>

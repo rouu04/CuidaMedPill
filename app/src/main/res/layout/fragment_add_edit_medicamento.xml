@@ -20,7 +20,7 @@
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:titleTextColor="@color/md_primary_dark"
+        android:textColor="?attr/titleColor"
         android:textStyle="bold"
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         app:navigationIcon="@drawable/ic_flecha_atras"
@@ -45,7 +45,7 @@
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_on_background"
+            android:textColor="?attr/titleSoftColor"
             android:textSize="@dimen/text_hint_size"/>
 
         <LinearLayout
@@ -121,7 +121,7 @@
             android:text="@string/hint_med_horariotoggle"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_marginTop="@dimen/margin_top"
-            android:textColor="@color/md_primary_dark"/>
+            android:textColor="?attr/titleColor"/>
 
         <!-- Contenedor que se oculta -->
         <LinearLayout
@@ -139,7 +139,7 @@
                 android:layout_marginTop="@dimen/margin_elements_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/md_on_background"
+                android:textColor="?attr/titleSoftColor"
                 android:textSize="@dimen/text_hint_size"/>
 
             <!-- Intervalo -->
@@ -188,7 +188,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_top_element"
-                android:hint="Siguiente toma"
+                android:hint="@string/hint_med_add_toma"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -229,7 +229,7 @@
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_primary_dark"
+            android:textColor="?attr/titleColor"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
         <LinearLayout
@@ -299,28 +299,28 @@
 
         <TextView
             android:id="@+id/tvNotificaciones"
-            android:text="Notificaciones"
+            android:text="@string/text_title_notis"
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_primary_dark"
+            android:textColor="?attr/titleColor"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchNotiGeneral"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Usar configuración general"
+            android:text="@string/text_title_notis_config_gen"
             android:layout_marginTop="@dimen/margin_top_element"/>
 
         <TextView
             android:id="@+id/tvNotiGeneralInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Este medicamento usará la configuración de notificaciones definida en el perfil."
-            android:layout_marginTop="8dp"
+            android:text="@string/text_title_notis_usa_config_gen"
+            android:layout_marginTop="@dimen/margin_top_element"
             android:textSize="@dimen/text_hint_size"
-            android:textColor="@color/md_on_background"/>
+            android:textColor="?attr/titleSoftColor"/>
 
         <FrameLayout
             android:id="@+id/containerNotificacionesMed"

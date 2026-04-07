@@ -80,7 +80,7 @@
             android:layout_marginTop="@dimen/margin_elements_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_on_background"
+            android:textColor="?attr/titleSoftColor"
             android:textSize="@dimen/text_hint_size"/>
 
         <com.google.android.material.button.MaterialButton

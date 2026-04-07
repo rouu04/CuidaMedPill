@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="titleColor" format="color"/>
+    <attr name="titleSoftColor" format="color"/>
+    <attr name="titleNavColor" format="color"/>
+</resources>

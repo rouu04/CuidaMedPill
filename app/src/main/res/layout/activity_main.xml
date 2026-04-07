@@ -12,9 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="?attr/colorPrimary"
-        app:indicatorColor="@color/md_primary_dark"
+        app:itemActiveIndicatorStyle="@style/Widget.App.BottomNav.Indicator"
+        app:indicatorColor="@color/md_blanco"
         app:itemIconSize="36dp"
-        app:itemIconTint="@null"
+        app:itemIconTint="?attr/titleNavColor"
         app:menu="@menu/menu_nav_inferior" />
 
     <FrameLayout

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.pastillerodigital.cuidamedpill.R;
 import com.pastillerodigital.cuidamedpill.modelo.enumerados.TipoNotificacion;
@@ -22,11 +23,8 @@ import java.util.Arrays;
 
 public class NotificacionesFragment extends Fragment {
 
-    private MaterialSwitch switchAvisoCaducidad;
-    private MaterialSwitch switchAvisoCompra;
-    private MaterialSwitch switchFinTratamiento;
-    private MaterialSwitch switchAntiprocrastinador;
-    private MaterialSwitch switchAvisoTutores;
+    private MaterialSwitch switchAvisoCaducidad, switchAvisoCompra, switchFinTratamiento, switchAntiprocrastinador,
+            switchAvisoTutores;
     private LinearLayout layoutAvisoTutores;
     private Spinner spTipoNoti;
 
@@ -96,15 +94,25 @@ public class NotificacionesFragment extends Fragment {
      * Habilita/deshabilita elementos según modo edición
      */
     public void setVistasModoEdicion(boolean editar) {
-        //Para que se vea bien aunque esté disabled
-        float alpha = editar ? 1.0f : 0.85f; // casi opaco cuando está deshabilitado
-        int visText = editar ? View.GONE : View.VISIBLE;
+        int colorPrimary = getResources().getColor(R.color.md_primary, null);
+        int colorDisabled = getResources().getColor(R.color.md_primary_disabled, null); // Asegúrate que el ID sea correcto en tu colors.xml
+
+        float alpha = editar ? 1.0f : 0.85f;
 
         View[] controles = {switchAvisoCaducidad, switchAvisoCompra,
                 switchFinTratamiento, switchAntiprocrastinador, spTipoNoti, switchAvisoTutores};
+
         for (View v : controles) {
             v.setEnabled(editar);
-            v.setAlpha(alpha); // forzamos que se vea más fuerte (aunque esté disabled)
+            v.setAlpha(alpha);
+
+            // Si la vista es un MaterialSwitch, cambiamos su color de pista
+            if (v instanceof MaterialSwitch) {
+                MaterialSwitch s = (MaterialSwitch) v;
+                // Si está editando usamos el primary, si no, el disabled
+                int colorAEstablecer = editar ? colorPrimary : colorDisabled;
+                s.setTrackTintList(android.content.res.ColorStateList.valueOf(colorAEstablecer));
+            }
         }
     }
 

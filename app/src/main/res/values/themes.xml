@@ -13,6 +13,10 @@
         <item name="colorOnBackground">@color/md_on_background</item>
         <item name="colorOnSurface">@color/md_on_surface</item>
 
+        <item name="titleColor">@color/md_primary_dark</item>
+        <item name="titleSoftColor">@color/md_on_background</item>
+        <item name="titleNavColor">@color/md_primary_dark</item>
+
         <item name="colorError">@color/md_error</item>
 
     </style>
@@ -33,6 +37,26 @@
 
     <style name="ToolbarTitleBold" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WeekDayTextStyle">
+        <item name="android:textColor">@color/md_blanco</item>
+    </style>
+
+    <style name="DayTextStyle">
+        <item name="android:textColor">@color/md_blanco</item>
+    </style>
+
+    <style name="CalendarHeaderTextStyle">
+        <item name="android:textColor">@color/md_blanco</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.App.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/md_surface</item>
+        <item name="android:width">56dp</item>
+        <item name="android:height">32dp</item>
     </style>
 
 </resources>
