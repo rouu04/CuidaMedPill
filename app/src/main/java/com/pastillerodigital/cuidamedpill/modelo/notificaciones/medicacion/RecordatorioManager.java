@@ -208,7 +208,6 @@ public class RecordatorioManager {
         //WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
         Calendar next = Utils.timestampToCalendar(med.getHorario().getSigIngesta());
 
         for (int i = 0; i < 7; i++) {
@@ -227,10 +226,8 @@ public class RecordatorioManager {
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                 );
-
                 alarmManager.cancel(pendingIntent);
             }
-
             med.getHorario().avanzarIntervalo(next);
         }
     }

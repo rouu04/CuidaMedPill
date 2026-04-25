@@ -1,5 +1,7 @@
 package com.pastillerodigital.cuidamedpill.modelo.dao;
 
+import android.util.Log;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
@@ -131,10 +133,10 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
     }
 
     public void eliminarAvisosMedicamento(String medId){
-        db.collection("usuarios")
+        db.collection(Constantes.COLLECTION_USUARIOS)
                 .document(uid)
-                .collection("avisos")
-                .whereEqualTo("medId", medId)
+                .collection(Constantes.COLLECTION_AVISOS)
+                .whereEqualTo(Constantes.ARG_MEDID, medId)
                 .get()
                 .addOnSuccessListener(query -> {
                     for(DocumentSnapshot doc : query){

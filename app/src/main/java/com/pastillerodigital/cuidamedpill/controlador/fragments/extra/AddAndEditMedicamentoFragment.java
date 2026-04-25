@@ -486,9 +486,13 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     }
                 }
 
+                //si han quitado el horario:
+                if(medEdit.getHorario() != null && medActual.getHorario() == null){
+                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), medEdit);
+                }
+
                 if(isEdit){
                     editMedicamento(medActual);
-
                 }
                 else addMedicamento(medActual);
             }
@@ -704,8 +708,10 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.edit(med, new OnOperationCallback() {
             @Override
             public void onSuccess() { // Medicamento actualizado, volvemos atrás
-                RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
-                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                if(med.getHorario() != null) {
+                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), med);
+                    RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                }
 
                 AvisoDAO aDAO = new AvisoDAO(uid);
                 aDAO.eliminarAvisosMedicamento(med.getId());
@@ -745,14 +751,20 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                             .popBackStack();
                 }
 
+                final int total = pendientes.size();
+                final int[] contador = {0};
+
                 // Borrar cada ingesta pendiente
                 for (Ingesta ingPend : pendientes) {
                     ingDAO.delete(ingPend.getId(), new OnOperationCallback() {
                         @Override
                         public void onSuccess() {
-                            requireActivity()
-                                    .getSupportFragmentManager()
-                                    .popBackStack();
+                            contador[0]++;
+                            if (contador[0] == total) {
+                                requireActivity()
+                                        .getSupportFragmentManager()
+                                        .popBackStack();
+                            }
                         }
 
                         @Override
