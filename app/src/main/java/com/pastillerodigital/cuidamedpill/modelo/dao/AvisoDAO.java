@@ -87,9 +87,8 @@ public class AvisoDAO extends AbstractDAO<Aviso>{
 
     public void getAvisoPendiente(Aviso aviso, OnDataLoadedCallback<Aviso> callback){
         getCollection()
-                .whereEqualTo("tipoAvisoStr", aviso.getTipoAvisoStr())
-                .whereEqualTo("medId", aviso.getMedId())
-                .whereEqualTo("leido", false)
+                .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, aviso.getTipoAvisoStr())
+                .whereEqualTo(Constantes.ARG_MEDID, aviso.getMedId())
                 .limit(1)
                 .get()
                 .addOnSuccessListener(query -> {
