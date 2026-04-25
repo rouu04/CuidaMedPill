@@ -128,7 +128,7 @@
     c
     <string name="text_title_sinfechasel">Sin fecha seleccionada</string>
     <string name="text_title_selfecha">Seleccionar fecha</string>
-    <string name="text_title_quitarfecha">Quitar fecha caducidad</string>
+    <string name="text_title_quitarfecha">Quitar fecha</string>
     <string name="text_title_pocasunidades">Quedan pocas unidades. ¿Has comprado más?</string>
     <string name="text_title_cantidadcomprada">Cantidad comprada</string>
     <string name="text_title_tratamiento_terminado">¿El tratamiento ha terminado?</string>
