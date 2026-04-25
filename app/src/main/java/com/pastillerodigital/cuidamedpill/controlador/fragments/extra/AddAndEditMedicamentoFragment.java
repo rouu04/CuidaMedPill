@@ -486,12 +486,12 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                     }
                 }
 
-                //si han quitado el horario:
-                if(medEdit.getHorario() != null && medActual.getHorario() == null){
-                    RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), medEdit);
-                }
-
                 if(isEdit){
+                    //si han quitado el horario:
+                    if(medEdit.getHorario() != null && medActual.getHorario() == null){
+                        RecordatorioManager.cancelarRecordatoriosMedicamento(requireContext(), medEdit);
+                    }
+
                     editMedicamento(medActual);
                 }
                 else addMedicamento(medActual);
@@ -690,7 +690,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         medDAO.add(med, new OnOperationCallback() {
             @Override
             public void onSuccess() {//medicamento añadido, volvemos a la lista
-                RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+                if(med.getHorario() != null) RecordatorioManager.programarRecordatoriosMedicamento(requireContext(), med);
+
                 AvisoManager.comprobarAvisos(getContext(), usr, med);
                 requireActivity()
                         .getSupportFragmentManager()
