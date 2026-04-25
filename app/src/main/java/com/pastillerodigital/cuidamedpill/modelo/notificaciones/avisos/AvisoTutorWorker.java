@@ -33,7 +33,6 @@ public class AvisoTutorWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("AvisoTutorWorker", "En do work");
 
         String idAsistido = getInputData().getString(Constantes.NOTI_INPUT_ID_ASISTIDO);
         String nombreMed = getInputData().getString(Constantes.NOTI_INPUT_NOMBRE_MED);
@@ -57,40 +56,9 @@ public class AvisoTutorWorker extends Worker {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // Margen de 2 minutos
-            long margen = 2 * 60 * 1000; //lo que decide si la toma fue tomada o no
+            // Margen de 90 minutos
+            long margen = 90 * 60 * 1000; //lo que decide si la toma fue tomada o no
             //verificará si hay alguna ingesta registrada entre esas horas
-
-            Log.d("AvisoTutorWorker", "En verifica");
-
-            Date inicio = new Date(tiempoProgramado - margen);
-            Date fin = new Date(tiempoProgramado + margen);
-            /*
-
-            // Consultar si existe registro de ingesta dentro del margen
-            QuerySnapshot snapshot = Tasks.await(
-                    db.collection(Constantes.COLLECTION_USUARIOS)
-                            .document(idAsistido)
-                            .collection(Constantes.COLLECTION_MEDICAMENTOS)
-                            .document(medId)
-                            .collection(Constantes.COLLECTION_INGESTAS)
-                            .whereGreaterThan(Constantes.ING_FECHAPROGRAMADA, inicio)
-                            .whereLessThan(Constantes.ING_FECHAPROGRAMADA, fin)
-                            .get()
-            );
-
-            Log.d("AvisoTutorWorker", "Antes empty");
-            if (!snapshot.isEmpty()) {
-                for (QueryDocumentSnapshot document : snapshot) {
-                    Log.d("AvisoTutorWorker", "dentro empty");
-                    String estado = document.getString(Constantes.ING_ESTADOINGESTASTR);
-                    if (EstadoIngesta.TOMADA.toString().equals(estado)) {
-                        return;
-                    }
-                }
-            }
-
-             */
 
             // Formatear la hora de la toma programada
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -98,25 +66,6 @@ public class AvisoTutorWorker extends Worker {
 
             // Iterar sobre cada tutor
             for (String tutorId : tutores) {
-                Log.d("AvisoTutorWorker", "tutor");
-                /*
-                QuerySnapshot existing = Tasks.await(
-                        db.collection(Constantes.COLLECTION_USUARIOS)
-                                .document(tutorId)
-                                .collection(Constantes.COLLECTION_AVISOS)
-                                .whereEqualTo(Constantes.AVISO_MEDID, medId)
-                                .whereEqualTo(Constantes.AVISO_UORIGID, idAsistido)
-                                .whereEqualTo(Constantes.AVISO_TIPOAVISOSTR, TipoAviso.OLVIDOASISTIDO.toString())
-                                .whereEqualTo(Constantes.AVISO_FECHAPROGRAMADA, new Date(tiempoProgramado))
-                                .get()
-                );
-
-                if (!existing.isEmpty()) {
-                    Log.d("AvisoTutorWorker", "Existe para " + tutorId);
-                    continue; // ya existe
-                }
-
-                 */
 
                 // Crear aviso
                 Aviso aviso = new Aviso(
