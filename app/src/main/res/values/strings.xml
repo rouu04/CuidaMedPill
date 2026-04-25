@@ -72,7 +72,7 @@
     <string name="hint_med_notasMed">Notas adicionales</string>
     <string name="hint_med_fecha_fintratamiento">Fecha fin del tratamiento</string>
     <string name="hint_med_fecha_caducidad">Fecha de caducidad</string>
-    <string name="hint_med_restantes">Medicamentos restates en posesión</string>
+    <string name="hint_med_restantes">Medicamentos restantes en posesión</string>
 
     <string name="btn_med_addhora">Añadir hora</string>
 
