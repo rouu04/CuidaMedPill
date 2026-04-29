@@ -158,6 +158,12 @@ public class PerfilFragment extends Fragment{
         });
 
         btnRegAsist.setOnClickListener(v -> {
+            // Se limpian los campos y errores
+            etUa.setText("");
+            etPasswdAsist.setText("");
+            layoutNombreUa.setError(null);
+            layoutPasswdUa.setError(null);
+
             AddAndEditUsuarioFragment fragment = AddAndEditUsuarioFragment.newInstance(usrSelf.getId(), Modo.SUPERVISOR);
 
             requireActivity()

@@ -206,7 +206,7 @@ public class RecordatorioManager {
      */
     public static void cancelarRecordatoriosMedicamento(Context context, Medicamento med) {
         //WorkManager.getInstance(context).cancelAllWorkByTag(med.getId());
-
+        if(med.getHorario() == null) return;
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar next = Utils.timestampToCalendar(med.getHorario().getSigIngesta());
 
