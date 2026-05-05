@@ -746,7 +746,11 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         ingDAO.getListBasic(new OnDataLoadedCallback<List<Ingesta>>() {
             @Override
             public void onSuccess(List<Ingesta> ingestas) {
-                if (ingestas == null || ingestas.isEmpty()) return;
+                if (ingestas == null || ingestas.isEmpty()) {
+                    requireActivity()
+                            .getSupportFragmentManager()
+                            .popBackStack();
+                }
 
                 //solo las pendientes
                 List<Ingesta> pendientes = new ArrayList<>();

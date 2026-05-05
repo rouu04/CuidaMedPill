@@ -42,9 +42,10 @@ public class MedicamentoDetalleFragment extends Fragment {
 
     private MaterialToolbar toolbarSup;
     private ImageView imgMedicamento;
-    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo, tvSigToma, tvNotiGeneralInfo;
+    private TextView tvNombre, tvFechaCad, tvFechaFin, tvRestantes, tvNotas, tvIntervalo, tvSigToma,
+            tvNotiGeneralInfo, tvSinHorario;
     private ChipGroup chipGroupHoras;
-    private LinearLayout layoutFormMedDetalle;
+    private LinearLayout layoutFormMedDetalle, layoutHorarioContainer, layoutHorarioDetallesContainer;
     private MaterialButton btnEditar, btnEliminar;
     private View progressMedDetalle, layoutFechaCad, layoutFechaFin, layoutRestantes, layoutNotas;;
     private LinearLayout layoutFormNotificaciones, layoutFormOpciones;
@@ -90,6 +91,7 @@ public class MedicamentoDetalleFragment extends Fragment {
         tvNombre = view.findViewById(R.id.tvNombreMedDetalle);
 
         tvIntervalo = view.findViewById(R.id.tvIntervaloDet);
+        tvSinHorario = view.findViewById(R.id.tvSinHorario);
         tvSigToma = view.findViewById(R.id.tvSigTomaDet);
         chipGroupHoras = view.findViewById(R.id.chipGroupHoras);
 
@@ -104,6 +106,8 @@ public class MedicamentoDetalleFragment extends Fragment {
         layoutFechaFin = view.findViewById(R.id.layoutFechaFin);
         layoutRestantes = view.findViewById(R.id.layoutRestantes);
         layoutNotas = view.findViewById(R.id.tvNotasText);
+        layoutHorarioContainer = view.findViewById(R.id.layoutHorarioContainer);
+        layoutHorarioDetallesContainer = view.findViewById(R.id.layoutHorarioDetallesContainer);
 
         btnEditar = view.findViewById(R.id.btnEditar);
         btnEliminar = view.findViewById(R.id.btnEliminar);
@@ -242,27 +246,49 @@ public class MedicamentoDetalleFragment extends Fragment {
         // Horas
         chipGroupHoras.removeAllViews();
         Horario horario = medicamento.getHorario();
-        if(horario != null && horario.getHoras() != null){
-            List<Hora> horas = horario.getHoras();
-            Collections.sort(horas);
-            for(Hora h: horas){
-                Chip chip = new Chip(requireContext());
-                chip.setText(h instanceof com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia
-                        ? h.toString()
-                        : String.format(Locale.getDefault(), "%02d:%02d", h.getHora(), h.getMin()));
-                chip.setClickable(false);
-                chip.setCheckable(false);
-                chipGroupHoras.addView(chip);
-            }
+
+        if (modo == Modo.ASISTIDO && horario == null) {
+            layoutHorarioContainer.setVisibility(View.GONE);
+            return;
         }
 
-        if (horario != null) tvIntervalo.setText(TipoIntervalo.tipoToStringVista(horario.getIntervalo(),
-                TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr())));
-        else tvIntervalo.setText("-");
+        if (horario != null) {
+            layoutHorarioContainer.setVisibility(View.VISIBLE);
+            layoutHorarioDetallesContainer.setVisibility(View.VISIBLE);
+            tvSinHorario.setVisibility(View.GONE);
 
-        if (horario != null && horario.getSigIngesta() != null)tvSigToma.setText(Utils.timestampToTextoSigToma(horario.getSigIngesta()));
-        else tvSigToma.setText("-");
+            List<Hora> horas = horario.getHoras();
+            chipGroupHoras.removeAllViews();
 
+            if (horas != null) {
+                Collections.sort(horas);
+                for (Hora h : horas) {
+                    Chip chip = new Chip(requireContext());
+                    chip.setText(h instanceof com.pastillerodigital.cuidamedpill.modelo.medicamento.horario.HoraMomentoDia
+                            ? h.toString()
+                            : String.format(Locale.getDefault(), "%02d:%02d", h.getHora(), h.getMin()));
+                    chip.setClickable(false);
+                    chip.setCheckable(false);
+                    chipGroupHoras.addView(chip);
+                }
+            }
+
+            tvIntervalo.setText(TipoIntervalo.tipoToStringVista(horario.getIntervalo(), TipoIntervalo.tipoIntervaloFromString(horario.getTipoIntervaloStr())));
+            tvSigToma.setText(horario.getSigIngesta() != null ? Utils.timestampToTextoSigToma(horario.getSigIngesta()) : "-");
+
+        } else {
+            chipGroupHoras.removeAllViews();
+            tvIntervalo.setText("-");
+            tvSigToma.setText("-");
+
+            if (modo == Modo.ASISTIDO) {
+                tvSinHorario.setVisibility(View.GONE);
+                layoutHorarioContainer.setVisibility(View.GONE);
+            } else {
+                tvSinHorario.setVisibility(View.VISIBLE);
+                layoutHorarioDetallesContainer.setVisibility(View.GONE);
+            }
+        }
 
         // Notificaciones
         configurarNotificaciones();

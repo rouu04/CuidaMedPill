@@ -78,6 +78,12 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
                 </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/layoutHorarioContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
                 <!-- Horario -->
                 <TextView
                     android:id="@+id/tvHorarioGrande"
@@ -88,6 +94,22 @@
                     android:textStyle="bold"
                     android:textColor="?attr/titleColor"
                     android:layout_marginTop="@dimen/margin_top_element"/>
+
+                <TextView
+                    android:id="@+id/tvSinHorario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/este_medicamento_no_tiene_horario"
+                    android:textColor="?attr/titleSoftColor"
+                    android:visibility="gone"
+                    android:textStyle="italic"
+                    android:layout_marginTop="@dimen/margin_top_element"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutHorarioDetallesContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                 <!-- Intervalo -->
                 <LinearLayout
@@ -153,6 +175,8 @@
                     app:chipSpacingHorizontal="@dimen/margin_horizontal"
                     app:chipSpacingVertical="@dimen/margin_mini"
                     android:textSize="@dimen/text_value_size"/>
+                </LinearLayout>
+            </LinearLayout>
 
                 <!-- Título sección: Detalles del medicamento -->
                 <TextView

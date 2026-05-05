@@ -145,6 +145,7 @@
     <!-- OTROS -->
     <string name="material_timepicker_hour">Hora</string>
     <string name="material_timepicker_minute">Minuto</string>
+    <string name="este_medicamento_no_tiene_horario">Este medicamento no tiene horario</string>
 
 
 </resources>
