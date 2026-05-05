@@ -90,7 +90,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private Modo modo;
     private int selectedColorRes = R.color.md_primary;
     private TipoMed selectedTipo = TipoMed.CAPSULA;
-    private int colorMed;
+    private int intervalo = 1;
     private TipoIntervalo tipoIntervaloSel;
     private Usuario usr;
 
@@ -221,7 +221,7 @@ public class AddAndEditMedicamentoFragment extends Fragment {
     private void setButtonListeners(){
         cardTipoMed.setOnClickListener(v -> mostrarSelectorTipo());
 
-        edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo());
+        edtTipoIntervalo.setOnClickListener(v -> mostrarSelectorIntervalo(intervalo));
         edtFechaCad.setOnClickListener(v -> mostrarDatePicker(edtFechaCad));
         edtFechaFin.setOnClickListener(v -> mostrarDatePicker(edtFechaFin));
         edtSigToma.setOnClickListener(v -> mostrarDatePicker(edtSigToma));
@@ -238,7 +238,8 @@ public class AddAndEditMedicamentoFragment extends Fragment {
                 layoutHorarioContainer.setVisibility(View.VISIBLE);
                 // Valores por defecto
                 tipoIntervaloSel = TipoIntervalo.DIARIO;
-                edtTipoIntervalo.setText(TipoIntervalo.DIARIO.toString());
+                edtTipoIntervalo.setText(Constantes.INTERVALO_DIA);
+                edtIntervaloNum.setText(String.valueOf(1));
                 Calendar hoy = Calendar.getInstance();
                 edtSigToma.setText(Utils.calendarToString(hoy));
 
@@ -266,6 +267,14 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         switchNotiGeneral.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isNotiGeneral = isChecked;
             actualizarVistaNotificaciones(isChecked);
+        });
+
+        layoutFechaCad.setEndIconOnClickListener(v -> {
+            edtFechaCad.setText("");
+        });
+
+        layoutFechaFin.setEndIconOnClickListener(v -> {
+            edtFechaFin.setText("");
         });
 
     }
@@ -335,14 +344,14 @@ public class AddAndEditMedicamentoFragment extends Fragment {
         dpd.show();
     }
 
-    private void mostrarSelectorIntervalo(){
-        String[] tipos = TipoIntervalo.getAllTipos();
+    private void mostrarSelectorIntervalo(int intervalo){
+        String[] tipos = TipoIntervalo.getAllTiposOutput(intervalo);
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(Mensajes.MED_EDITADD_SEL_INTERVALO)
                 .setItems(tipos, (dialog, which) -> {
                     edtTipoIntervalo.setText(tipos[which]);
-                    tipoIntervaloSel = TipoIntervalo.tipoIntervaloFromString(tipos[which]);
+                    tipoIntervaloSel = TipoIntervalo.fromUnidad(tipos[which]);
                 })
                 .show();
     }
@@ -664,8 +673,9 @@ public class AddAndEditMedicamentoFragment extends Fragment {
             }
             ordenarYRepintarHoras();
 
+            intervalo = med.getHorario().getIntervalo();
             tipoIntervaloSel = med.getHorario().getTipoIntervalo();
-            edtTipoIntervalo.setText(tipoIntervaloSel.toString());
+            edtTipoIntervalo.setText(TipoIntervalo.tipoToStringIndividual(intervalo, tipoIntervaloSel));
             edtIntervaloNum.setText(String.valueOf(med.getHorario().getIntervalo()));
             edtSigToma.setText(Utils.timestampToString(med.getHorario().getSigIngesta()));
         } else {

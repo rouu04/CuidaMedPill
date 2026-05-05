@@ -59,8 +59,11 @@
     <string name="text_title_add_med">Añadir medicamento</string>
     <string name="text_title_med_detalles">Detalles del medicamento</string>
 
-    <string name="text_hint_med_opcionales">Para guardar un medicamento, sólo es necesario un nombre</string>
-    <string name="text_hint_med_horario">Cada cuantos "intervalos" (cada 2 días)</string>
+    <string name="text_hint_med_opcionales">No es necesario añadir ninguno estos elementos para guardar el medicamento</string>
+    <string name="text_hint_med_horario">Ejemplo: todos los días a las 10 y a las 21 \n Cada 1 día \n Añadir horas: 10 y 21</string>
+    <string name="text_hint_cada_intervalo">Cada</string>
+    <string name="text_hint_med_horario2"> Todos los días puede indicarse como cada 1 día</string>
+
 
     <string name="contdesc_med_simb">Símbolo medicamento</string>
 
@@ -68,7 +71,7 @@
     <string name="hint_med_add_toma">Siguiente toma</string>
     <string name="hint_med_horariotoggle">Horario </string>
     <string name="hint_med_intervalo">Intervalo</string>
-    <string name="hint_med_frecuencia">Cada cuantos intervalos</string>
+    <string name="hint_med_frecuencia"> </string>
     <string name="hint_med_notasMed">Notas adicionales</string>
     <string name="hint_med_fecha_fintratamiento">Fecha fin del tratamiento</string>
     <string name="hint_med_fecha_caducidad">Fecha de caducidad</string>

@@ -38,21 +38,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Texto Opcionales -->
-        <TextView
-            android:id="@+id/tvOpcionales"
-            android:text="@string/text_hint_med_opcionales"
-            android:layout_marginTop="@dimen/margin_elements_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/titleSoftColor"
-            android:textSize="@dimen/text_hint_size"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/margin_top"
             android:layout_marginBottom="@dimen/margin_bottom_element">
 
             <!-- Columna izquierda -->
@@ -120,7 +110,7 @@
             android:layout_height="wrap_content"
             android:text="@string/hint_med_horariotoggle"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_marginTop="@dimen/margin_top"
+            android:layout_marginTop="@dimen/margin_start"
             android:textColor="?attr/titleColor"/>
 
         <!-- Contenedor que se oculta -->
@@ -134,13 +124,12 @@
 
             <!-- Texto aclaratorio horario -->
             <TextView
-                android:id="@+id/tvHintHorario"
+                android:id="@+id/tvEjemploHorario"
                 android:text="@string/text_hint_med_horario"
-                android:layout_marginTop="@dimen/margin_elements_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/titleSoftColor"
-                android:textSize="@dimen/text_hint_size"/>
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
 
             <!-- Intervalo -->
             <LinearLayout
@@ -149,6 +138,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_top_element"
                 android:weightSum="2">
+
+
+                <TextView
+                    android:id="@+id/tvCadaIntervalo"
+                    android:text="@string/text_hint_cada_intervalo"
+                    android:layout_marginTop="@dimen/margin_elements_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/titleSoftColor"
+                    android:layout_marginEnd="@dimen/margin_end"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layoutIntervaloNum"
@@ -232,6 +232,16 @@
             android:textColor="?attr/titleColor"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
+        <!-- Texto Opcionales -->
+        <TextView
+            android:id="@+id/tvOpcionales"
+            android:text="@string/text_hint_med_opcionales"
+            android:layout_marginTop="@dimen/margin_elements_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/titleSoftColor"
+            android:textSize="@dimen/text_hint_size"/>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -243,7 +253,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_med_fecha_fintratamiento"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_basura"
+                app:endIconTint="@android:color/holo_red_dark">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtFechaFin"
@@ -258,7 +271,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_med_fecha_caducidad"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_basura"
+                app:endIconTint="@android:color/holo_red_dark">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtFechaCad"
