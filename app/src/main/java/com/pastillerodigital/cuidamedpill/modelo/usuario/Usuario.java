@@ -37,7 +37,7 @@ public class Usuario implements Persistible {
     private String passwordPlano;
 
     public Usuario(){
-        this.confNoti = new ConfNoti(); //todo añadir el usuario cuando se añada
+        this.confNoti = new ConfNoti();
     }
 
     //GETTERS Y SETTERS

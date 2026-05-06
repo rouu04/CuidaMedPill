@@ -113,7 +113,9 @@
     <string name="text_title_notis">Notificaciones</string>
     <string name="text_title_notis_config_gen">Usar configuración general</string>
     <string name="text_title_notis_usa_config_gen">Este medicamento usará la configuración de notificaciones definida en el perfil</string>
-
+    <string name="text_hint_notis_antiproc">Permite activar una cuenta atrás cuando suene la alarma</string>
+    <string name="text_title_formato">Formato</string>
+    <string name="text_hint_notis_formato">Formato de la notificación cuando sea la hora de tomarse el medicamento</string>
     <string name="text_title_antiproc">Antiprocrastinador</string>
 
     <string name="tomado">Tomado</string>
@@ -128,7 +130,6 @@
     <string name="text_hint_aviso_titulo">Título del aviso</string>
 
     <!-- Avisos-->
-    c
     <string name="text_title_sinfechasel">Sin fecha seleccionada</string>
     <string name="text_title_selfecha">Elegir fecha</string>
     <string name="text_title_quitarfecha">Quitar fecha</string>

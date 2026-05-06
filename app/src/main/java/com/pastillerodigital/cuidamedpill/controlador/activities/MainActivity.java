@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         AndroidThreeTen.init(this);
         setContentView(R.layout.activity_main);
-        //borrarSesion();//todo borrar cuando esté log out
+        //borrarSesion();
 
         View mainView = findViewById(R.id.main);
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //todo borrar cuando ya esté puesto en el log out
     private void borrarSesion(){
         SharedPreferences prefs = getSharedPreferences(Constantes.PERSIST_NOMBREARCHIVOPREF, MODE_PRIVATE);
         prefs.edit().clear().apply();

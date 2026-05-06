@@ -157,7 +157,7 @@ public class HomeFragment extends Fragment {
         if(modo == Modo.ASISTIDO){
             tvHintAvisosAsist.setVisibility(View.VISIBLE);
             tvHintMedsAsist.setVisibility(View.VISIBLE);
-            tvHintNoProgramAsist.setVisibility(View.VISIBLE); //todo ocultar si no hay meds
+            tvHintNoProgramAsist.setVisibility(View.VISIBLE);
         }
         else{
             tvHintAvisosAsist.setVisibility(View.GONE);

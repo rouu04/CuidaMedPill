@@ -6,16 +6,16 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.pastillerodigital.cuidamedpill.modelo.notificaciones.medicacion.RecordatorioManager;
+import com.pastillerodigital.cuidamedpill.utils.Constantes;
 
 public class MedicamentoRealTimeManager {
     private ListenerRegistration listener;
 
     public void iniciarListener(Context context, String uid) {
-        //todo cambiar y ponerlo sin cosas hardocded
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        listener = db.collection("usuarios")
+        listener = db.collection(Constantes.COLLECTION_USUARIOS)
                 .document(uid)
-                .collection("medicamentos")
+                .collection(Constantes.COLLECTION_MEDICAMENTOS)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null || snapshots == null) return;
 

@@ -17,6 +17,8 @@
         android:textColor="?attr/titleColor"
         android:layout_marginBottom="@dimen/margin_bottom_element"/>
 
+
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -112,6 +114,7 @@
                 android:layout_height="wrap_content"/>
 
             <!-- Antiprocrastinador -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,6 +136,13 @@
                     android:layout_height="wrap_content"
                     app:thumbTint="@color/md_surface"/>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLabelAclaratorioNotis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_hint_notis_antiproc"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
 
 
@@ -174,6 +184,23 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/tvLabelFormato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_title_formato"
+        android:textColor="@color/md_primary_dark"
+        android:layout_marginTop="@dimen/margin_top_element"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+    <TextView
+        android:id="@+id/tvLabelAclaratorionFormato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_hint_notis_formato"
+        android:layout_marginTop="@dimen/margin_top_element"
+        android:textColor="@color/md_primary_dark"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
     <Spinner
         android:id="@+id/spTipoNoti"
