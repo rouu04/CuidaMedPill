@@ -195,10 +195,11 @@
                     android:layout_marginTop="@dimen/margin_top_element">
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:id="@+id/layoutFechaCad"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_top_element">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -219,7 +220,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:id="@+id/layoutFechaFin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -244,7 +245,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:id="@+id/layoutRestantes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -268,7 +269,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp">
