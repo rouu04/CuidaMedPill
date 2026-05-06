@@ -134,7 +134,8 @@
     <string name="text_title_quitarfecha">Quitar fecha</string>
     <string name="text_title_pocasunidades">Indica cuántas medicinas has comprado</string>
     <string name="text_title_cantidadcomprada">Cantidad comprada</string>
-    <string name="text_title_tratamiento_terminado"> El tratamiento va a terminar\nElige una nueva fecha de fin, o quita la fecha para no tenerla en cuenta.</string>
+    <string name="text_title_tratamiento_terminado"> El tratamiento va a terminar\nElige una nueva fecha de fin, o quítala para no tenerla en cuenta.</string>
+    <string name="text_title_fecha_caducidad">El medicamento va a caducar\nElige una nueva fecha de caducidad, o quítala para no tenerla en cuenta </string>
     <string name="text_title_no_pendientes">No hay avisos pendientes</string>
 
     <string name="text_title_aviso_cad">Aviso de caducidad</string>
