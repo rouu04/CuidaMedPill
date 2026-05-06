@@ -187,7 +187,7 @@ public class MedicamentoDetalleFragment extends Fragment {
             @Override
             public void onSuccess(Usuario data) {
                 if(medId == null) toolbarSup.setTitle(String.format(Mensajes.MED_ADD_SUPERV, data.getAliasU()));
-                else toolbarSup.setTitle(String.format(Mensajes.MED_EDIT_SUPERV, data.getAliasU()));
+                else toolbarSup.setTitle(String.format(Mensajes.MED_DETALLE_SUPERV, data.getAliasU()));
             }
 
             @Override

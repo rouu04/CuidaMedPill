@@ -108,7 +108,7 @@ public class MedicamentoCalendarioAdapter extends RecyclerView.Adapter<Medicamen
 
             // Contenedor horizontal por ingesta
             LinearLayout container = new LinearLayout(holder.itemView.getContext());
-            container.setOrientation(LinearLayout.HORIZONTAL);
+            container.setOrientation(LinearLayout.VERTICAL);
             container.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

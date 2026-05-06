@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         android:textColor="?android:attr/textColorPrimary"/>
 
     </LinearLayout>

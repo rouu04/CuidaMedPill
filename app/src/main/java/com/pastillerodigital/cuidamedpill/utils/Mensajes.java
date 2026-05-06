@@ -63,6 +63,7 @@ public class Mensajes {
     public static final String MEDS_TITULO_SUPERV = "Medicamentos de %s";
     public static final String MED_ADD_SUPERV = "Añadir medicamento para %s";
     public static final String MED_EDIT_SUPERV = "Editar medicamento de %s";
+    public static final String MED_DETALLE_SUPERV = "Medicamento de %s";
 
         //LISTA
     public static final String MEDS_TITLE = "Tus medicamentos";
