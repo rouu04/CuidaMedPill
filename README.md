@@ -1,16 +1,16 @@
 # CuidaMed Pill
 
-CuidaMed Pill es una aplicación diseñada para ayudar a personas mayores en la gestión y control de su medicación diaria. El objetivo principal del proyecto es mejorar la adherencia a los tratamientos farmacológicos mediante recordatorios, organización de medicamentos y supervisión por parte de familiares o cuidadores.
-
-Este proyecto ha sido desarrollado como Trabajo de Fin de Grado (TFG), incluyendo el análisis de necesidades, diseño de la interfaz, implementación de la aplicación y pruebas con usuarios.
-
----
-
 ## Motivación
 
 En la actualidad, muchas personas mayores presentan dificultades para gestionar tareas digitales cotidianas, incluyendo la administración correcta de su medicación. Errores como olvidos o duplicidades en la toma de medicamentos pueden tener consecuencias graves.
 
 CuidaMed Pill surge como respuesta a esta problemática, ofreciendo una herramienta accesible, sencilla y orientada a mejorar la autonomía del usuario en la gestión de su tratamiento.
+
+---
+
+CuidaMed Pill es una aplicación diseñada para ayudar a personas mayores en la gestión y control de su medicación diaria. El objetivo principal del proyecto es mejorar la adherencia a los tratamientos farmacológicos mediante recordatorios, organización de medicamentos y supervisión por parte de familiares o cuidadores.
+
+Este proyecto ha sido desarrollado como Trabajo de Fin de Grado (TFG), incluyendo el análisis de necesidades, diseño de la interfaz, implementación de la aplicación y pruebas con usuarios.
 
 ---
 
@@ -58,7 +58,7 @@ Esta estructura facilita el mantenimiento, la escalabilidad y futuras ampliacion
 - Lenguaje de programación: Java
 - Framework: Android Studio
 - Base de datos: Firebase
-- Herramientas de diseño: aplicaciones de dibujo digitales
+- Herramientas de diseño: aplicaciones de diseño digitales
 - Control de versiones: GitHub
 
 ---
