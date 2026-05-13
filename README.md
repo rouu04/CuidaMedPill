@@ -1,17 +1,14 @@
 # CuidaMed Pill
 
-## Motivación y descripción del proyecto
+## Descripción del proyecto
 
-En la actualidad, la tecnología está muy presente en nuestro día a día. Sin embargo, hay determinadas personas, sobre todo aquellas en la tercera edad, que pueden tener dificultades para realizar tareas tecnológicas aparentemente sencillas. Estas personas suelen tomar distintos medicamentos, cuyo seguimiento diario puede ser tedioso y olvidadizo. Precisamente la tecnología puede facilitarles esa tarea.
-
-
-En este contexto surge CuidaMed Pill, una aplicación móvil que actúa como un pastillero digital. Su objetivo principal es facilitar la organización y seguimiento de la medicación diaria de los usuarios. La aplicación permite registrar medicamentos, indicar cuándo se ha ingerido el fármaco y visualizarlo en un calendario. También cuenta con un sistema personalizable de notificaciones. 
-
- 
- Además, esta aplicación destaca por ser accesible para las personas con dificultades para la tecnología, ya que restringe funcionalidades con gran impacto a este tipo de usuarios, y permite que sus tutores los supervisen de forma remota. Por otra parte, las personas con menos experiencia en el mundo digital disponen de una interfaz completamente personalizada y accesible, con distintos textos aclaratorios e información simplificada, con el fin de facilitarles el uso de CuidaMed Pill. Adicionalmente, durante el desarrollo de CuidaMed Pill se han realizado pruebas con usuarios, con el fin de evaluar la usabilidad de la aplicación y detectar posibles mejoras. 
+Actualmente, la tecnología forma parte de la vida diaria, aunque muchas personas mayores tienen dificultades para gestionar tareas digitales, como el seguimiento de su medicación. Para ayudar en este proceso surge CuidaMed Pill, una aplicación móvil que funciona como un pastillero digital, permitiendo registrar medicamentos, controlar las tomas y recibir recordatorios personalizados.
 
 
-En conclusión, CuidaMed Pill ofrece una solución práctica y accesible para mejorar el seguimiento de la medicación diaria, especialmente en usuarios con menos experiencia tecnológica. Gracias a su sistema de recordatorios, su interfaz simplificada y la posibilidad de supervisión por parte de tutores, la aplicación contribuye a reducir olvidos y a aumentar la seguridad en la toma de fármacos, consolidándose como una herramienta útil tanto para pacientes como para cuidadores.
+La aplicación destaca por su accesibilidad, ya que ofrece una interfaz sencilla y adaptada para usuarios con poca experiencia tecnológica, además de permitir la supervisión remota por parte de tutores o cuidadores. Asimismo, se realizaron pruebas con usuarios para mejorar su usabilidad.
+
+
+En conclusión, CuidaMed Pill proporciona una solución práctica y accesible que facilita el seguimiento de la medicación diaria y contribuye a reducir olvidos y aumentar la seguridad de los pacientes.
 
 
 
