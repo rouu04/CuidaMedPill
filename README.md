@@ -76,3 +76,9 @@ Los aspectos evaluados incluyen:
 - Experiencia general de uso
 
 Los resultados obtenidos han permitido identificar mejoras en accesibilidad y usabilidad, especialmente orientadas a personas mayores.
+
+## Descarga de la aplicación
+
+Puedes descargar la versión ejecutable de la aplicación en el siguiente enlace:
+
+- https://github.com/rouu04/CuidaMedPill/releases
